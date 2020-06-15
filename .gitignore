@@ -1,0 +1,3 @@
+/node_modules
+/src/infrastructure/db/config.ts
+/src/infrastructure/db/databases.json

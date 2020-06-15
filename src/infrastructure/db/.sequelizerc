@@ -1,0 +1,17 @@
+var path = require('path');
+var underscore = require('underscore.string');
+var args = process.argv.slice(2);
+var folder = 'store';
+
+args.forEach(function(arg) {
+    if(underscore.startsWith(arg, '--env=')) {
+        migrationFolder = arg.replace('--env', '');
+    }
+});
+
+module.exports = {
+    'models-path': path.resolve('models', folder),
+    'migrations-path': path.resolve('migrations', folder),
+    'seeders-path': path.resolve('seeders', folder),
+    'config': './databases.json'
+}
