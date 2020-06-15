@@ -1,22 +1,35 @@
 import OutputPort from '../../application/output-port';
 import { DetailInvoiceResponseDTO } from '../../application/use-cases/detail-invoice/detail-invoice-response.dto';
-import { Response } from 'express';
+
+type DetailInvoiceHTTPView = {
+  statusCode: number,
+  message?: string,
+  body?: any,
+  headers?: JSON
+};
 
 export default class DetailInvoiceAPIPresenter implements OutputPort<DetailInvoiceResponseDTO>{
-  private _res: Response;
+  private _view: DetailInvoiceHTTPView;
 
-  constructor(res: Response) {
-    this._res = res;
-  }
+  get view(): DetailInvoiceHTTPView {
+    return this._view;
+  } 
 
-  async show(response: DetailInvoiceResponseDTO) {
+  public show(response: DetailInvoiceResponseDTO) {
     if (response.failures && response.failures.invalidInvoiceId) {
-      this._res.status(404)
-        .end('Not Found');
+      this._view = {
+        statusCode: 404,
+        message: 'Not found'
+      };
+      
+      return;
     }
 
-    
-    this._res.status(200)
-      .json(response.success);
+    this._view = {
+      statusCode: 200,
+      body: response
+    };
+
+    return;
   }
 };

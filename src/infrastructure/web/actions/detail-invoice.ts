@@ -14,7 +14,7 @@ export default async function detailInvoice(req: Request, res: Response) {
   const productRep = new SequelizeProductRepository();
   const customerRep = new SequelizeCustomerRepository();
   const lineItemRepository = new SequelizeLineItemRepository();
-  const detailInvoicePresenter = new DetailInvoiceAPIPresenter(res);
+  const detailInvoicePresenter = new DetailInvoiceAPIPresenter();
   const invoiceRep = new SequelizeInvoiceRepository(lineItemRepository);
 
   const detailInvoiceInteractor = new DetailInvoiceInteractor(
@@ -24,14 +24,16 @@ export default async function detailInvoice(req: Request, res: Response) {
     detailInvoicePresenter
   );
 
-  const detailInvoiceControllerInput = {
-    req: req,
-    res: res,
-    detailInvoiceInteractor
-  };
+  const detailInvoiceController = new DetailInvoiceController(req, detailInvoiceInteractor);
 
-  const detailInvoiceController = new DetailInvoiceController(detailInvoiceControllerInput);
+  await detailInvoiceController.run();
+  const view = detailInvoicePresenter.view;
 
-  detailInvoiceController.run();
+  if (view.message) {
+    return res.status(view.statusCode)
+      .end(view.message)
+  }
 
+  res.status(view.statusCode)
+    .json(view.body);
 }

@@ -1,22 +1,21 @@
-import { Request, Response } from 'express';
 import DetailInvoiceInputPort  from '../../application/use-cases/detail-invoice/detail-invoice.input';
 
-type DetailInvoiceControllerDTO = {
-  req: Request;
-  res: Response;
-  detailInvoiceInteractor: DetailInvoiceInputPort
-};
+type DetailInvoiceHTTPInput = {
+  params: any,
+  headers?: any,
+  body: any
+}
 
 export default class DetailInvoiceController {
-  private _req: Request;
+  private _input: DetailInvoiceHTTPInput;
   private _detailInvoiceInteractor: DetailInvoiceInputPort
 
-  constructor(input: DetailInvoiceControllerDTO) {
-    this._req = input.req;
-    this._detailInvoiceInteractor = input.detailInvoiceInteractor;
+  constructor(input: DetailInvoiceHTTPInput, interactor: DetailInvoiceInputPort) {
+    this._input = input;
+    this._detailInvoiceInteractor = interactor;
   }
 
   async run() {
-      await (await this._detailInvoiceInteractor.execute(this._req.params.id));
+      await (await this._detailInvoiceInteractor.execute(this._input.params.id));
   }
 };
