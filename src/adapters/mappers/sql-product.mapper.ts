@@ -1,8 +1,7 @@
 import RepositoryMapper from './repository.mapper';
-import { Product } from '@entities';
-import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
+import { Product, UniqueEntityID } from '@entities';
 
-export const sequelizeProductMapper: RepositoryMapper<Product> = {
+const sqlProductMapper: RepositoryMapper<Product> = {
   toDomain(productRowDTO: any): Product {
     const productProps = {
       name: productRowDTO.name,
@@ -23,3 +22,5 @@ export const sequelizeProductMapper: RepositoryMapper<Product> = {
     } 
   }
 }
+
+export default sqlProductMapper;

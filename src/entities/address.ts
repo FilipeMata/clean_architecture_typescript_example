@@ -1,4 +1,4 @@
-import { ValueObject } from '@shared/domain/value-object';
+import { ValueObject } from '@entities';
 import { Result } from '@shared/Result';
 
 export interface IAddressProps {

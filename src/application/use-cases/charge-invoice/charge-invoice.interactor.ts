@@ -2,7 +2,7 @@ import * as Gateways from '@aplication/gateways';
 import { DetailInvoiceInputPort } from '@aplication/useCases/detail-invoice/detail-invoice.interactor'; 
 
 import { Result } from '@shared/Result';
-import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
+import { UniqueEntityID } from 'src/entities/unique-entity-id';
 
 import { Invoice, Address, LineItem } from '@entities';
 

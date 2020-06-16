@@ -2,8 +2,7 @@
  * @author: Filipe Mata
  */
 
-import { Entity } from '@shared/domain/entity';
-import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
+import { Entity, UniqueEntityID } from '@entities';
 import { Result } from '@shared/Result';
 
 interface IProductProps {

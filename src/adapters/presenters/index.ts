@@ -1,0 +1,1 @@
+export * as HTTPDetailInvoicePresenter from './http-detail-invoice.ptr';

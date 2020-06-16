@@ -1,8 +1,7 @@
 import RepositoryMapper from './repository.mapper';
-import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
-import { LineItem } from '../../entities/line-item';
+import { LineItem, UniqueEntityID } from '@entities';
 
-export const sequelizeLineItemMapper: RepositoryMapper<LineItem> = {
+const sqlLineItemMapper: RepositoryMapper<LineItem> = {
   toDomain(lineItemRowDTO: any): LineItem {
     const lineItemProps = {
       productId: new UniqueEntityID(lineItemRowDTO.product_id),
@@ -23,3 +22,5 @@ export const sequelizeLineItemMapper: RepositoryMapper<LineItem> = {
     }
   }
 }
+
+export default sqlLineItemMapper;

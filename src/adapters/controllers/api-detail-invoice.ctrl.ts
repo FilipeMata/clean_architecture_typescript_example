@@ -1,16 +1,16 @@
 import DetailInvoiceInputPort  from '../../application/use-cases/detail-invoice/detail-invoice.input';
 
-type DetailInvoiceHTTPInput = {
+type APIDetailInvoiceInput = {
   params: any,
   headers?: any,
   body: any
 }
 
-export default class DetailInvoiceController {
-  private _input: DetailInvoiceHTTPInput;
+export default class APIDetailInvoiceController {
+  private _input: APIDetailInvoiceInput;
   private _detailInvoiceInteractor: DetailInvoiceInputPort
 
-  constructor(input: DetailInvoiceHTTPInput, interactor: DetailInvoiceInputPort) {
+  constructor(input: APIDetailInvoiceInput, interactor: DetailInvoiceInputPort) {
     this._input = input;
     this._detailInvoiceInteractor = interactor;
   }

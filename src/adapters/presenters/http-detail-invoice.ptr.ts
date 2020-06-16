@@ -8,7 +8,7 @@ type DetailInvoiceHTTPView = {
   headers?: JSON
 };
 
-export default class DetailInvoiceAPIPresenter implements OutputPort<DetailInvoiceResponseDTO>{
+export default class HTTPDetailInvoicePresenter implements OutputPort<DetailInvoiceResponseDTO>{
   private _view: DetailInvoiceHTTPView;
 
   get view(): DetailInvoiceHTTPView {

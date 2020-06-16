@@ -1,22 +1,21 @@
-import { Entity } from '@shared/domain/entity';
-import RepositoryMapper from '@adapters/mappers/repository.mapper';
-import Repository from '@shared/repository';
+import { Entity } from '@entities';
+import RepositoryMapper from '../mappers/repository.mapper';
+import Repository from './repository';
+import { Connections, DB, SQL } from './sql-models';
 
-const db = require('../../infrastructure/db/models');
-
-export interface SequelizeRepositoryProps<E> {
+export interface SQLRepositoryProps<E> {
   dbName: string;
   modelName: string;
   mapper: RepositoryMapper<E>;
 }
 
-export abstract class SequelizeBaseRepository<E extends Entity<any>> implements Repository<E> {
-  protected _db: any;
+export abstract class SQLBaseRepository<E extends Entity<any>> implements Repository<E> {
+  protected _db: SQL;
   protected _models: any;
   protected _mapper: RepositoryMapper<E>;
   private _transaction: any;
   
-  constructor(props: SequelizeRepositoryProps<E>) {
+  constructor(props: SQLRepositoryProps<E>, db: Connections) {
     this._models = db;
     const dbName = props.dbName;
     const modelName = props.modelName;

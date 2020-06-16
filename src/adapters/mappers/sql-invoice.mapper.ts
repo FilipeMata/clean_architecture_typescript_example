@@ -1,11 +1,9 @@
 import RepositoryMapper from './repository.mapper';
-import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
-import { Invoice } from '../../entities/invoice';
-import { Charge } from '../../entities/charge';
-import { Address, IAddressProps, LineItem } from '@entities';
-import { sequelizeLineItemMapper } from './sequelize-line-item.mapper';
+import { UniqueEntityID } from '@entities';
+import { Address, IAddressProps, LineItem, Invoice, Charge } from '@entities';
+import sqlLineItemMapper from './sql-line-item.mapper';
 
-export const sequelizeInvoiceMapper: RepositoryMapper<Invoice> = {
+const sqlInvoiceMapper: RepositoryMapper<Invoice> = {
   toDomain(invoiceRowDTO: any): Invoice {
     const chargeProps = {
       paymentMethod: invoiceRowDTO.payment_method,
@@ -19,7 +17,7 @@ export const sequelizeInvoiceMapper: RepositoryMapper<Invoice> = {
 
     if (invoiceRowDTO.line_items) {
       lineItems = invoiceRowDTO.line_items.map((lineItem: any) => {
-        return sequelizeLineItemMapper.toDomain(lineItem);
+        return sqlLineItemMapper.toDomain(lineItem);
       })
     }
 
@@ -50,3 +48,5 @@ export const sequelizeInvoiceMapper: RepositoryMapper<Invoice> = {
     }
   }
 }
+
+export default sqlInvoiceMapper;

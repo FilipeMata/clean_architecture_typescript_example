@@ -1,6 +1,4 @@
-import { Address } from '@entities';
-import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
-import { Entity } from '@shared/domain/entity';
+import { Entity, UniqueEntityID, Address } from '@entities';
 import { Result } from '@shared/Result';
 
 export interface ICustomer {

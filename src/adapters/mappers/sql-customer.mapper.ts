@@ -1,9 +1,7 @@
 import RepositoryMapper from './repository.mapper';
-import { Customer } from '@entities';
-import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
-import { Address, IAddressProps } from '../../entities/address';
+import { Customer, UniqueEntityID,  Address, IAddressProps } from '@entities';
 
-export const sequelizeCustomerMapper: RepositoryMapper<Customer> = {
+const sqlCustomerMapper: RepositoryMapper<Customer> = {
   toDomain(customerRowDTO: any): Customer {
     const address = Address.build(customerRowDTO.address).value;
 
@@ -32,3 +30,5 @@ export const sequelizeCustomerMapper: RepositoryMapper<Customer> = {
     }
   }
 }
+
+export default sqlCustomerMapper;

@@ -1,0 +1,1 @@
+export * as DeatailInvoiceGateway from './detail-invoice.gateway';

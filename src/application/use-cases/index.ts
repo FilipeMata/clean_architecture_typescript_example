@@ -1,5 +1,1 @@
-import * as DetailInvoice from './detail-invoice/index';
-
-export default {
-  DetailInvoice: DetailInvoice
-};
+export * as DetailInvoice from './detail-invoice/index';

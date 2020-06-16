@@ -1,6 +1,9 @@
-  export * from './address';
-  export * from './charge';
-  export * from './customer';
-  export * from './invoice';
-  export * from './line-item';
-  export * from './product';
+export * from './entity';
+export * from './unique-entity-id';
+export * from './value-object';
+export * from './address';
+export * from './charge';
+export * from './customer';
+export * from './invoice';
+export * from './line-item';
+export * from './product';

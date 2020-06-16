@@ -1,4 +1,4 @@
-import { UniqueEntityID } from './UniqueEntityID';
+import { UniqueEntityID } from '@entities';
 
 /**
  * 

@@ -2,7 +2,7 @@ import * as Gateways from '@aplication/gateways';
 import { LineItem, Invoice, Address} from '@entities';
 
 import { Result } from '@shared/Result';
-import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
+import { UniqueEntityID } from '@entities';
 import GenerateInvoiceRequestDTO from './generate-invoice-request.dto';
 
 class GenerateInvoiceInteractor {

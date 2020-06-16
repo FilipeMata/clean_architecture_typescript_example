@@ -1,0 +1,1 @@
+export * as APIDetailInvoiceController from './api-detail-invoice.ctrl';

@@ -18,8 +18,8 @@
       "@infrastructure/*": [
         "src/infrastructure/*"
       ],
-      "@adapters/*": [
-        "src/adapters/*"
+      "@adapters": [
+        "src/adapters/index"
       ],
       "@entities": [
         "src/entities/index"

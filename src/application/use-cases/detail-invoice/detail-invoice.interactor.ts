@@ -1,33 +1,26 @@
-import * as Gateways from '@aplication/gateways';
-
 import { DetailInvoiceResponseDTO } from './detail-invoice-response.dto';
 import * as DetailInvoiceMapper from './detail-invoice.mapper';
 import DetailInvoiceInputPort  from './detail-invoice.input';
-import { UniqueEntityID } from '../../../shared/domain/UniqueEntityID';
+import { UniqueEntityID } from '@entities';
 import OutputPort from '../../output-port';
+import DetailInvoiceGateway from './detail-invoice.gateway';
 
 export default class DetailInvoiceInteractor implements DetailInvoiceInputPort {
-  private invoiceRep: Gateways.InvoiceRepository;
-  private customerRep: Gateways.CustomerRepository;
-  private productRep: Gateways.ProductRepository;
-  private presenter: OutputPort<DetailInvoiceResponseDTO>;
+  private _gateway: DetailInvoiceGateway;
+  private _presenter: OutputPort<DetailInvoiceResponseDTO>;
 
   constructor(
-    invoiceRep: Gateways.InvoiceRepository,
-    customerRep: Gateways.CustomerRepository,
-    productRep: Gateways.ProductRepository,
+    gateway: DetailInvoiceGateway,
     presenter: OutputPort<DetailInvoiceResponseDTO>
   ) {
-    this.invoiceRep = invoiceRep;
-    this.customerRep = customerRep;
-    this.productRep = productRep;
-    this.presenter = presenter;
+    this._gateway = gateway;
+    this._presenter = presenter;
   }
 
   public async execute(invoiceId: string) {
     let response: DetailInvoiceResponseDTO = {};
 
-    const invoice = await this.invoiceRep
+    const invoice = await this._gateway
       .getInvoiceById(new UniqueEntityID(invoiceId));
 
     if (!invoice) {
@@ -35,12 +28,12 @@ export default class DetailInvoiceInteractor implements DetailInvoiceInputPort {
         invalidInvoiceId: true
       };
 
-      return this.presenter.show(response);
+      return this._presenter.show(response);
     }
 
     const itemsDTO = [];
     for (const lineItem of invoice.lineItems) {
-      const product = await this.productRep
+      const product = await this._gateway
         .getProductById(lineItem.productId);
 
       const item = {
@@ -52,7 +45,7 @@ export default class DetailInvoiceInteractor implements DetailInvoiceInputPort {
       itemsDTO.push(item);
     }
 
-    const customer = await this.customerRep
+    const customer = await this._gateway
       .getCustomerById(invoice.customerId);
 
     response.success = {
@@ -66,7 +59,7 @@ export default class DetailInvoiceInteractor implements DetailInvoiceInputPort {
       response.success.charge = DetailInvoiceMapper.mapChargeToDetailInvoiceResponseChargeDTO(invoice.charge)
     }
 
-    return this.presenter.show(response);
+    return this._presenter.show(response);
   }
 }
 
