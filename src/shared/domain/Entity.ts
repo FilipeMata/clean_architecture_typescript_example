@@ -1,28 +1,32 @@
+import { UniqueEntityID } from './UniqueEntityID';
 
+const isEntity = (obj: any): obj is Entity<any> => {
+  return obj instanceof Entity;
+};
 
 export abstract class Entity<T> {
-  protected readonly _id: number;
+  protected readonly _id: UniqueEntityID;
   protected props: T;
 
-  constructor (props: T, id?: number) {
-    this._id = id ? id : 1;
+  constructor(props: T, id?: UniqueEntityID) {
+    this._id = id ? id : new UniqueEntityID();
     this.props = props;
   }
 
-  public equals (object?: Entity<T>) : boolean {
+  /*get id(): any {
+    return this._id.toValue();
+  }*/
 
-    if (!object) {
+  public equals (entity?: Entity<T>) : boolean {
+
+    if (!entity || !isEntity(entity)) {
       return false;
     }
 
-    if (!(object instanceof Entity)) {
-      return false;
-    }
-
-    if (this === object) {
+    if (this === entity) {
       return true;
     }
 
-    return this._id && object._id && this._id === object._id;
+    return this._id.equals(entity._id);;
   }
 }

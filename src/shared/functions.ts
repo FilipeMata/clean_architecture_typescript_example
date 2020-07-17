@@ -1,5 +1,5 @@
 import logger from './Logger';
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuid } from 'uuid';
 
 export const pErr = (err: Error) => {
     if (err) {
@@ -12,5 +12,5 @@ export const getRandomInt = () => {
 };
 
 export const genereateUUID = () => {
-    return new uuidv4();
+    return uuid();
 }

@@ -1,4 +1,9 @@
-import { Entity } from '../shared/domain/Entity';
+/**
+ * @author: Filipe Mata
+ */
+
+import { Entity } from '@shared/domain/Entity';
+import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 
 interface IProductProps {
     name: string;
@@ -20,11 +25,11 @@ class Product extends Entity<IProductProps>{
         return this.props.price;
     }
 
-    private constructor (props: IProductProps, id?: UniqueEntityId) {
+    private constructor (props: IProductProps, id?: UniqueEntityID) {
         super(props, id);
     }  
 
-    public static createProduct(props: IProductProps, id?: UniqueEntityId): Product { 
+    public static build(props: IProductProps, id?: UniqueEntityID): { 
         /** some domain validations here **/
         
         return new Product(props, id);
