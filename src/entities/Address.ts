@@ -1,24 +1,66 @@
-class Address {
+import { ValueObject } from '@shared/domain/ValueObject';
+import { Result } from '@shared/Result';
 
-    public id: number;
-    public street: string;
-    public neighborhood: string;
-    public number: number;
-    public state: string;
-    public country: string;
-    public complement: string;
-    public zipcode: string;
+interface IAddressProps {
+    street: string;
+    neighborhood: string;
+    number: string;
+    state: string;
+    country: string;
+    complement: string;
+    zipcode: string;
+};
 
-    constructor(id: number, street: string, neighborhood: string, number: number,
-               state: string, country: string, complement: string, zipcode: string) {
-        this.id = id;
-        this.street = street;
-        this.neighborhood = neighborhood;
-        this.number = number;
-        this.state = state;
-        this.country = country;
-        this.complement = complement;
-        this.zipcode = zipcode;
+class Address extends ValueObject<IAddressProps>{
+
+    get street (): string {
+        return this.props.street;
+    }
+
+    get neighborhood (): string {
+        return this.props.neighborhood;
+    }
+
+    get number (): string {
+        return this.props.number;
+    }
+
+    get state(): string {
+        return this.props.state;
+    }
+
+    get country(): string {
+        return this.props.country;
+    }
+
+    get complement(): string {
+        return this.props.complement;
+    }
+
+    get zipcode(): string {
+        return this.props.zipcode;
+    }
+
+    private constructor(props: IAddressProps) {
+        super(props);
+    }
+
+    build(props: IAddressProps): Result<Address> {
+        /** some domain validations here **/
+
+        let errors: Array<string> = [];
+
+        if (!props.street || props.street.length < 2) {
+            errors.push('Address street must be grater than 2 chars');
+        }
+
+        /** put some other validations here */
+
+        if (errors) {
+            return Result.fail<Address>(errors);
+        }
+
+        return Result.success<Address>(new Address(props))
     }
 }
 

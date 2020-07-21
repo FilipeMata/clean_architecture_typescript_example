@@ -1,6 +1,6 @@
 
 
-import { IUser } from '@entities/User';
+import { IUser } from '@entities/Customer';
 
 
 export interface IUserDao {

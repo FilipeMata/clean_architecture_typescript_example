@@ -1,5 +1,11 @@
 import { UniqueEntityID } from './UniqueEntityID';
 
+/**
+ * 
+ * @desc Entities are object that encapsulates corporation business rules. 
+ * We determine it's equality throgh entity unique id, if it exists.
+ */
+
 const isEntity = (obj: any): obj is Entity<any> => {
   return obj instanceof Entity;
 };
@@ -12,10 +18,6 @@ export abstract class Entity<T> {
     this._id = id ? id : new UniqueEntityID();
     this.props = props;
   }
-
-  /*get id(): any {
-    return this._id.toValue();
-  }*/
 
   public equals (entity?: Entity<T>) : boolean {
 
