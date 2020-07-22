@@ -19,6 +19,10 @@ export abstract class Entity<T> {
     this.props = props;
   }
 
+  get id (): UniqueEntityID {
+    return this.id;
+  }
+
   public equals (entity?: Entity<T>) : boolean {
 
     if (!entity || !isEntity(entity)) {

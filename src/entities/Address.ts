@@ -45,7 +45,7 @@ class Address extends ValueObject<IAddressProps>{
         super(props);
     }
 
-    build(props: IAddressProps): Result<Address> {
+    public static build(props: IAddressProps): Result<Address> {
         /** some domain validations here **/
 
         let errors: Array<string> = [];

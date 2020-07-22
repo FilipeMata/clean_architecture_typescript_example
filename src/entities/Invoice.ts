@@ -1,5 +1,4 @@
 import { Address } from '@entities/Address';
-import Customer from './Customer';
 import { LineItem } from './LineItem';
 import { Entity } from '@shared/domain/Entity';
 import { UniqueEntityID } from '../shared/domain/UniqueEntityID';
@@ -9,7 +8,7 @@ import { Charge } from './Charge';
 interface IInvoiceProps {
     billingAddress: Address;
     lineItems?: Array<LineItem>;
-    customer: Customer;
+    customerId: UniqueEntityID;
     charge?: Charge;
 };
 

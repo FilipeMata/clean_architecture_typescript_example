@@ -2,6 +2,7 @@ import { Address } from '@entities/Address';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 import { Entity } from '@shared/domain/Entity';
 import { Result } from '@shared/Result';
+
 export interface ICustomer {
     document: string;
     name: string;
@@ -33,7 +34,7 @@ class Customer extends Entity<ICustomer>{
         return this.props.birthdate;
     }
 
-    get Address(): Address {
+    get address(): Address {
         return this.props.address;
     }
 

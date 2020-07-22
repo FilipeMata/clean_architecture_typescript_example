@@ -1,6 +1,6 @@
 export class Result<T> {
   public succeeded: boolean;
-  private readonly _errors: Array<string>;
+  private readonly _errors: Array<string> = [];
   private readonly _value?: T;
 
   private constructor(value?: T, errors?: Array<string>) {
@@ -25,10 +25,8 @@ export class Result<T> {
     return this._value;
   }
 
-  public get errors(): Array<string> | undefined {
-    if (this._errors.length > 0) {
-      return this._errors;
-    }
+  public get errors(): Array<string> {
+    return this._errors;
   }
 
   public static success<U>(value?: U): Result<U> {

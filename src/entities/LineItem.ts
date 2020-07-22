@@ -4,14 +4,14 @@ import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 import { Result } from '@shared/Result';
 
 interface ILineItemProps {
-  product: Product;
+  productId: UniqueEntityID;
   quantity: number;
 };
 
 class LineItem extends Entity<ILineItemProps>{
 
-  get product(): Product {
-    return this.props.product;
+  get productId(): UniqueEntityID {
+    return this.props.productId;
   }
 
   get quantity(): number {
