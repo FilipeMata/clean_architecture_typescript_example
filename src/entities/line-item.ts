@@ -1,4 +1,4 @@
-import { Product } from '@entities/Product';
+import { Product } from '@entities/product';
 import { Entity } from '@shared/domain/Entity';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 import { Result } from '@shared/Result';

@@ -1,4 +1,4 @@
-import { Address } from '@entities/Address';
+import { Address } from '@entities/address';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 import { Entity } from '@shared/domain/Entity';
 import { Result } from '@shared/Result';

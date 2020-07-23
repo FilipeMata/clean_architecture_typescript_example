@@ -1,55 +1,36 @@
+import InvoiceRepository from '@useCases/gateways/invoice.rep';
+import CustomerRepository from '@useCases/gateways/customer.rep';
 
-import { IInvoiceRepository } from './entityGatewayInterfaces/IInvoiceRepository';
-import { IProductRepository } from './entityGatewayInterfaces/IProductRepository';
-import { ILineItemRepository } from './entityGatewayInterfaces/ILineItemRepository';
-import { ICustomerRepository } from './entityGatewayInterfaces/ICustomerRepository';
-import { Result } from '../shared/Result';
-import { LineItem } from '@entities/LineItem';
+import { LineItem } from '@entities/line-item';
+import { Invoice } from '@entities/invoice';
+import { Address } from '@entities/address';
+
+import { Result } from '@shared/Result';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
-import { Invoice } from '@entities/Invoice';
-import { Address } from '@entities/Address';
 
-interface LineItemRequestDTO {
-  productId: string,
-  quantity: number
-};
+import AddressDTO from '@useCases/dtos/address.dto';
+import LineItemDTO from '@useCases/dtos/line-item.dto';
 
-interface AddressRequestDTO {
-  street: string;
-  neighborhood: string;
-  number: string;
-  state: string;
-  country: string;
-  complement: string;
-  zipcode: string;
-};
-
-interface GenerateInvoiceUseCaseRequestDTO {
-  items: Array<LineItemRequestDTO>,
+interface GenerateInvoiceRequestDTO {
+  items: Array<LineItemDTO>,
   customerId: string,
-  billingAddress?: AddressRequestDTO,
+  billingAddress?: AddressDTO,
   shouldConsiderCustomerAddressForBilling?: boolean
 };
 
-class GenerateInvoiceUseCase {
-  private invoiceRep: IInvoiceRepository;
-  private productRep: IProductRepository;
-  private lineItemRep: ILineItemRepository;
-  private customerRep: ICustomerRepository;
+class GenerateInvoiceInteractor {
+  private invoiceRep: InvoiceRepository;
+  private customerRep: CustomerRepository;
 
   constructor(
-    invoiceRep: IInvoiceRepository,
-    productRep: IProductRepository,
-    lineItemRep: ILineItemRepository,
-    customerRep: ICustomerRepository
+    invoiceRep: InvoiceRepository,
+    customerRep: CustomerRepository
   ) {
     this.invoiceRep = invoiceRep;
-    this.productRep = productRep;
-    this.lineItemRep = lineItemRep;
     this.customerRep = customerRep;
   }
 
-  public async execute(data: GenerateInvoiceUseCaseRequestDTO): Promise<Result<void>> {
+  public async execute(data: GenerateInvoiceRequestDTO): Promise<Result<void>> {
 
     let billingAddress: Address | undefined;
 
@@ -112,4 +93,4 @@ class GenerateInvoiceUseCase {
 
 }
 
-export { GenerateInvoiceUseCase };
+export { GenerateInvoiceInteractor };

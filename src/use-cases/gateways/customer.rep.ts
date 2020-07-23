@@ -1,6 +1,6 @@
-import Customer from '../../entities/Customer';
+import Customer from '../../entities/customer';
 
-export interface ICustomerRepository extends Repository<Customer> {
+export default interface CustomerRepository extends Repository<Customer> {
   getCustomerById(lineItemId: string): Promise<Customer>;
   getCustomerByDocument(lineItemId: string): Promise<Customer>;
 }

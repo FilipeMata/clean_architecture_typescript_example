@@ -22,8 +22,8 @@
       "@entities/*": [
         "src/entities/*"
       ],
-      "@interactors/*": [
-        "src/interactors/*"
+      "@useCases/*": [
+        "src/use-cases/*"
       ],
       "@shared/*": [
         "src/shared/*"
