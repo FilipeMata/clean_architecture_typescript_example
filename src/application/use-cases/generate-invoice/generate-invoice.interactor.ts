@@ -1,5 +1,5 @@
-import InvoiceRepository from '@useCases/gateways/invoice.rep';
-import CustomerRepository from '@useCases/gateways/customer.rep';
+import InvoiceRepository from '@aplication/gateways/invoice.rep';
+import CustomerRepository from '@aplication/gateways/customer.rep';
 
 import { LineItem } from '@entities/line-item';
 import { Invoice } from '@entities/invoice';
@@ -7,16 +7,7 @@ import { Address } from '@entities/address';
 
 import { Result } from '@shared/Result';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
-
-import AddressDTO from '@useCases/dtos/address.dto';
-import LineItemDTO from '@useCases/dtos/line-item.dto';
-
-interface GenerateInvoiceRequestDTO {
-  items: Array<LineItemDTO>,
-  customerId: string,
-  billingAddress?: AddressDTO,
-  shouldConsiderCustomerAddressForBilling?: boolean
-};
+import GenerateInvoiceRequestDTO from './generate-invoice-request.dto';
 
 class GenerateInvoiceInteractor {
   private invoiceRep: InvoiceRepository;

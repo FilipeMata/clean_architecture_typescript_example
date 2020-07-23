@@ -1,5 +1,5 @@
 import { Product } from '@entities/product';
-import { Entity } from '@shared/domain/Entity';
+import { Entity } from '@shared/domain/entity';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 import { Result } from '@shared/Result';
 

@@ -1,13 +1,12 @@
-import { Product } from '@entities/product';
 import { Charge } from '@entities/charge';
 
-import AddressDTO from '@useCases/dtos/address.dto';
-import CustomerDTO from '@useCases/dtos/customer.dto';
+import AddressDTO from '@aplication/dtos/address.dto';
+import CustomerDTO from '@aplication/dtos/customer.dto';
 
 export interface ItemDTO {
-  productName: string,
-  productPrice: number,
-  productQuantity: number
+  name: string,
+  price: number,
+  quantity: number
 };
 
 export interface GenerateChargeDTO {

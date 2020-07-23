@@ -1,18 +1,13 @@
-import { Entity } from '@shared/domain/Entity';
+import { Entity } from '@shared/domain/entity';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 import { Result } from '@shared/Result';
 
 interface IChargeProps {
-  customId: string;
   paymentMethod: string;
   status: string;
 };
 
-class Charge extends Entity<IChargeProps>{
-
-  get customId(): string {
-    return this.props.customId;
-  }
+class Charge extends Entity<IChargeProps> {
 
   get paymentMethod(): string {
     return this.props.paymentMethod;
@@ -26,11 +21,11 @@ class Charge extends Entity<IChargeProps>{
     super(props, id);
   }
 
-  public static build(props: IChargeProps, id?: UniqueEntityID): Result<Charge> {
+  public static build(props: IChargeProps, id: UniqueEntityID): Result<Charge> {
     /** some domain validations here **/
     const errors: Array<string> = [];
 
-    if (!props.customId) {
+    if (!id) {
       errors.push('Charge must have a protocol');
     }
 

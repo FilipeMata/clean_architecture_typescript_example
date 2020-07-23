@@ -22,14 +22,23 @@
       "@entities/*": [
         "src/entities/*"
       ],
-      "@useCases/*": [
-        "src/use-cases/*"
+      "@aplication/useCases/*": [
+        "src/application/use-cases/*"
+      ],
+      "@aplication/gateways/*": [
+        "src/application/gateways/*"
+      ],
+      "@aplication/dtos/*": [
+        "src/application/dtos/*"
       ],
       "@shared/*": [
         "src/shared/*"
       ],
       "@server": [
         "src/Server"
+      ],
+      "@namespace": [
+        "src/namespace"
       ]
     },
     "types": [

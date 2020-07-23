@@ -1,6 +1,6 @@
 import { Address } from '@entities/address';
 import { LineItem } from './line-item';
-import { Entity } from '@shared/domain/Entity';
+import { Entity } from '@shared/domain/entity';
 import { UniqueEntityID } from '../shared/domain/UniqueEntityID';
 import { Result } from '@shared/Result';
 import { Charge } from './charge';
@@ -23,8 +23,12 @@ class Invoice extends Entity<IInvoiceProps>{
         return this.props.lineItems || [];
     }
 
-    get customerId(): string {
-        return this.props.customerId.toString();
+    get customerId(): UniqueEntityID {
+        return this.props.customerId;
+    }
+
+    get charge (): Charge | undefined {
+        return this.props.charge;
     }
 
     private constructor(props: IInvoiceProps, id?: UniqueEntityID) {
@@ -54,7 +58,7 @@ class Invoice extends Entity<IInvoiceProps>{
         return Result.success<Invoice>(new Invoice(props, id));
     }
     
-    public addLineItem(lineItem: LineItem): Result<undefined> {
+    public addLineItem(lineItem: LineItem): Result<void> {
         if (!this.props.lineItems) {
             this.props.lineItems = [lineItem];
             return Result.success<undefined>;
@@ -65,7 +69,7 @@ class Invoice extends Entity<IInvoiceProps>{
         } 
 
         this.props.lineItems.push(lineItem);
-        return Result.success<undefined>;
+        return Result.success<void>;
     }
     
 }
