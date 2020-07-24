@@ -1,6 +1,6 @@
-import { Product } from '@entities/product';
+import { Product } from '@entities';
 
-export default interface ProductRepository extends Repository<Product> {
+export interface ProductRepository extends Repository<Product> {
   getProductById(productId: string): Promise<Product>;
   getProductByName(productName: string): Promise<Product>;
 }

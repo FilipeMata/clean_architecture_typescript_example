@@ -1,24 +1,19 @@
-import InvoiceRepository from '@aplication/gateways/invoice.rep';
+import * as Gateways from '@aplication/gateways';
 import { DetailInvoiceInputPort } from '@aplication/useCases/detail-invoice/detail-invoice.interactor'; 
-
-import { GenerateChargeDTO, ThirdPartyPaymentService } from '@aplication/gateways/thrid-party-payment.service';
 
 import { Result } from '@shared/Result';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 
-import { Invoice } from '@entities/invoice';
-import { Address } from '@entities/address';
-import { LineItem } from '@entities/line-item';
-
+import { Invoice, Address, LineItem } from '@entities';
 
 class ChargeInvoiceInteractor {
-  private invoiceRep: InvoiceRepository;
-  private thirdPartyPaymentGateway: ThirdPartyPaymentService,
+  private invoiceRep: Gateways.InvoiceRepository;
+  private thirdPartyPaymentGateway: Gateways.ThirdPartyPaymentService;
   private detailInvoiceInteractor: DetailInvoiceInputPort;
 
   constructor(
-    invoiceRep: InvoiceRepository,
-    thirdPartyPaymentGateway: ThirdPartyPaymentService,
+    invoiceRep: Gateways.InvoiceRepository,
+    thirdPartyPaymentGateway: Gateways.ThirdPartyPaymentService,
     detailInvoiceInteractor: DetailInvoiceInputPort
   ) {
     this.invoiceRep = invoiceRep;
@@ -64,7 +59,7 @@ class ChargeInvoiceInteractor {
     }
 
     
-    const generateChargeDTO: GenerateChargeDTO = {
+    const generateChargeDTO: Gateways.GenerateChargeDTO = {
       billingAddress: invoice.billingAddress.toValue(),
       customer: {
         document: invoiceDTO.customer.document,

@@ -12,7 +12,7 @@ interface IProductProps {
     price: number;
 };
 
-class Product extends Entity<IProductProps>{
+export class Product extends Entity<IProductProps>{
 
     get name (): string {
         return this.props.name;
@@ -45,5 +45,3 @@ class Product extends Entity<IProductProps>{
         return Result.success<Product>(new Product(props, id));
     }
 }
-
-export { Product };

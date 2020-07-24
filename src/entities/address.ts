@@ -12,7 +12,7 @@ interface IAddressProps {
     zipcode: string;
 };
 
-class Address extends ValueObject<IAddressProps>{
+export class Address extends ValueObject<IAddressProps>{
 
     get street (): string {
         return this.props.street;
@@ -81,5 +81,3 @@ class Address extends ValueObject<IAddressProps>{
         return Result.success<Address>(new Address(props))
     }
 }
-
-export { Address };

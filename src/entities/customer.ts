@@ -1,4 +1,4 @@
-import { Address } from '@entities/address';
+import { Address } from '@entities';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 import { Entity } from '@shared/domain/entity';
 import { Result } from '@shared/Result';
@@ -12,7 +12,7 @@ export interface ICustomer {
     address: Address;
 };
 
-class Customer extends Entity<ICustomer>{
+export class Customer extends Entity<ICustomer>{
 
     get document(): string {
         return this.props.name;
@@ -59,5 +59,3 @@ class Customer extends Entity<ICustomer>{
         return Result.success<Customer>(new Customer(props, id));
     }
 }
-
-export default Customer;

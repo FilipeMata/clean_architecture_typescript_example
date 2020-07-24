@@ -1,4 +1,4 @@
-export default interface LineItemDTO {
+export interface LineItemDTO {
   productId: string,
   quantity: number
 };

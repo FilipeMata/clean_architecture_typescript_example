@@ -19,14 +19,17 @@
       "@adapters/*": [
         "src/adapters/*"
       ],
-      "@entities/*": [
-        "src/entities/*"
+      "@entities": [
+        "src/entities/index"
       ],
       "@aplication/useCases/*": [
         "src/application/use-cases/*"
       ],
-      "@aplication/gateways/*": [
-        "src/application/gateways/*"
+      "@aplication/gateways": [
+        "src/application/gateways/index"
+      ],
+      "@aplication/dtos": [
+        "src/application/dtos/index"
       ],
       "@aplication/dtos/*": [
         "src/application/dtos/*"
@@ -53,6 +56,7 @@
     "spec/**/*.ts"
   ],
   "exclude": [
-    "src/public/"
+    "src/public/",
+    "node_modules"
   ]
 }

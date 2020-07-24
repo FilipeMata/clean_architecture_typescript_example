@@ -1,9 +1,7 @@
-import { Address } from '@entities/address';
-import { LineItem } from './line-item';
+import { Address, LineItem, Charge }  from '@entities';
 import { Entity } from '@shared/domain/entity';
 import { UniqueEntityID } from '../shared/domain/UniqueEntityID';
 import { Result } from '@shared/Result';
-import { Charge } from './charge';
 
 interface IInvoiceProps {
     billingAddress: Address;
@@ -12,7 +10,7 @@ interface IInvoiceProps {
     charge?: Charge;
 };
 
-class Invoice extends Entity<IInvoiceProps>{
+export class Invoice extends Entity<IInvoiceProps>{
     public static MAX_NUMBER_OF_LINE_ITEMS_PER_INVOICE = 7;
 
     get billingAddress(): Address {
@@ -69,9 +67,7 @@ class Invoice extends Entity<IInvoiceProps>{
         } 
 
         this.props.lineItems.push(lineItem);
-        return Result.success<void>;
+        return Result.success<void>
     }
     
 }
-
-export { Invoice };

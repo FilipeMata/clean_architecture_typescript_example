@@ -1,4 +1,4 @@
-export default interface CustomerDTO {
+export interface CustomerDTO {
   document: string;
   name: string;
   cellphone: string;

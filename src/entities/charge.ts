@@ -7,7 +7,7 @@ interface IChargeProps {
   status: string;
 };
 
-class Charge extends Entity<IChargeProps> {
+export class Charge extends Entity<IChargeProps> {
 
   get paymentMethod(): string {
     return this.props.paymentMethod;
@@ -36,5 +36,3 @@ class Charge extends Entity<IChargeProps> {
     return Result.success<Charge>(new Charge(props, id));
   }
 }
-
-export { Charge };

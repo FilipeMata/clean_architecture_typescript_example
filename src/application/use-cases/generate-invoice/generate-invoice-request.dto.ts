@@ -1,5 +1,4 @@
-import AddressDTO from '../dtos/address.dto';
-import LineItemDTO from '@useCases/dtos/line-item.dto';
+import { AddressDTO, LineItemDTO } from '@aplication/dtos';
 
 export default interface GenerateInvoiceRequestDTO {
   items: Array<LineItemDTO>,

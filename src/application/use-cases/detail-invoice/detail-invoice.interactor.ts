@@ -1,6 +1,4 @@
-import InvoiceRepository from '@aplication/gateways/invoice.rep';
-import CustomerRepository from '@aplication/gateways/customer.rep';
-import ProductRepository from '@aplication/gateways/product.rep';
+import * as Gateways from '@aplication/gateways';
 
 import { Result } from '@shared/Result';
 import DetailInvoiceResponseDTO from './detail-invoice-response.dto';
@@ -11,14 +9,14 @@ export interface DetailInvoiceInputPort {
 
 
 export class DetailInvoiceInteractor implements DetailInvoiceInputPort {
-  private invoiceRep: InvoiceRepository;
-  private customerRep: CustomerRepository;
-  private productRep: ProductRepository;
+  private invoiceRep: Gateways.InvoiceRepository;
+  private customerRep: Gateways.CustomerRepository;
+  private productRep: Gateways.ProductRepository;
 
   constructor(
-    invoiceRep: InvoiceRepository,
-    customerRep: CustomerRepository,
-    productRep: ProductRepository,
+    invoiceRep: Gateways.InvoiceRepository,
+    customerRep: Gateways.CustomerRepository,
+    productRep: Gateways.ProductRepository,
   ) {
     this.invoiceRep = invoiceRep;
     this.customerRep = customerRep;

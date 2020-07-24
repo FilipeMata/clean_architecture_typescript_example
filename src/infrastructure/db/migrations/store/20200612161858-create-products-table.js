@@ -21,6 +21,9 @@ module.exports = {
       },
       created_at: Sequelize.DataTypes.DATE,
       updated_at: Sequelize.DataTypes.DATE
+    })
+    .then(() => {
+      return queryInterface.addIndex('products', ['id']);
     });
   },
   down: (queryInterface) => {

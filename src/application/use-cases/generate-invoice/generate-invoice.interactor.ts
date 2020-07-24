@@ -1,21 +1,17 @@
-import InvoiceRepository from '@aplication/gateways/invoice.rep';
-import CustomerRepository from '@aplication/gateways/customer.rep';
-
-import { LineItem } from '@entities/line-item';
-import { Invoice } from '@entities/invoice';
-import { Address } from '@entities/address';
+import * as Gateways from '@aplication/gateways';
+import { LineItem, Invoice, Address} from '@entities';
 
 import { Result } from '@shared/Result';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 import GenerateInvoiceRequestDTO from './generate-invoice-request.dto';
 
 class GenerateInvoiceInteractor {
-  private invoiceRep: InvoiceRepository;
-  private customerRep: CustomerRepository;
+  private invoiceRep: Gateways.InvoiceRepository;
+  private customerRep: Gateways.CustomerRepository;
 
   constructor(
-    invoiceRep: InvoiceRepository,
-    customerRep: CustomerRepository
+    invoiceRep: Gateways.InvoiceRepository,
+    customerRep: Gateways.CustomerRepository
   ) {
     this.invoiceRep = invoiceRep;
     this.customerRep = customerRep;

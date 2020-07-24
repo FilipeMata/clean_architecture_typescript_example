@@ -1,6 +1,5 @@
-import { Product } from '@entities/product';
-import { Invoice } from '@entities/invoice';
+import { Invoice } from '@entities';
 
-export default interface InvoiceRepository extends Repository<Invoice> {
+export interface InvoiceRepository extends Repository<Invoice> {
   getInvoiceById(lineItemId: string): Promise<Invoice>;
 }

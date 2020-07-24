@@ -1,4 +1,4 @@
-import AddressDTO from '../dtos/address.dto';
+import { AddressDTO } from '@aplication/dtos';
 
 interface ProductDTO {
   id: string,

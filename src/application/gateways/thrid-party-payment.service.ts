@@ -1,7 +1,5 @@
-import { Charge } from '@entities/charge';
-
-import AddressDTO from '@aplication/dtos/address.dto';
-import CustomerDTO from '@aplication/dtos/customer.dto';
+import { Charge } from '@entities';
+import { AddressDTO, CustomerDTO } from '@aplication/dtos';
 
 export interface ItemDTO {
   name: string,

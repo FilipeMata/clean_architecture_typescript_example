@@ -1,5 +1,5 @@
-import { LineItem } from '@entities/line-item';
+import { LineItem } from '@entities';
 
-export default  interface LineItemRepository extends Repository<LineItem> {
+export interface LineItemRepository extends Repository<LineItem> {
   getLineItemById(lineItemId: string): Promise<LineItem>;
 }

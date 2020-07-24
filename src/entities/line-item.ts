@@ -1,4 +1,3 @@
-import { Product } from '@entities/product';
 import { Entity } from '@shared/domain/entity';
 import { UniqueEntityID } from '@shared/domain/UniqueEntityID';
 import { Result } from '@shared/Result';
@@ -8,7 +7,7 @@ interface ILineItemProps {
   quantity: number;
 };
 
-class LineItem extends Entity<ILineItemProps>{
+export class LineItem extends Entity<ILineItemProps>{
 
   get productId(): UniqueEntityID {
     return this.props.productId;
@@ -37,5 +36,3 @@ class LineItem extends Entity<ILineItemProps>{
     return Result.success<LineItem>(new LineItem(props, id));
   }
 }
-
-export { LineItem };

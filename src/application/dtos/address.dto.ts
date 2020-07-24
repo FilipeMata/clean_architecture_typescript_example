@@ -1,4 +1,4 @@
-export default interface AddressDTO {
+export interface AddressDTO {
   street: string;
   neighborhood: string;
   city: string;
