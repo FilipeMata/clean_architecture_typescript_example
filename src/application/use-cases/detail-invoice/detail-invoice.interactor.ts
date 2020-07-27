@@ -2,13 +2,10 @@ import * as Gateways from '@aplication/gateways';
 
 import { Result } from '@shared/Result';
 import DetailInvoiceResponseDTO from './detail-invoice-response.dto';
+import DetailInvoiceInputPort  from './detail-invoice.input';
+import { UniqueEntityID } from '../../../shared/domain/UniqueEntityID';
 
-export interface DetailInvoiceInputPort {
-  execute(invoiceId: string): Promise<Result<DetailInvoiceResponseDTO>>
-};
-
-
-export class DetailInvoiceInteractor implements DetailInvoiceInputPort {
+export default class DetailInvoiceInteractor implements DetailInvoiceInputPort {
   private invoiceRep: Gateways.InvoiceRepository;
   private customerRep: Gateways.CustomerRepository;
   private productRep: Gateways.ProductRepository;
@@ -26,14 +23,14 @@ export class DetailInvoiceInteractor implements DetailInvoiceInputPort {
   public async execute(invoiceId: string): Promise<Result<DetailInvoiceResponseDTO>> {
 
     const invoice = await this.invoiceRep
-      .getInvoiceById(invoiceId);
+      .getInvoiceById(new UniqueEntityID(invoiceId));
 
     if (!invoice) {
       return Result.fail<DetailInvoiceResponseDTO>('Could not find invoice');
     }
 
     const customer = await this.customerRep
-      .getCustomerById(invoice.customerId.toString());
+      .getCustomerById(invoice.customerId);
 
     const customerDTO = {
       id: customer.id.toString(),
@@ -48,7 +45,7 @@ export class DetailInvoiceInteractor implements DetailInvoiceInputPort {
 
     for (const lineItem of invoice.lineItems) {
       const product = await this.productRep
-        .getProductById(lineItem.productId.toString());
+        .getProductById(lineItem.productId);
 
       const item = {
         id: lineItem.id.toString(),
@@ -66,7 +63,7 @@ export class DetailInvoiceInteractor implements DetailInvoiceInputPort {
 
     let response: DetailInvoiceResponseDTO = {
       id: invoice.id.toString(),
-      billingAddress: invoice.billingAddress.toValue(),
+      //billingAddress: invoice.billingAddress.toValue(),
       lineItems: itemsDTO,
       customer: customerDTO
     };

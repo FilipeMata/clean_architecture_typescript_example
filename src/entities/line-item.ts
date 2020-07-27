@@ -4,6 +4,7 @@ import { Result } from '@shared/Result';
 
 interface ILineItemProps {
   productId: UniqueEntityID;
+  invoiceId: UniqueEntityID;
   quantity: number;
 };
 
@@ -11,6 +12,10 @@ export class LineItem extends Entity<ILineItemProps>{
 
   get productId(): UniqueEntityID {
     return this.props.productId;
+  }
+
+  get invoiceId(): UniqueEntityID {
+    return this.props.invoiceId;
   }
 
   get quantity(): number {

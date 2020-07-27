@@ -1,10 +1,12 @@
-import { Sequelize, DataTypes } from 'sequelize';
+'use strict';
 
-export default (sequelize: Sequelize) => {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('product', {
     id: {
       type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
+      primaryKey: true,
+      autoIncrement: true
     },
     name: {
       type: DataTypes.STRING(50),

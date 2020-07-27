@@ -21,4 +21,10 @@ export default class SequelizeLineItemRepository extends SequelizeBaseRepository
       id: lineItemId.toValue()
     })
   }
+
+  async getLineItemsByInvoiceId(invoiceId: UniqueEntityID): Promise<Array<LineItem>> {
+    return this._getAllBy({
+      invoice_id: invoiceId.toValue()
+    });
+  }
 }

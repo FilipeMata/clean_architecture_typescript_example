@@ -1,6 +1,8 @@
 import { Entity } from '@shared/domain/entity';
 import RepositoryMapper from '@adapters/mappers/repository.mapper';
-import { db, Models } from '@infrastructure/db/models';
+import Repository from '@shared/repository';
+
+const db = require('../../infrastructure/db/models');
 
 export interface SequelizeRepositoryProps<E> {
   dbName: string;
@@ -10,15 +12,16 @@ export interface SequelizeRepositoryProps<E> {
 
 export abstract class SequelizeBaseRepository<E extends Entity<any>> implements Repository<E> {
   protected _db: any;
+  protected _models: any;
   protected _mapper: RepositoryMapper<E>;
   private _transaction: any;
   
   constructor(props: SequelizeRepositoryProps<E>) {
-    const models = db;
+    this._models = db;
     const dbName = props.dbName;
     const modelName = props.modelName;
 
-    this._db = models[dbName][modelName];
+    this._db = db[dbName][modelName];
     this._mapper = props.mapper;
   }
 
@@ -49,13 +52,34 @@ export abstract class SequelizeBaseRepository<E extends Entity<any>> implements 
     return this._db.update(data, options);
   }
 
-  protected async _getBy(conditions: any): Promise<E>{
-    const row = await this._db.find({
+  protected async _getBy(conditions: any, includes?: any): Promise<E>{
+    let options: any = {
+      where: conditions,
+    }
+
+    if (includes) {
+      options.include = includes;
+    };
+
+    const row = await this._db.findOne(options);
+    return this._mapper.toDomain(row);
+  };
+
+  protected async _getAllBy(conditions: any, includes?: any): Promise<Array<E>> {
+    let options: any = {
       where: conditions,
       raw: true
-    });
+    }
 
-    return this._mapper.toDomain(row);
+    if (includes) {
+      options.include = includes;
+    };
+
+    const rows = await this._db.findAll(options);
+
+    return rows.map((row: any) => {
+      return this._mapper.toDomain(row);
+    });
   };
 
   async exists(entity: E): Promise<boolean> {
@@ -76,7 +100,7 @@ export abstract class SequelizeBaseRepository<E extends Entity<any>> implements 
     }
   }
 
-  async saveCollention(entities: Array<E>): Promise<void> {
+  async saveCollection(entities: Array<E>): Promise<void> {
     for (const entity of entities) {
       await this.save(entity);
     }

@@ -1,17 +1,19 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "module": "commonjs",
-    "outDir": "dist",
-    "removeComments": true,
-    "sourceMap": true,
+    "noImplicitAny": true,
+    "declaration": false,
     "strict": true,
-    "target": "es6",
-    "moduleResolution": "node",
+    "strictNullChecks": false,
+    "target": "ES2019",
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "checkJs": false,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "rootDir": "./",
+    "baseUrl": "./",
     "paths": {
       "@infrastructure/*": [
         "src/infrastructure/*"
@@ -22,8 +24,8 @@
       "@entities": [
         "src/entities/index"
       ],
-      "@aplication/useCases/*": [
-        "src/application/use-cases/*"
+      "@aplication/useCases": [
+        "src/application/use-cases/index"
       ],
       "@aplication/gateways": [
         "src/application/gateways/index"
@@ -39,24 +41,14 @@
       ],
       "@server": [
         "src/Server"
-      ],
-      "@namespace": [
-        "src/namespace"
       ]
-    },
-    "types": [
-      "node"
-    ],
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    }
   },
   "include": [
-    "src/**/*.ts",
-    "spec/**/*.ts"
+    "src/**/*.ts", "src/infrastructure/db/relations.js", "src/infrastructure/db/models/store/customer.js", "src/infrastructure/db/models/store/invoice.js", "src/infrastructure/db/models/store/line-item.js", "src/infrastructure/db/models/store/product.js", "src/infrastructure/db/models.js"
   ],
   "exclude": [
-    "src/public/",
-    "node_modules"
+    "src/infrastructure/db/migrations/**/*",
+    "src/infrastructure/db/seeders/**/*"
   ]
 }

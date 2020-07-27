@@ -1,7 +1,7 @@
 import { ValueObject } from '@shared/domain/ValueObject';
 import { Result } from '@shared/Result';
 
-interface IAddressProps {
+export interface IAddressProps {
     street: string;
     neighborhood: string;
     city: string;

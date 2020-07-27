@@ -13,7 +13,7 @@ export default class SequelizeInvoiceRepository extends SequelizeBaseRepository<
   ) {
     const props: SequelizeRepositoryProps<Invoice> = {
       dbName: 'store',
-      modelName: 'line_item',
+      modelName: 'invoice',
       mapper: sequelizeInvoiceMapper
     };
 
@@ -25,13 +25,20 @@ export default class SequelizeInvoiceRepository extends SequelizeBaseRepository<
    * @override
    */
   async save(invoice: Invoice): Promise<void> {
-    await this._lineItemRepository.saveCollention(invoice.lineItems);
+    await this._lineItemRepository.saveCollection(invoice.lineItems);
     await super.save(invoice);
   }
 
   async getInvoiceById(invoiceId: UniqueEntityID): Promise<Invoice> {
-    return this._getBy({
+    const invoice = await this._getBy({
       id: invoiceId.toValue()
-    })
+    });
+
+    const lineItems = await this._lineItemRepository
+      .getLineItemsByInvoiceId(invoice.id);
+
+    invoice.lineItems = lineItems;
+
+    return invoice;
   }
 }

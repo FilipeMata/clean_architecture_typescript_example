@@ -18,7 +18,7 @@ export class Result<T> {
   }
 
   public get value(): T {
-    if (!this.succeeded || !this._value) {
+    if (!this.succeeded) {
       throw new Error("Can't get the value of an error result. Use 'errors' instead.")
     }
 

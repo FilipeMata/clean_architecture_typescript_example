@@ -20,7 +20,7 @@ export abstract class Entity<T> {
   }
 
   get id (): UniqueEntityID {
-    return this.id;
+    return this._id;
   }
 
   public equals (entity?: Entity<T>) : boolean {

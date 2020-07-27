@@ -1,6 +1,6 @@
-import { Sequelize, DataTypes } from 'sequelize';
+'use strict';
 
-export default (sequelize: Sequelize) => {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('line_item', {
     id: {
       type: DataTypes.UUID,

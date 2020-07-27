@@ -1,6 +1,6 @@
-import { Sequelize, DataTypes } from 'sequelize';
+'use strict';
 
-export default (sequelize: Sequelize) => {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('invoice', {
     id: {
       type: DataTypes.UUID,
@@ -30,5 +30,5 @@ export default (sequelize: Sequelize) => {
       type: DataTypes.JSON,
       allowNull: false
     }
-  })
+  });
 };

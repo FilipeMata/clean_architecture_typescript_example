@@ -21,6 +21,10 @@ export class Invoice extends Entity<IInvoiceProps>{
         return this.props.lineItems || [];
     }
 
+    set lineItems(lineItems: LineItem[]) {
+        this.props.lineItems = lineItems;
+    }
+
     get customerId(): UniqueEntityID {
         return this.props.customerId;
     }
@@ -59,15 +63,15 @@ export class Invoice extends Entity<IInvoiceProps>{
     public addLineItem(lineItem: LineItem): Result<void> {
         if (!this.props.lineItems) {
             this.props.lineItems = [lineItem];
-            return Result.success<undefined>;
+            return Result.success<void>();
         }
 
         if (this.props.lineItems.length >= Invoice.MAX_NUMBER_OF_LINE_ITEMS_PER_INVOICE) {
-            return Result.fail<undefined>('Max number of genres reached')
+            return Result.fail<void>('Max number of genres reached')
         } 
 
         this.props.lineItems.push(lineItem);
-        return Result.success<void>
+        return Result.success<void>();
     }
     
 }

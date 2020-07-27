@@ -30,7 +30,7 @@ interface chargeDTO {
 
 export default interface DetailInvoiceResponseDTO {
   id: string,
-  billingAddress: AddressDTO,
+  //billingAddress: AddressDTO,
   lineItems: Array<LineItemDTO>
   customer: CustomerDTO,
   charge?: chargeDTO
