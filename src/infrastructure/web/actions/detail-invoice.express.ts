@@ -4,8 +4,11 @@ import SequelizeLineItemRepository from '@adapters/repositories/sequelize-line-i
 import DetailInvoiceAPIPresenter from '@adapters/presenters/detail-invoice.api.ptr';
 import SequelizeInvoiceRepository from '@adapters/repositories/sequelize-invoice.rep';
 import { Request, Response } from 'express';
-import DetailInvoiceInteractor from '../../application/use-cases/detail-invoice/detail-invoice.interactor';
-import DetailInvoiceController from '../../adapters/controllers/detail-invoice.ctrl';
+import UseCases from '@aplication/useCases';
+import DetailInvoiceController from '@adapters/controllers/detail-invoice.ctrl';
+
+const DetailInvoice = UseCases.DetailInvoice;
+const DetailInvoiceInteractor = DetailInvoice.DetailInvoiceInteractor.default;
  
 export default async function detailInvoice(req: Request, res: Response) {
   const productRep = new SequelizeProductRepository();

@@ -34,6 +34,10 @@ export default class SequelizeInvoiceRepository extends SequelizeBaseRepository<
       id: invoiceId.toValue()
     });
 
+    if (!invoice) {
+      return null;
+    }
+
     const lineItems = await this._lineItemRepository
       .getLineItemsByInvoiceId(invoice.id);
 

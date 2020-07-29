@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import detailInvoice from '@infrastructure/actions/detail-invoice.express';
+import detailInvoice from '@infrastructure/web/actions/detail-invoice.express';
 
 // Init shared
 const router = Router();

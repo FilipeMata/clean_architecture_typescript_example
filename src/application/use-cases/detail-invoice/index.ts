@@ -1,2 +1,2 @@
-export * from './detail-invoice.interactor';
-export * from './detail-invoice-response.dto';
+export * as DetailInvoiceInteractor from './detail-invoice.interactor';
+export * as DetailInvoiceResponseDTO from './detail-invoice-response.dto';

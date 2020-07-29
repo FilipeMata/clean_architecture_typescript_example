@@ -62,6 +62,10 @@ export abstract class SequelizeBaseRepository<E extends Entity<any>> implements 
     };
 
     const row = await this._db.findOne(options);
+    if(!row) {
+      return null;
+    }
+
     return this._mapper.toDomain(row);
   };
 
