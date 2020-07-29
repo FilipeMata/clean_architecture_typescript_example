@@ -1,82 +1,72 @@
 import * as Gateways from '@aplication/gateways';
 
-import { Result } from '@shared/Result';
-import DetailInvoiceResponseDTO from './detail-invoice-response.dto';
+import { DetailInvoiceResponseDTO } from './detail-invoice-response.dto';
+import * as DetailInvoiceMapper from './detail-invoice.mapper';
 import DetailInvoiceInputPort  from './detail-invoice.input';
 import { UniqueEntityID } from '../../../shared/domain/UniqueEntityID';
+import OutputPort from '../../output-port';
 
 export default class DetailInvoiceInteractor implements DetailInvoiceInputPort {
   private invoiceRep: Gateways.InvoiceRepository;
   private customerRep: Gateways.CustomerRepository;
   private productRep: Gateways.ProductRepository;
+  private presenter: OutputPort<DetailInvoiceResponseDTO>;
 
   constructor(
     invoiceRep: Gateways.InvoiceRepository,
     customerRep: Gateways.CustomerRepository,
     productRep: Gateways.ProductRepository,
+    presenter: OutputPort<DetailInvoiceResponseDTO>
   ) {
     this.invoiceRep = invoiceRep;
     this.customerRep = customerRep;
     this.productRep = productRep;
+    this.presenter = presenter;
   }
 
-  public async execute(invoiceId: string): Promise<Result<DetailInvoiceResponseDTO>> {
+  public async execute(invoiceId: string) {
+    let response: DetailInvoiceResponseDTO = {};
 
     const invoice = await this.invoiceRep
       .getInvoiceById(new UniqueEntityID(invoiceId));
 
     if (!invoice) {
-      return Result.fail<DetailInvoiceResponseDTO>('Could not find invoice');
+      response.failures = {
+        invalidInvoiceId: true
+      };
+
+      return this.presenter.show(response);
     }
 
-    const customer = await this.customerRep
-      .getCustomerById(invoice.customerId);
-
-    const customerDTO = {
-      id: customer.id.toString(),
-      document: customer.document,
-      name: customer.name,
-      cellphone: customer.cellphone,
-      email: customer.email,
-      birthdate: customer.birthdate
-    };
-
     const itemsDTO = [];
-
     for (const lineItem of invoice.lineItems) {
       const product = await this.productRep
         .getProductById(lineItem.productId);
 
       const item = {
         id: lineItem.id.toString(),
-        product: {
-          id: product.id.toString(),
-          name: product.name,
-          description: product.description,
-          price: product.price
-        },
+        product: DetailInvoiceMapper.mapProductToDetailInvoiceResponseProductDTO(product),
         quantity: lineItem.quantity
       };
 
       itemsDTO.push(item);
     }
 
-    let response: DetailInvoiceResponseDTO = {
+    const customer = await this.customerRep
+      .getCustomerById(invoice.customerId);
+
+    response.success = {
       id: invoice.id.toString(),
-      //billingAddress: invoice.billingAddress.toValue(),
+      billingAddress: invoice.billingAddress.toValue(),
       lineItems: itemsDTO,
-      customer: customerDTO
+      customer: DetailInvoiceMapper.mapCustomerToDetailInvoiceResponseCustomerDTO(customer)
     };
 
     if (!!invoice.charge) {
-      response.charge = {
-        id: invoice.charge.id.toString(),
-        paymentMethod: invoice.charge.paymentMethod,
-        status: invoice.charge.status
-      }
+      response.success.charge = DetailInvoiceMapper.mapChargeToDetailInvoiceResponseChargeDTO(invoice.charge)
     }
 
-    return Result.success<DetailInvoiceResponseDTO>(response);
+    return this.presenter.show(response);
   }
 }
 

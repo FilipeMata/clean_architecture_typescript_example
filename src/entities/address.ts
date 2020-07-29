@@ -1,4 +1,4 @@
-import { ValueObject } from '@shared/domain/ValueObject';
+import { ValueObject } from '@shared/domain/value-object';
 import { Result } from '@shared/Result';
 
 export interface IAddressProps {
@@ -74,7 +74,7 @@ export class Address extends ValueObject<IAddressProps>{
 
         /** put some other validations here */
 
-        if (errors) {
+        if (errors.length > 0) {
             return Result.fail<Address>(errors);
         }
 

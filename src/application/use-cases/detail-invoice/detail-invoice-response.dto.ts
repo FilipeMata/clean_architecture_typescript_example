@@ -1,13 +1,13 @@
 import { AddressDTO } from '@aplication/dtos';
 
-interface ProductDTO {
+export interface DetailInvoiceResponseProductDTO {
   id: string,
   name: string,
   description: string,
   price: number
 };
 
-interface CustomerDTO {
+export interface DetailInvoiceResponseCustomerDTO {
   id: string,
   document: string;
   name: string;
@@ -16,23 +16,32 @@ interface CustomerDTO {
   birthdate: Date;
 }
 
-interface LineItemDTO {
+export interface DetailInvoiceResponseLineItemDTO {
   id: string,
-  product: ProductDTO,
+  product: DetailInvoiceResponseProductDTO,
   quantity: number
 };
 
-interface chargeDTO {
+export interface DetailInvoiceResponseChargeDTO {
   id: string;
   paymentMethod: string;
   status: string;
 };
 
-export default interface DetailInvoiceResponseDTO {
+interface DetailInvoiceSuccess {
   id: string,
-  //billingAddress: AddressDTO,
-  lineItems: Array<LineItemDTO>
-  customer: CustomerDTO,
-  charge?: chargeDTO
+  billingAddress: AddressDTO,
+  lineItems: Array<DetailInvoiceResponseLineItemDTO>
+  customer: DetailInvoiceResponseCustomerDTO,
+  charge?: DetailInvoiceResponseChargeDTO
+};
+
+interface DetailInvoiceFailures {
+  invalidInvoiceId?: boolean
+}
+
+export interface DetailInvoiceResponseDTO {
+  success?: DetailInvoiceSuccess,
+  failures?: DetailInvoiceFailures
 };
 

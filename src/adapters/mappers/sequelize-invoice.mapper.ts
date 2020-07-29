@@ -24,7 +24,7 @@ export const sequelizeInvoiceMapper: RepositoryMapper<Invoice> = {
     }
 
     const addressResult = Address.build(addressProps);
-    console.log(addressProps, addressResult.errors);
+    console.log(addressResult.value, addressResult.errors);
 
     const InvoiceProps = {
       billingAddress: Address.build(addressProps).value,
@@ -35,7 +35,7 @@ export const sequelizeInvoiceMapper: RepositoryMapper<Invoice> = {
 
     const invoiceId = new UniqueEntityID(invoiceRowDTO.id);
     const invoiceResult = Invoice.build(InvoiceProps, invoiceId);
-    //console.log(invoiceResult.errors);
+
     return invoiceResult.value;
   },
 
