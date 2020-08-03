@@ -22,7 +22,6 @@ const sqlInvoiceMapper: RepositoryMapper<Invoice> = {
     }
 
     const addressResult = Address.build(addressProps);
-    console.log(addressResult.value, addressResult.errors);
 
     const InvoiceProps = {
       billingAddress: Address.build(addressProps).value,
