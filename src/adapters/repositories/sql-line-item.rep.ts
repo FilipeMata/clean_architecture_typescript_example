@@ -21,9 +21,9 @@ export default class SQLLineItemRepository extends SQLBaseRepository<LineItem> {
     })
   }
 
-  async getLineItemsByInvoiceId(invoiceId: UniqueEntityID): Promise<Array<LineItem>> {
+  async getLineItemsByOrderId(orderId: UniqueEntityID): Promise<Array<LineItem>> {
     return this._getAllBy({
-      invoice_id: invoiceId.toValue()
+      order_id: orderId.toValue()
     });
   }
 }

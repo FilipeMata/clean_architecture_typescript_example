@@ -1,1 +1,1 @@
-export * as APIDetailInvoiceController from './api-detail-invoice.ctrl';
+export * as APIDetailOrderController from './api-detail-order.ctrl';

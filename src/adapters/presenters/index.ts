@@ -1,1 +1,1 @@
-export * as HTTPDetailInvoicePresenter from './http-detail-invoice.ptr';
+export * as HTTPDetailOrderPresenter from './http-detail-order.ptr';

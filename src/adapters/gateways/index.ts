@@ -1,1 +1,1 @@
-export * as DeatailInvoiceGateway from './detail-invoice.gateway';
+export * as DeatailOrderGateway from './detail-order.gateway';

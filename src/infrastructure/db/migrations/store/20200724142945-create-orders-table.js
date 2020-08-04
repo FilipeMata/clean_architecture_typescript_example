@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('invoices', {
+    return queryInterface.createTable('orders', {
       id: {
         type: Sequelize.DataTypes.UUID,
         unique: true,
@@ -33,16 +33,16 @@ module.exports = {
       updated_at: Sequelize.DataTypes.DATE
     })
     .then(() => {
-      return queryInterface.addIndex('invoices', ['id']);
+      return queryInterface.addIndex('orders', ['id']);
     })
     .then(() => {
-      return queryInterface.addIndex('invoices', ['customer_id']);
+      return queryInterface.addIndex('orders', ['customer_id']);
     })
     .then(() => {
-      return queryInterface.addIndex('invoices', ['charge_id']);
+      return queryInterface.addIndex('orders', ['charge_id']);
     })
   },
   down: (queryInterface) => {
-    return queryInterface.dropTable('invoices');
+    return queryInterface.dropTable('orders');
   }
 };

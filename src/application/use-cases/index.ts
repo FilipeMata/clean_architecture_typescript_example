@@ -1,1 +1,1 @@
-export * as DetailInvoice from './detail-invoice/index';
+export * as DetailOrder from './detail-order/index';

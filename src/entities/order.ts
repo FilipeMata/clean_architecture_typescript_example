@@ -2,14 +2,14 @@ import { Address, LineItem, Charge }  from '@entities';
 import { Entity, UniqueEntityID } from '@entities';
 import { Result } from '@shared/Result';
 
-interface IInvoiceProps {
+interface IOrderProps {
     billingAddress: Address;
     lineItems?: Array<LineItem>;
     customerId: UniqueEntityID;
     charge?: Charge;
 };
 
-export class Invoice extends Entity<IInvoiceProps>{
+export class Order extends Entity<IOrderProps>{
     public static MAX_NUMBER_OF_LINE_ITEMS_PER_INVOICE = 7;
 
     get billingAddress(): Address {
@@ -32,7 +32,7 @@ export class Invoice extends Entity<IInvoiceProps>{
         return this.props.charge;
     }
 
-    private constructor(props: IInvoiceProps, id?: UniqueEntityID) {
+    private constructor(props: IOrderProps, id?: UniqueEntityID) {
         super(props, id);
     }  
 
@@ -40,7 +40,7 @@ export class Invoice extends Entity<IInvoiceProps>{
         this.props.charge = ch;
     }
 
-    public static build(props: IInvoiceProps, id?: UniqueEntityID): Result<Invoice> {
+    public static build(props: IOrderProps, id?: UniqueEntityID): Result<Order> {
         /** some domain validations here **/
         if (!props.lineItems) {
             props.lineItems = [];
@@ -48,15 +48,15 @@ export class Invoice extends Entity<IInvoiceProps>{
 
         let errors: Array<string> = [];
 
-        if (props.lineItems.length >= Invoice.MAX_NUMBER_OF_LINE_ITEMS_PER_INVOICE) {
+        if (props.lineItems.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_INVOICE) {
             errors.push('Max number of line items reached');
         }
 
         if (errors.length > 0) {
-            return Result.fail<Invoice>(errors);
+            return Result.fail<Order>(errors);
         }
         
-        return Result.success<Invoice>(new Invoice(props, id));
+        return Result.success<Order>(new Order(props, id));
     }
     
     public addLineItem(lineItem: LineItem): Result<void> {
@@ -65,7 +65,7 @@ export class Invoice extends Entity<IInvoiceProps>{
             return Result.success<void>();
         }
 
-        if (this.props.lineItems.length >= Invoice.MAX_NUMBER_OF_LINE_ITEMS_PER_INVOICE) {
+        if (this.props.lineItems.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_INVOICE) {
             return Result.fail<void>('Max number of genres reached')
         } 
 

@@ -5,6 +5,6 @@ export * from './value-object';
 export * from './address';
 export * from './charge';
 export * from './customer';
-export * from './invoice';
+export * from './order';
 export * from './line-item';
 export * from './product';

@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         allowNull: false
       },
-      invoice_id: {
+      order_id: {
         type: Sequelize.DataTypes.UUID,
         allowNull: false
       },
@@ -27,7 +27,7 @@ module.exports = {
       return queryInterface.addIndex('line_items', ['id']);
     })
     .then(() => {
-      return queryInterface.addIndex('line_items', ['invoice_id']);
+      return queryInterface.addIndex('line_items', ['order_id']);
     })
     .then(() => {
       return queryInterface.addIndex('line_items', ['product_id']);

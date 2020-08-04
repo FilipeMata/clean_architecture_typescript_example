@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import InvoiceRouter from './invoice';
+import OrderRouter from './order';
 
 // Init router and path
 const router = Router();
 
 // Add sub-routes
-router.use('/invoice', InvoiceRouter);
+router.use('/order', OrderRouter);
 
 // Export the base-router
 export default router;

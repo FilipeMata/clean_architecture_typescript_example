@@ -1,23 +1,23 @@
 import * as Gateways from '@aplication/gateways';
-import { LineItem, Invoice, Address} from '@entities';
+import { LineItem, Order, Address} from '@entities';
 
 import { Result } from '@shared/Result';
 import { UniqueEntityID } from '@entities';
-import GenerateInvoiceRequestDTO from './generate-invoice-request.dto';
+import GenerateOrderRequestDTO from './generate-order-request.dto';
 
-class GenerateInvoiceInteractor {
-  private invoiceRep: Gateways.InvoiceRepository;
+class GenerateOrderInteractor {
+  private orderRep: Gateways.OrderRepository;
   private customerRep: Gateways.CustomerRepository;
 
   constructor(
-    invoiceRep: Gateways.InvoiceRepository,
+    orderRep: Gateways.OrderRepository,
     customerRep: Gateways.CustomerRepository
   ) {
-    this.invoiceRep = invoiceRep;
+    this.orderRep = orderRep;
     this.customerRep = customerRep;
   }
 
-  public async execute(data: GenerateInvoiceRequestDTO): Promise<Result<void>> {
+  public async execute(data: GenerateOrderRequestDTO): Promise<Result<void>> {
 
     let billingAddress: Address | undefined;
 
@@ -43,19 +43,19 @@ class GenerateInvoiceInteractor {
     }
 
     if (!billingAddress) {
-      return Result.fail<void>(`Invoice billing address is required`);
+      return Result.fail<void>(`Order billing address is required`);
     }
 
-    const invoiceResult = Invoice.build({
+    const orderResult = Order.build({
       billingAddress: billingAddress,
       customerId: customer.id
     });
 
-    if (!invoiceResult.succeeded) {
-      return Result.fail<void>(invoiceResult.errors);
+    if (!orderResult.succeeded) {
+      return Result.fail<void>(orderResult.errors);
     }
 
-    const invoice = invoiceResult.value;
+    const order = orderResult.value;
 
     for (const item of data.items) {
 
@@ -70,14 +70,14 @@ class GenerateInvoiceInteractor {
 
       let lineItem = lineItemResult.value;
 
-      invoice.addLineItem(lineItem);
+      order.addLineItem(lineItem);
     }
 
-    await this.invoiceRep.save(invoice);
+    await this.orderRep.save(order);
 
     return Result.success<void>();
   }
 
 }
 
-export { GenerateInvoiceInteractor };
+export { GenerateOrderInteractor };

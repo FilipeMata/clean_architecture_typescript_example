@@ -3,7 +3,7 @@ import { Result } from '@shared/Result';
 
 interface ILineItemProps {
   productId: UniqueEntityID;
-  invoiceId: UniqueEntityID;
+  orderId: UniqueEntityID;
   quantity: number;
 };
 
@@ -13,8 +13,8 @@ export class LineItem extends Entity<ILineItemProps>{
     return this.props.productId;
   }
 
-  get invoiceId(): UniqueEntityID {
-    return this.props.invoiceId;
+  get orderId(): UniqueEntityID {
+    return this.props.orderId;
   }
 
   get quantity(): number {

@@ -9,7 +9,7 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: true,
       allowNull: false
     },
-    invoice_id: {
+    order_id: {
       type: DataTypes.UUID,
       allowNull: false
     },

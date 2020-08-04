@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define('invoice', {
+  return sequelize.define('order', {
     id: {
       type: DataTypes.UUID,
       unique: true,

@@ -5,7 +5,7 @@ const sqlLineItemMapper: RepositoryMapper<LineItem> = {
   toDomain(lineItemRowDTO: any): LineItem {
     const lineItemProps = {
       productId: new UniqueEntityID(lineItemRowDTO.product_id),
-      invoiceId: new UniqueEntityID(lineItemRowDTO.invoice_id),
+      orderId: new UniqueEntityID(lineItemRowDTO.order_id),
       quantity: lineItemRowDTO.quantity
     };
 
@@ -16,7 +16,7 @@ const sqlLineItemMapper: RepositoryMapper<LineItem> = {
   toPersistence(lineItem: LineItem): any {
     return {
       id: lineItem.id.toValue(),
-      invoice_id: lineItem.invoiceId.toValue(),
+      order_id: lineItem.orderId.toValue(),
       product_id: lineItem.productId.toValue(),
       quantity: lineItem.quantity
     }

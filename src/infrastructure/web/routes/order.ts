@@ -1,10 +1,10 @@
 import { Request, Response, Router } from 'express';
-import detailInvoice from '@infrastructure/web/actions/detail-invoice';
+import detailOrder from '@infrastructure/web/actions/detail-order';
 
 // Init shared
 const router = Router();
 
 router.route('/:id')
-  .get(detailInvoice);
+  .get(detailOrder);
 
 export default router;

@@ -1,7 +1,7 @@
 import { Customer, Product, Charge } from '@entities';
-import { DetailInvoiceResponseCustomerDTO, DetailInvoiceResponseProductDTO, DetailInvoiceResponseChargeDTO } from './detail-invoice-response.dto';
+import { DetailOrderResponseCustomerDTO, DetailOrderResponseProductDTO, DetailOrderResponseChargeDTO } from './detail-order-response.dto';
 
-export function mapCustomerToDetailInvoiceResponseCustomerDTO(customer: Customer): DetailInvoiceResponseCustomerDTO {
+export function mapCustomerToDetailOrderResponseCustomerDTO(customer: Customer): DetailOrderResponseCustomerDTO {
   return {
     id: customer.id.toString(),
     document: customer.document,
@@ -12,7 +12,7 @@ export function mapCustomerToDetailInvoiceResponseCustomerDTO(customer: Customer
   };
 }
 
-export function mapProductToDetailInvoiceResponseProductDTO(product: Product): DetailInvoiceResponseProductDTO {
+export function mapProductToDetailOrderResponseProductDTO(product: Product): DetailOrderResponseProductDTO {
   return {
     id: product.id.toString(),
     name: product.name,
@@ -21,7 +21,7 @@ export function mapProductToDetailInvoiceResponseProductDTO(product: Product): D
   };
 }
 
-export function mapChargeToDetailInvoiceResponseChargeDTO(charge: Charge): DetailInvoiceResponseChargeDTO {
+export function mapChargeToDetailOrderResponseChargeDTO(charge: Charge): DetailOrderResponseChargeDTO {
   return {
     id: charge.id.toString(),
     paymentMethod: charge.paymentMethod,
