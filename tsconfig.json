@@ -44,6 +44,7 @@
       ]
     }
   },
+  "compileOnSave": true,
   "include": [
     "src/**/*.ts", "src/infrastructure/db/relations.js", "src/infrastructure/db/models/store/customer.js", "src/infrastructure/db/models/store/order.js", "src/infrastructure/db/models/store/line-item.js", "src/infrastructure/db/models/store/product.js", "src/infrastructure/db/models.js"
   ],

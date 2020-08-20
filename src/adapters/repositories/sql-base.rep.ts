@@ -1,5 +1,5 @@
 import { Entity } from '@entities';
-import RepositoryMapper from '../mappers/repository.mapper';
+import RepositoryMapper from '../mappers/old/repository.mapper';
 import Repository from './repository';
 import { Connections, DB, SQL } from './sql-models';
 

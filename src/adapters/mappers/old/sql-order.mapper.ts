@@ -1,19 +1,10 @@
-import SQLMapper from './sql-mapper';
+import RepositoryMapper from './old/repository.mapper';
 import { UniqueEntityID } from '@entities';
 import { Address, IAddressProps, LineItem, Order, Charge } from '@entities';
-import SqlLineItemMapper from './sql-line-item.mapper';
+import sqlLineItemMapper from './sql-line-item.mapper';
 
-export default class SqlOrderMapper extends SQLMapper {
-  private _lineItemMapper: SqlLineItemMapper;
-
-  constructor(db: any) {
-    const dbName = 'store';
-    const modelName = 'order';
-    super(dbName, modelName, db);
-    this._lineItemMapper = new SqlLineItemMapper(db);
-  }
-
-  public toDomain(orderRowDTO: any): Order {
+const sqlOrderMapper: RepositoryMapper<Order> = {
+  toDomain(orderRowDTO: any): Order {
     const chargeProps = {
       paymentMethod: orderRowDTO.payment_method,
       status: orderRowDTO.charge_status
@@ -26,9 +17,11 @@ export default class SqlOrderMapper extends SQLMapper {
 
     if (orderRowDTO.line_items) {
       lineItems = orderRowDTO.line_items.map((lineItem: any) => {
-        return this._lineItemMapper.toDomain(lineItem);
+        return sqlLineItemMapper.toDomain(lineItem);
       })
     }
+
+    const addressResult = Address.build(addressProps);
 
     const OrderProps = {
       billingAddress: Address.build(addressProps).value,
@@ -41,9 +34,9 @@ export default class SqlOrderMapper extends SQLMapper {
     const orderResult = Order.build(OrderProps, orderId);
 
     return orderResult.value;
-  }
+  },
 
-  public toPersistence(order: Order): any {
+  toPersistence(order: Order): any {
     return {
       id: order.id.toValue(),
       customer_id: order.customerId.toValue(),
@@ -54,3 +47,5 @@ export default class SqlOrderMapper extends SQLMapper {
     }
   }
 }
+
+export default sqlOrderMapper;

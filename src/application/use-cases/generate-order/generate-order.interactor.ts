@@ -1,20 +1,21 @@
-import * as Gateways from '@aplication/gateways';
-import { LineItem, Order, Address} from '@entities';
+import { LineItem, Order, Address, UniqueEntityID } from '@entities';
 
 import { Result } from '@shared/Result';
-import { UniqueEntityID } from '@entities';
+import OutputPort from 'src/application/output-port';
 import GenerateOrderRequestDTO from './generate-order-request.dto';
+import GenerateOrderGateway from './generate-order.gateway';
+import GenerateOrderResponseDTO from './generate-order-response.dto'
 
 class GenerateOrderInteractor {
-  private orderRep: Gateways.OrderRepository;
-  private customerRep: Gateways.CustomerRepository;
+  private _gateway: GenerateOrderGateway;
+  private _presenter: OutputPort<GenerateOrderResponseDTO>;
 
   constructor(
-    orderRep: Gateways.OrderRepository,
-    customerRep: Gateways.CustomerRepository
+    gateway: GenerateOrderGateway,
+    presenter: OutputPort<GenerateOrderResponseDTO>
   ) {
-    this.orderRep = orderRep;
-    this.customerRep = customerRep;
+    this._gateway = gateway;
+    this._presenter = presenter;
   }
 
   public async execute(data: GenerateOrderRequestDTO): Promise<Result<void>> {
@@ -31,7 +32,7 @@ class GenerateOrderInteractor {
       billingAddress = billingAddressOrError.value;
     }
 
-    const customer = await this.customerRep
+    const customer = await this._gateway
       .getCustomerById(data.customerId);
 
     if (!customer) {

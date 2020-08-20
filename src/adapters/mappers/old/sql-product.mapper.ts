@@ -1,14 +1,8 @@
-import SQLMapper from './sql-mapper';
+import RepositoryMapper from './old/repository.mapper';
 import { Product, UniqueEntityID } from '@entities';
 
-export default class SqlProductMapper extends SQLMapper {
-  constructor(db: any) {
-    const dbName = 'store';
-    const modelName = 'product';
-    super(db[dbName][modelName]);
-  }
-
-  public toDomain(productRowDTO: any): Product {
+const sqlProductMapper: RepositoryMapper<Product> = {
+  toDomain(productRowDTO: any): Product {
     const productProps = {
       name: productRowDTO.name,
       description: productRowDTO.description,
@@ -17,9 +11,9 @@ export default class SqlProductMapper extends SQLMapper {
 
     const uniqueId = new UniqueEntityID(productRowDTO.id);
     return Product.build(productProps, uniqueId).value;
-  }
+  },
 
-  public toPersistence(product: Product): any {
+  toPersistence(product: Product): any {
     return {
       id: product.id.toValue(),
       name: product.name,
@@ -28,3 +22,5 @@ export default class SqlProductMapper extends SQLMapper {
     } 
   }
 }
+
+export default sqlProductMapper;

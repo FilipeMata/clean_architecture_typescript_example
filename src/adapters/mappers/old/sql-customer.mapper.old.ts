@@ -1,14 +1,8 @@
-import SQLMapper from './sql-mapper';
+import RepositoryMapper from './repository.mapper';
 import { Customer, UniqueEntityID,  Address, IAddressProps } from '@entities';
 
-export default class SqlCustomerMapper extends SQLMapper {
-  constructor(db: any) {
-    const dbName = 'store';
-    const modelName = 'customer';
-    super(dbName, modelName, db);
-  }
-
-  public toDomain(customerRowDTO: any): Customer {
+const sqlCustomerMapper: RepositoryMapper<Customer> = {
+  toDomain(customerRowDTO: any): Customer {
     const address = Address.build(customerRowDTO.address).value;
 
     const customerProps = {
@@ -22,9 +16,9 @@ export default class SqlCustomerMapper extends SQLMapper {
 
     const uniqueId = new UniqueEntityID(customerRowDTO.id);
     return Customer.build(customerProps, uniqueId).value;
-  }
+  },
 
-  public toPersistence(customer: Customer): any {
+  toPersistence(customer: Customer): any {
     return {
       id: customer.id.toValue(),
       document: customer.document,
@@ -36,3 +30,5 @@ export default class SqlCustomerMapper extends SQLMapper {
     }
   }
 }
+
+export default sqlCustomerMapper;

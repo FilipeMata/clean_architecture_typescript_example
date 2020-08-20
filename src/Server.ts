@@ -9,7 +9,18 @@ import 'express-async-errors';
 
 import BaseRouter from './infrastructure/web/routes';
 import logger from '@shared/Logger';
+import { UniqueEntityIDGeneratorFactory } from '@entities';
+import UUIDEntityGenerator from '@infrastructure/plugins/uuid-id-generator';
 
+// init id factories
+
+const factories = {
+    'default': new UUIDEntityGenerator()
+};
+
+UniqueEntityIDGeneratorFactory
+    .getInstance()
+    .init(factories);
 
 // Init express
 const app = express();

@@ -1,4 +1,4 @@
-import { UniqueEntityID } from '@entities';
+import { UniqueEntityIDGeneratorFactory, UniqueEntityID, UnitOfWork, ValueObject } from '@entities';
 
 /**
  * 
@@ -15,14 +15,15 @@ export abstract class Entity<T> {
   protected props: T;
 
   constructor(props: T, id?: UniqueEntityID) {
-    this._id = id ? id : new UniqueEntityID();
+    const idGenerator = UniqueEntityIDGeneratorFactory.getInstance().getIdGeneratorFor(this);
+    this._id = id ? id : idGenerator.nextId();
     this.props = props;
   }
 
   get id (): UniqueEntityID {
     return this._id;
   }
-
+  
   public equals (entity?: Entity<T>) : boolean {
 
     if (!entity || !isEntity(entity)) {

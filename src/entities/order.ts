@@ -72,5 +72,13 @@ export class Order extends Entity<IOrderProps>{
         this.props.lineItems.push(lineItem);
         return Result.success<void>();
     }
+
+    public removeLineItem(lineItem: LineItem): Result<void> {
+        this.lineItems = this.props.lineItems.filter((li) => {
+            return !li.equals(lineItem);
+        });
+
+        return 
+    }
     
 }
