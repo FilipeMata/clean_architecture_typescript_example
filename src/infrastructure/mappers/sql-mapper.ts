@@ -1,6 +1,7 @@
 import { Entity } from '@entities';
+import { Mapper } from 'src/adapters/gateways/mapper-registry';
 
-export default abstract class SQLMapper {
+export default abstract class SQLMapper implements Mapper {
   private _dbName: string;
   private _scope: any;
   protected _db: any;
@@ -23,16 +24,20 @@ export default abstract class SQLMapper {
   }
 
   public async insert(entity: Entity<any>): Promise<void> {
+    const t = await this._getTransaction();
+
     return await this._db.create(
       this.toPersistence(entity), {
-      transaction: this._getTransaction()
+      transaction: t
     });
   }
 
   public async find(criteria: any): Promise<Entity<any>>{
+    const t = await this._getTransaction();
+
     let options: any = {
       where: criteria,
-      transaction: this._getTransaction()
+      transaction: t
     }
 
     const row = await this._db.findOne(options);
@@ -43,10 +48,12 @@ export default abstract class SQLMapper {
     return this.toDomain(row);
   };
 
-  protected async findAll(conditions: any): Promise<Array<Entity<any>>> {
+  public async findAll(conditions: any): Promise<Array<Entity<any>>> {
+    const t = await this._getTransaction();
+
     let options: any = {
       where: conditions,
-      transaction: this._getTransaction(),
+      transaction: t,
       raw: true
     }
 
@@ -58,11 +65,13 @@ export default abstract class SQLMapper {
   };
 
   public async update(entity: Entity<any>): Promise<void> {
+    const t = await this._getTransaction();
+
     const options = {
       where: {
         id: entity.id.toValue()
       },
-      transaction: this._getTransaction()
+      transaction: t
     };
 
     const data = this.toPersistence(entity);
@@ -70,21 +79,25 @@ export default abstract class SQLMapper {
   }
 
   async insertCollection(entities: Array<Entity<any>>): Promise<void> {
+    const t = await this._getTransaction();
+    
     const rows = entities.map((e) => {
       return this.toPersistence(e);
     });
     
     return await this._db.bulkCreate(rows, {
-      transaction: this._getTransaction()
+      transaction: t
     });
   }
 
   async delete(entity: Entity<any>): Promise<void> {
+    const t = await this._getTransaction();
+
     return await this._db.destroy({
       where: {
         id: entity.id.toValue()
       },
-      transaction: this._getTransaction()
+      transaction: t
     });
   }
 

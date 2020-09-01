@@ -1,6 +1,6 @@
 import { Entity } from '@entities';
 import Guard from '@shared/guard';
-import MapperRegistry from '../../entities/mapper-registry';
+import MapperRegistry from './mapper-registry';
 import { UniqueEntityID } from '../../entities/unique-entity-id';
 
 interface IdentityMap {

@@ -1,11 +1,11 @@
-import { Address, LineItem, Charge }  from '@entities';
+import { Address, LineItem, Charge, Customer }  from '@entities';
 import { Entity, UniqueEntityID } from '@entities';
 import { Result } from '@shared/Result';
 
 interface IOrderProps {
     billingAddress: Address;
     lineItems?: Array<LineItem>;
-    customerId: UniqueEntityID;
+    buyer: Customer;
     charge?: Charge;
 };
 
@@ -24,8 +24,8 @@ export class Order extends Entity<IOrderProps>{
         this.props.lineItems = lineItems;
     }
 
-    get customerId(): UniqueEntityID {
-        return this.props.customerId;
+    get buyer(): Customer {
+        return this.props.buyer;
     }
 
     get charge (): Charge | undefined {

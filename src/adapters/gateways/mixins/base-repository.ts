@@ -1,5 +1,5 @@
 import { Entity, UniqueEntityID } from '@entities';
-import MapperRegistry from '../../../entities/mapper-registry';
+import MapperRegistry from '../mapper-registry';
 import { UnitOfWork } from '../unit-of-work';
 
 export interface IRepository {

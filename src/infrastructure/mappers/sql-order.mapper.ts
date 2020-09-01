@@ -1,16 +1,19 @@
 import SQLMapper from './sql-mapper';
-import { UniqueEntityID } from '@entities';
+import { Customer, UniqueEntityID } from '@entities';
 import { Address, IAddressProps, LineItem, Order, Charge } from '@entities';
 import SqlLineItemMapper from './sql-line-item.mapper';
+import SqlCustomerMapper from './sql-customer.mapper';
 
 export default class SqlOrderMapper extends SQLMapper {
   private _lineItemMapper: SqlLineItemMapper;
+  private _customerMapper: SqlCustomerMapper;
 
   constructor(db: any) {
     const dbName = 'store';
     const modelName = 'order';
     super(dbName, modelName, db);
     this._lineItemMapper = new SqlLineItemMapper(db);
+    this._customerMapper = new SqlCustomerMapper(db);
   }
 
   public toDomain(orderRowDTO: any): Order {
@@ -23,6 +26,7 @@ export default class SqlOrderMapper extends SQLMapper {
     const addressProps: IAddressProps = orderRowDTO.billing_address;
 
     let lineItems: Array<LineItem> = [];
+    let buyer: Customer;
 
     if (orderRowDTO.line_items) {
       lineItems = orderRowDTO.line_items.map((lineItem: any) => {
@@ -30,15 +34,19 @@ export default class SqlOrderMapper extends SQLMapper {
       })
     }
 
-    const OrderProps = {
+    if (orderRowDTO.customer) {
+      buyer = this._customerMapper.toDomain(orderRowDTO.customer);
+    }
+
+    const orderProps = {
       billingAddress: Address.build(addressProps).value,
-      customerId: new UniqueEntityID(orderRowDTO.customer_id),
+      buyer: buyer,
       lineItems: lineItems,
       charge: orderRowDTO.charge_id ? Charge.build(chargeProps, chargeId).value : undefined
     };
 
     const orderId = new UniqueEntityID(orderRowDTO.id);
-    const orderResult = Order.build(OrderProps, orderId);
+    const orderResult = Order.build(orderProps, orderId);
 
     return orderResult.value;
   }
@@ -46,7 +54,7 @@ export default class SqlOrderMapper extends SQLMapper {
   public toPersistence(order: Order): any {
     return {
       id: order.id.toValue(),
-      customer_id: order.customerId.toValue(),
+      customer_id: order.buyer.id.toValue(),
       charge_id: order.charge ? order.charge.id.toValue() : null,
       payment_method: order.charge ? order.charge.paymentMethod : null,
       charge_status: order.charge ? order.charge.status : null,
@@ -64,6 +72,8 @@ export default class SqlOrderMapper extends SQLMapper {
       where: criteria,
       includes: [{
         model: 'line_item'
+      }, {
+        model: 'customer'
       }],
       transaction: t
     }
@@ -79,13 +89,15 @@ export default class SqlOrderMapper extends SQLMapper {
   /**
    * @override
    */
-  protected async findAll(conditions: any): Promise<Array<Order>> {
+  public async findAll(conditions: any): Promise<Array<Order>> {
     const t = this._getTransaction();
 
     let options: any = {
       where: conditions,
       includes: [{
         model: 'line_item'
+      }, {
+        model: 'customer'
       }],
       transaction: t,
       raw: true
@@ -148,5 +160,23 @@ export default class SqlOrderMapper extends SQLMapper {
     });
 
     await super.deleteCollection(orders);
+  }
+  
+  /**
+   * @override
+   */
+  async insertCollection(orders: Order[]): Promise<void> {
+    await super.insertCollection(orders);
+
+    const lineItems: LineItem[] = [];
+
+    for (const order of orders) {
+      for (const lineItem of order.lineItems) {
+        lineItems.push(lineItem);
+      }
+    }
+    
+    await this._lineItemMapper
+      .insertCollection(lineItems);
   }
 }

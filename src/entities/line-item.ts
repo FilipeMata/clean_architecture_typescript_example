@@ -1,16 +1,16 @@
-import { Entity, UniqueEntityID } from '@entities';
+import { Entity, UniqueEntityID, Product } from '@entities';
 import { Result } from '@shared/Result';
 
 interface ILineItemProps {
-  productId: UniqueEntityID;
+  product: Product,
   orderId: UniqueEntityID;
   quantity: number;
 };
 
 export class LineItem extends Entity<ILineItemProps>{
 
-  get productId(): UniqueEntityID {
-    return this.props.productId;
+  get product(): Product {
+    return this.props.product;
   }
 
   get orderId(): UniqueEntityID {
