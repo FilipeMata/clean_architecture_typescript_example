@@ -15,15 +15,9 @@ export default class SQLCustomerRepository extends SQLBaseRepository<Customer> {
     super(props, db);
   }
 
-  async getCustomerById(customerId: UniqueEntityID): Promise<Customer> {
+  async findCustomerById(customerId: UniqueEntityID): Promise<Customer> {
     return this._getBy({
       id: customerId.toValue()
-    })
-  }
-
-  async getCustomerByDocument(document: string): Promise<Customer> {
-    return this._getBy({
-      document: document
     })
   }
 }

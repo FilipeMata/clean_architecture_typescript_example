@@ -1,4 +1,5 @@
 import { UnitOfWork, Entity } from '@entities';
+import MapperRegistry from '../../entities/mapper-registry';
 
 export default interface Repository<T> {
   remove(t: T): Promise<void>;
@@ -9,6 +10,10 @@ export default interface Repository<T> {
 
 export class BaseRepository<T> {
   constructor() { };
+
+  protected _find<T>(criteria: any) {
+    MapperRegistry.getEntiyMapper(removedObject.constructor.name).delete(removedObject);
+  }
 
   save(e: Entity<any>) {
     const uow = UnitOfWork.getCurrent();
