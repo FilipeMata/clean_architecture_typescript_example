@@ -5,7 +5,7 @@ export default class SqlLineItemMapper extends SQLMapper {
   constructor(db: any) {
     const dbName = 'store';
     const modelName = 'line_item';
-    super(db[dbName][modelName]);
+    super(dbName, modelName, db);
   }
 
   public toDomain(lineItemRowDTO: any): LineItem {

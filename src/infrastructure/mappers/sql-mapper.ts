@@ -16,7 +16,7 @@ export default abstract class SQLMapper {
   public abstract toPersistence(entity: Entity<any>): any;
   public abstract toDomain(row: any): Entity<any>;
 
-  private async _getTransaction(): Promise<any> {
+  protected async _getTransaction(): Promise<any> {
     if (this._scope) {
       return this._scope.getTransaction(this._dbName);
     }
@@ -43,7 +43,7 @@ export default abstract class SQLMapper {
     return this.toDomain(row);
   };
 
-  protected async findCollection(conditions: any): Promise<Array<Entity<any>>> {
+  protected async findAll(conditions: any): Promise<Array<Entity<any>>> {
     let options: any = {
       where: conditions,
       transaction: this._getTransaction(),
@@ -93,11 +93,15 @@ export default abstract class SQLMapper {
       return e.id.toValue()
     });
 
+    return await this.deleteByCriteria({id: ids});
+  }
+
+  async deleteByCriteria(criteria: any): Promise<void> {
+    const t = await this._getTransaction();
+
     return await this._db.destroy({
-      where: {
-        id: ids
-      },
-      transaction: this._getTransaction()
+      where: criteria,
+      transaction: t
     });
   }
 }

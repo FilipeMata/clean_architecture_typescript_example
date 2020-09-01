@@ -5,7 +5,7 @@ export default class SqlProductMapper extends SQLMapper {
   constructor(db: any) {
     const dbName = 'store';
     const modelName = 'product';
-    super(db[dbName][modelName]);
+    super(dbName, modelName, db);;
   }
 
   public toDomain(productRowDTO: any): Product {
