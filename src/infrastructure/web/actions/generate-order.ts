@@ -7,7 +7,7 @@ const GenerateOrder = UseCases.GenerateOrder;
 const GenerateOrderInteractor = GenerateOrder.GenerateOrderInteractor;
  
 export default async function generateOrder(req: Request, res: Response) {
-  const generateOrderPresenter = new Adapters.HTTPPresenters.HTTPGenerateOrderPresenter();
+  const generateOrderPresenter = new Adapters.Presenters.HTTPGenerateOrderPresenter();
   const generateOrderGateway = new Adapters.Gateways.GenerateOrderGateway();
 
   const generateOrderInteractor = new GenerateOrderInteractor(
@@ -15,7 +15,7 @@ export default async function generateOrder(req: Request, res: Response) {
     generateOrderPresenter
   );
 
-  const generateOrderController = new Adapters.APIControllers.HttpGenerateOrderController.default(req, generateOrderInteractor);
+  const generateOrderController = new Adapters.Controllers.HTTPGenerateOrderController(req, generateOrderInteractor);
 
   await generateOrderController.run();
   const view = generateOrderPresenter.view;

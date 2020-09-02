@@ -18,7 +18,7 @@ export class UniqueEntityIDGeneratorFactory {
     return UniqueEntityIDGeneratorFactory._instance;
   }
 
-  public init(factories: EntityIDFactories) {
+  public initialize(factories: EntityIDFactories) {
     this._entityIdFactories = factories;
   }
 

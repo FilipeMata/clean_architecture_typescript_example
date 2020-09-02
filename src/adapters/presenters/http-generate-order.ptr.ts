@@ -16,15 +16,15 @@ export class HTTPGenerateOrderPresenter implements OutputPort<GenerateOrder.Gene
   } 
 
   public show(response: GenerateOrder.GenerateOrderResponseDTO) {
-    console.log('****************', response.failures);
     if (response.failures) {
       this._view = {
         statusCode: 500,
         message: 'Unexpected Error'
       };
-      
       return;
     }
+
+    /** Treat other failures here */
 
     this._view = {
       statusCode: 200

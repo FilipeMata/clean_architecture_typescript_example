@@ -8,7 +8,7 @@ type DetailOrderHTTPView = {
   headers?: JSON
 };
 
-export default class HTTPDetailOrderPresenter implements OutputPort<DetailOrderResponseDTO>{
+export class HTTPDetailOrderPresenter implements OutputPort<DetailOrderResponseDTO>{
   private _view: DetailOrderHTTPView;
 
   get view(): DetailOrderHTTPView {
@@ -27,7 +27,9 @@ export default class HTTPDetailOrderPresenter implements OutputPort<DetailOrderR
 
     this._view = {
       statusCode: 200,
-      body: response
+      body: {
+        data: response.success
+      }
     };
 
     return;

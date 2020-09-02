@@ -69,7 +69,7 @@ export class Address extends ValueObject<IAddressProps>{
         let errors: Array<string> = [];
 
         if (!props.street || props.street.length < 2) {
-            errors.push('Address street must be grater than 2 chars');
+            errors.push('street_too_short');
         }
 
         /** put some other validations here */

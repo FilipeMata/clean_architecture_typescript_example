@@ -63,7 +63,7 @@ export class Order extends Entity<IOrderProps>{
         let errors: Array<string> = [];
 
         if (buildProps.lineItems.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_ORDER) {
-            errors.push('Max number of line items reached');
+            errors.push('max_line_items_reached');
         }
 
         const mergeErros = (addinErrors: Array<string>) => {

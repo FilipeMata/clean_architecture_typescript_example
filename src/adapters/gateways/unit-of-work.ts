@@ -1,6 +1,6 @@
 import { Entity } from '@entities';
 import Guard from '@shared/guard';
-import MapperRegistry from './mapper-registry';
+import { MapperRegistry } from './mapper-registry';
 import IdentityMap from './identity-map';
 
 interface IUnitOfWork {

@@ -24,12 +24,40 @@ export default class SqlLineItemMapper extends SQLMapper {
     return LineItem.build(lineItemProps, uniqueId).value;
   }
 
-  public toPersistence(lineItem: LineItem): any {
+  public toPersistence(lineItem: LineItem, orderId?: UniqueEntityID): any {
     return {
       id: lineItem.id.toValue(),
+      order_id: orderId.toValue(),
       product_id: lineItem.product.id.toValue(),
       quantity: lineItem.quantity
     }
+  }
+
+  /**
+   * @override
+   */
+  public async insert(lineItem: LineItem, orderId?: UniqueEntityID): Promise<void> {
+    const t = await this._getTransaction();
+
+    return await this._db.create(
+      this.toPersistence(lineItem, orderId), {
+      transaction: t
+    });
+  }
+
+  /**
+   * @override
+   */
+  async insertCollection(lineItems: LineItem[], orderId?: UniqueEntityID): Promise<void> {
+    const t = await this._getTransaction();
+    
+    const rows = lineItems.map((item) => {
+      return this.toPersistence(item, orderId);
+    });
+    
+    return await this._db.bulkCreate(rows, {
+      transaction: t
+    });
   }
 
     /**

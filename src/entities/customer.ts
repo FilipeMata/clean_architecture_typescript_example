@@ -45,7 +45,7 @@ export class Customer extends Entity<ICustomer>{
         const errors: Array<string> = [];
 
         if (props.document.length !== 11 && props.document.length !== 14) {
-            errors.push('Document must be a CPF or a CNPJ');
+            errors.push('invalid_document');
         }
 
         /** put other validations here */

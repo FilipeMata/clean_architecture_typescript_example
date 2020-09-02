@@ -11,10 +11,10 @@ import BaseRouter from './infrastructure/web/routes';
 import logger from '@shared/Logger';
 import { UniqueEntityIDGeneratorFactory } from '@entities';
 import UUIDEntityGenerator from '@infrastructure/plugins/uuid-id-generator';
-import MapperRegistry from './adapters/gateways/mapper-registry';
-import mappers from './infrastructure/plugins/mappers';
+import * as Adapters from '@adapters';
+import mappers from '@infrastructure/plugins/mappers';
 
-
+const MapperRegistry = Adapters.Gateways.MapperRegistry;
 
 // init id factories
 
@@ -24,9 +24,12 @@ const factories = {
 
 UniqueEntityIDGeneratorFactory
     .getInstance()
-    .init(factories);
+    .initialize(factories);
 
-MapperRegistry.initialize(mappers);
+console.log('Entity ID Generators initialized');
+
+MapperRegistry
+    .initialize(mappers);
 
 console.log('Mappers initialized');
 // Init express
@@ -61,19 +64,12 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     });
 });
 
-
-
 /************************************************************************************
  *                              Serve front-end content
  ***********************************************************************************/
 
-const viewsDir = path.join(__dirname, 'infrastructure/web/views');
-app.set('views', viewsDir);
 const staticDir = path.join(__dirname, 'public');
 app.use(express.static(staticDir));
-app.get('*', (req: Request, res: Response) => {
-    res.sendFile('index.html', {root: viewsDir});
-});
 
 // Export express instance
 export default app;

@@ -1,8 +1,10 @@
-import BaseRepository from './mixins/base-repository';
-import FindableCustomer from './mixins/findable-customer';
-import FindableProduct from './mixins/findable-product.rep';
-import FindableOrder from './mixins/findable-order';
+import BaseRepository from './repositories/base-repository';
+import MixCustomerRepositoy from './repositories/customer.rep';
+import MixProductRepository from './repositories/product.rep';
+import MixOrderRepository from './repositories/order.rep';
 
+export { Mapper, Mappers } from './mappers';
+export { MapperRegistry } from './mapper-registry';
 
-export const DeatailOrderGateway = FindableOrder(BaseRepository);
-export const GenerateOrderGateway = FindableCustomer(FindableProduct(BaseRepository));
+export const DeatailOrderGateway = MixOrderRepository(BaseRepository);
+export const GenerateOrderGateway = MixCustomerRepositoy(MixProductRepository(BaseRepository));

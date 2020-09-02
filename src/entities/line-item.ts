@@ -25,7 +25,7 @@ export class LineItem extends Entity<ILineItemProps>{
     const errors: Array<string> = [];
 
     if (props.quantity % 1 !== 0) {
-      errors.push('LineItem quantity must be an integer');
+      errors.push('line_item_quantity_must_be_integer');
     }
 
     if (errors.length > 0) {

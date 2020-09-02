@@ -7,7 +7,7 @@ const DetailOrder = UseCases.DetailOrder;
 const DetailOrderInteractor = DetailOrder.DetailOrderInteractor;
  
 export default async function detailOrder(req: Request, res: Response) {
-  const detailOrderPresenter = new Adapters.HTTPPresenters.HTTPDetailOrderPresenter.default();
+  const detailOrderPresenter = new Adapters.Presenters.HTTPDetailOrderPresenter();
   const detailOrderGateway = new Adapters.Gateways.DeatailOrderGateway();
 
   const detailOrderInteractor = new DetailOrderInteractor(
@@ -15,7 +15,7 @@ export default async function detailOrder(req: Request, res: Response) {
     detailOrderPresenter
   );
 
-  const detailOrderController = new Adapters.APIControllers.APIDetailOrderController.default(req, detailOrderInteractor);
+  const detailOrderController = new Adapters.Controllers.HttpDetailOrderController(req, detailOrderInteractor);
 
   await detailOrderController.run();
   const view = detailOrderPresenter.view;

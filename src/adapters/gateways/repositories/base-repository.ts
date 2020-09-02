@@ -1,6 +1,6 @@
 import { Entity, UniqueEntityID } from '@entities';
 import IdentityMap from '../identity-map';
-import MapperRegistry from '../mapper-registry';
+import { MapperRegistry } from '../mapper-registry';
 import { UnitOfWork } from '../unit-of-work';4
 
 export interface IRepository {
@@ -63,6 +63,10 @@ export default class BaseRepository implements IRepository {
   }
 
   public async save(e: Entity<any>) {
+    if (!this.uow) {
+      throw new Error('There is no started transaction');
+    }
+
     const entityName = e.constructor.name;
     const registered = this.identityMap.load(entityName, e.id);
 
@@ -80,6 +84,10 @@ export default class BaseRepository implements IRepository {
   } 
 
   public async remove(e: Entity<any>) {
+    if (!this.uow) {
+      throw new Error('There is no started transaction');
+    }
+    
     this.uow.registerRemoved(e);
   }
 
@@ -90,6 +98,10 @@ export default class BaseRepository implements IRepository {
   }
 
   public async endTransaction() {
+    if (!this.uow) {
+      throw new Error('There is no started transaction');
+    }
+    
     await this.uow.commit();
     this.uow = undefined;
   }

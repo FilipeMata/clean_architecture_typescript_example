@@ -83,7 +83,6 @@ export class GenerateOrderInteractor {
       await this._gateway.save(order);
       await this._gateway.endTransaction();
     } catch (err) {
-      console.log('>>>>>>>>>>>>>>>>>', err);
       return this._presenter.show({
         success: false,
         failures: ['unexpected_failure']

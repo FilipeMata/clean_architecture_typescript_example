@@ -1,2 +1,2 @@
-export * as APIDetailOrderController from './api-detail-order.ctrl';
-export * as HttpGenerateOrderController from './http-generate-order.ctrl';
+export * from './http-detail-order.ctrl';
+export * from './http-generate-order.ctrl';

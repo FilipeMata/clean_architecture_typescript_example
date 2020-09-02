@@ -6,7 +6,7 @@ type APIDetailOrderInput = {
   body: any
 }
 
-export default class APIDetailOrderController {
+export class HttpDetailOrderController {
   private _input: APIDetailOrderInput;
   private _detailOrderInteractor: DetailOrder.DetailOrderInteractor
 

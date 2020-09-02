@@ -135,7 +135,7 @@ export default class SqlOrderMapper extends SQLMapper {
     await super.insert(order);
 
     await this._lineItemMapper
-      .insertCollection(order.lineItems);
+      .insertCollection(order.lineItems, order.id);
   }
 
   /**
@@ -184,17 +184,8 @@ export default class SqlOrderMapper extends SQLMapper {
    * @override
    */
   async insertCollection(orders: Order[]): Promise<void> {
-    await super.insertCollection(orders);
-
-    const lineItems: LineItem[] = [];
-
     for (const order of orders) {
-      for (const lineItem of order.lineItems) {
-        lineItems.push(lineItem);
-      }
+      await this.insert(order);
     }
-    
-    await this._lineItemMapper
-      .insertCollection(lineItems);
   }
 }

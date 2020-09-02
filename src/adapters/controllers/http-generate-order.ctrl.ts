@@ -6,7 +6,7 @@ type HTTPDetailOrderInput = {
   body: any
 }
 
-export default class HTTPGenerateOrderController {
+export class HTTPGenerateOrderController {
   private _input: HTTPDetailOrderInput;
   private _generateOrderInteractor: GenerateOrder.GenerateOrderInteractor
 

@@ -12,7 +12,6 @@ export default class Guard {
     }
   }
   
-
   public static isTrue(error: string | Error, condition: any) {
     if (!condition) {
       throw error;

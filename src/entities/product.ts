@@ -34,7 +34,7 @@ export class Product extends Entity<IProductProps>{
         const errors: Array<string> = [];
 
         if (props.price < 0) {
-            errors.push('Price should be greater than 0');
+            errors.push('price_too_low');
         }
 
         if(errors.length > 0) {

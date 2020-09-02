@@ -1,6 +1,6 @@
 import { Mapper, Mappers } from "./mappers";
 
-export default class MapperRegistry {
+export class MapperRegistry {
   private static _soleinstance: MapperRegistry;
   private _mappers: Mappers;
 
