@@ -1,46 +1,15 @@
 import DetailOrderGateway from '../../application/use-cases/detail-order/detail-order.gateway';
-import { UniqueEntityID } from '@entities';
-import { Customer, Order, Product} from '@entities';
+import { Gateway, BaseGateway } from './base-gateway';
+import CustomerDecorator from './decorators/customer-decorator';
+import ProductDecorator from './decorators/product-decorator.rep';
+import OrderDecorator from './decorators/oder-decorator';
 
 
-interface CustomerRepositoryForDetailOrder {
-  getCustomerById(customerId: UniqueEntityID): Promise<Customer>
-};
+let baseGateway: DetailOrderGateway;
+const g1 = new BaseGateway();
+const g2 = new CustomerDecorator(g1);
+const g3 = new ProductDecorator(g2);
+baseGateway = new OrderDecorator(g3);
 
-interface ProductRepositoryForDetailOrder {
-  getProductById(productId: UniqueEntityID): Promise<Product>
-};
+detailOrderGateway.fin
 
-
-interface OrderRepositoryForDetailOrder {
-  getOrderById(customerId: UniqueEntityID): Promise<Order>
-};
-
-
-export default class DetailOrderGatewayImpl implements DetailOrderGateway {
-  private _customerRep: CustomerRepositoryForDetailOrder;
-  private _productRep: ProductRepositoryForDetailOrder;
-  private _orderRep: OrderRepositoryForDetailOrder;
-
-  constructor(
-    customerRep: CustomerRepositoryForDetailOrder,
-    productRep: ProductRepositoryForDetailOrder,
-    orderRep: OrderRepositoryForDetailOrder
-  ) {
-    this._customerRep = customerRep;
-    this._productRep = productRep;
-    this._orderRep = orderRep;
-  }
-  
-  async getCustomerById(customerId: UniqueEntityID): Promise<Customer> {
-    return this._customerRep.getCustomerById(customerId);
-  };
-
-  getProductById(productId: UniqueEntityID): Promise<Product> {
-    return this._productRep.getProductById(productId);
-  }
-
-  getOrderById(orderId: UniqueEntityID): Promise<Order> {
-    return this._orderRep.getOrderById(orderId);
-  }
-}

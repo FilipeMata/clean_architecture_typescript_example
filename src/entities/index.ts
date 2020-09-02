@@ -9,5 +9,4 @@ export * from './order';
 export * from './line-item';
 export * from './product';
 export * from './id-generator';
-export * from './id-generator-factory'
-export * from './unit-of-work';
+export * from './id-generator-factory';
