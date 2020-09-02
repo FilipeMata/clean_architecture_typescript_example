@@ -21,7 +21,7 @@ export default class DetailOrderInteractor implements DetailOrderInputPort {
     let response: DetailOrderResponseDTO = {};
 
     const order = await this._gateway
-      .getOrderById(new UniqueEntityID(orderId));
+      .findOrderById(new UniqueEntityID(orderId));
 
     if (!order) {
       response.failures = {
@@ -34,7 +34,7 @@ export default class DetailOrderInteractor implements DetailOrderInputPort {
     const itemsDTO = [];
     for (const lineItem of order.lineItems) {
       const product = await this._gateway
-        .getProductById(lineItem.productId);
+        .findProductById(lineItem.productId);
 
       const item = {
         id: lineItem.id.toString(),
@@ -46,7 +46,7 @@ export default class DetailOrderInteractor implements DetailOrderInputPort {
     }
 
     const customer = await this._gateway
-      .getCustomerById(order.customerId);
+      .findCustomerById(order.customerId);
 
     response.success = {
       id: order.id.toString(),

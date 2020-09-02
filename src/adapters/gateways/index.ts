@@ -1,1 +1,7 @@
-export * as DeatailOrderGateway from './detail-order.gateway';
+import BaseRepository from './mixins/base-repository';
+import FindableCustomer from './mixins/findable-customer';
+import FindableProduct from './mixins/findable-product.rep';
+import FindableOrder from './mixins/findable-order';
+
+
+export const DeatailOrderGateway = FindableOrder(FindableProduct(FindableCustomer(BaseRepository)));

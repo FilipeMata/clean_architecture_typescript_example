@@ -46,6 +46,7 @@ export default abstract class SQLMapper {
   protected async findCollection(conditions: any): Promise<Array<Entity<any>>> {
     let options: any = {
       where: conditions,
+      transaction: this._getTransaction(),
       raw: true
     }
 
@@ -82,7 +83,8 @@ export default abstract class SQLMapper {
     return await this._db.destroy({
       where: {
         id: entity.id.toValue()
-      }
+      },
+      transaction: this._getTransaction()
     });
   }
 
@@ -94,7 +96,8 @@ export default abstract class SQLMapper {
     return await this._db.destroy({
       where: {
         id: ids
-      }
+      },
+      transaction: this._getTransaction()
     });
   }
 }
