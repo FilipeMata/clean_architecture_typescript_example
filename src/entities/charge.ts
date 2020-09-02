@@ -1,30 +1,31 @@
-import { Entity, UniqueEntityID } from '@entities';
+import { ValueObject } from '@entities';
 import { Result } from '@shared/Result';
 
 interface IChargeProps {
+  number: string,
   paymentMethod: string;
   status: string;
 };
 
-export class Charge extends Entity<IChargeProps> {
+export class Charge extends ValueObject<IChargeProps> {
 
-  get paymentMethod(): string {
-    return this.props.paymentMethod;
+  public toValue() {
+    return {
+      number: this.props.number,
+      paymentMethod: this.props.paymentMethod,
+      status: this.props.status
+    };
   }
 
-  get status(): string {
-    return this.props.status;
+  private constructor(props: IChargeProps) {
+    super(props);
   }
 
-  private constructor(props: IChargeProps, id?: UniqueEntityID) {
-    super(props, id);
-  }
-
-  public static build(props: IChargeProps, id: UniqueEntityID): Result<Charge> {
+  public static build(props: IChargeProps): Result<Charge> {
     /** some domain validations here **/
     const errors: Array<string> = [];
 
-    if (!id) {
+    if (!props.number) {
       errors.push('Charge must have a protocol');
     }
 
@@ -32,6 +33,6 @@ export class Charge extends Entity<IChargeProps> {
       return Result.fail<Charge>(errors);
     }
 
-    return Result.success<Charge>(new Charge(props, id));
+    return Result.success<Charge>(new Charge(props));
   }
 }

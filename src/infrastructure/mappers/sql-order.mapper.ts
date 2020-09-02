@@ -6,23 +6,29 @@ import SqlCustomerMapper from './sql-customer.mapper';
 
 export default class SqlOrderMapper extends SQLMapper {
   private _lineItemMapper: SqlLineItemMapper;
+  private _lineItemModel: any;
+  private _customerModel: any;
+  private _productModel: any;
   private _customerMapper: SqlCustomerMapper;
 
   constructor(db: any) {
     const dbName = 'store';
     const modelName = 'order';
     super(dbName, modelName, db);
+    this._lineItemModel = db.store.line_item;
+    this._customerModel = db.store.customer;
+    this._productModel = db.store.product;
     this._lineItemMapper = new SqlLineItemMapper(db);
     this._customerMapper = new SqlCustomerMapper(db);
   }
 
   public toDomain(orderRowDTO: any): Order {
     const chargeProps = {
+      number: orderRowDTO.charge_id,
       paymentMethod: orderRowDTO.payment_method,
       status: orderRowDTO.charge_status
     };
 
-    const chargeId = new UniqueEntityID(orderRowDTO.charge_id);
     const addressProps: IAddressProps = orderRowDTO.billing_address;
 
     let lineItems: Array<LineItem> = [];
@@ -42,7 +48,7 @@ export default class SqlOrderMapper extends SQLMapper {
       billingAddress: Address.build(addressProps).value,
       buyer: buyer,
       lineItems: lineItems,
-      charge: orderRowDTO.charge_id ? Charge.build(chargeProps, chargeId).value : undefined
+      charge: orderRowDTO.charge_id ? Charge.build(chargeProps).value : undefined
     };
 
     const orderId = new UniqueEntityID(orderRowDTO.id);
@@ -55,9 +61,9 @@ export default class SqlOrderMapper extends SQLMapper {
     return {
       id: order.id.toValue(),
       customer_id: order.buyer.id.toValue(),
-      charge_id: order.charge ? order.charge.id.toValue() : null,
-      payment_method: order.charge ? order.charge.paymentMethod : null,
-      charge_status: order.charge ? order.charge.status : null,
+      charge_id: order.charge ? +order.charge.toValue().number : null,
+      payment_method: order.charge ? order.charge.toValue().paymentMethod : null,
+      charge_status: order.charge ? order.charge.toValue().status : null,
       billing_address: order.billingAddress.toValue()
     }
   }
@@ -70,12 +76,18 @@ export default class SqlOrderMapper extends SQLMapper {
 
     let options: any = {
       where: criteria,
-      includes: [{
-        model: 'line_item'
+      include: [{
+        model: this._lineItemModel,
+        include: [{
+          model: this._productModel
+        }]
       }, {
-        model: 'customer'
-      }],
-      transaction: t
+        model: this._customerModel
+      }]
+    }
+
+    if (t) {
+      options.transactions = t;
     }
 
     const row = await this._db.findOne(options);
@@ -94,13 +106,19 @@ export default class SqlOrderMapper extends SQLMapper {
 
     let options: any = {
       where: conditions,
-      includes: [{
-        model: 'line_item'
+      include: [{
+        model: this._lineItemModel,
+        include: [{
+          model: this._productModel
+        }]
       }, {
-        model: 'customer'
+        model: this._customerModel
       }],
-      transaction: t,
       raw: true
+    }
+
+    if (t) {
+      options.transactions = t;
     }
 
     const rows = await this._db.findAll(options);

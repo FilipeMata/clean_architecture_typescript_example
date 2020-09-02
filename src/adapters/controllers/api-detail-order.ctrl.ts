@@ -1,4 +1,4 @@
-import DetailOrderInputPort  from '../../application/use-cases/detail-order/detail-order.input';
+import { DetailOrder } from '@aplication/useCases'
 
 type APIDetailOrderInput = {
   params: any,
@@ -8,14 +8,14 @@ type APIDetailOrderInput = {
 
 export default class APIDetailOrderController {
   private _input: APIDetailOrderInput;
-  private _detailOrderInteractor: DetailOrderInputPort
+  private _detailOrderInteractor: DetailOrder.DetailOrderInteractor
 
-  constructor(input: APIDetailOrderInput, interactor: DetailOrderInputPort) {
+  constructor(input: APIDetailOrderInput, interactor: DetailOrder.DetailOrderInteractor) {
     this._input = input;
     this._detailOrderInteractor = interactor;
   }
 
   async run() {
-      await (await this._detailOrderInteractor.execute(this._input.params.id));
+      await this._detailOrderInteractor.execute(this._input.params.id);
   }
 };

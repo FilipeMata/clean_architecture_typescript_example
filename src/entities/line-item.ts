@@ -1,9 +1,8 @@
 import { Entity, UniqueEntityID, Product } from '@entities';
 import { Result } from '@shared/Result';
 
-interface ILineItemProps {
+export interface ILineItemProps {
   product: Product,
-  orderId: UniqueEntityID;
   quantity: number;
 };
 
@@ -11,10 +10,6 @@ export class LineItem extends Entity<ILineItemProps>{
 
   get product(): Product {
     return this.props.product;
-  }
-
-  get orderId(): UniqueEntityID {
-    return this.props.orderId;
   }
 
   get quantity(): number {

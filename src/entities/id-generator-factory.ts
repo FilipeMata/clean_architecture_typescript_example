@@ -19,7 +19,6 @@ export class UniqueEntityIDGeneratorFactory {
   }
 
   public init(factories: EntityIDFactories) {
-    console.log('Entity ID Factories initalized');
     this._entityIdFactories = factories;
   }
 

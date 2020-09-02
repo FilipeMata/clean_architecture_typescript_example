@@ -1,3 +1,3 @@
-export * as DetailOrderInteractor from './detail-order.interactor';
-export * as DetailOrderGateway from './detail-order.gateway';
-export * as DetailOrderResponseDTO from './detail-order-response.dto';
+export * from './detail-order.interactor';
+export * from './detail-order.gateway';
+export * from './detail-order-response.dto';

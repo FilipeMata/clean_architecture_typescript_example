@@ -1,11 +1,10 @@
 import * as Adapters from '@adapters';
 import * as UseCases from '@aplication/useCases';
-const db = require('@infrastructure/db/models');
 
 import { Request, Response } from 'express';
 
 const DetailOrder = UseCases.DetailOrder;
-const DetailOrderInteractor = DetailOrder.DetailOrderInteractor.default;
+const DetailOrderInteractor = DetailOrder.DetailOrderInteractor;
  
 export default async function detailOrder(req: Request, res: Response) {
   const detailOrderPresenter = new Adapters.HTTPPresenters.HTTPDetailOrderPresenter.default();

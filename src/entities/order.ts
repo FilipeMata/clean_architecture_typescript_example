@@ -1,4 +1,4 @@
-import { Address, LineItem, Charge, Customer }  from '@entities';
+import { Address, LineItem, ILineItemProps, Charge, Customer }  from '@entities';
 import { Entity, UniqueEntityID } from '@entities';
 import { Result } from '@shared/Result';
 
@@ -9,8 +9,15 @@ interface IOrderProps {
     charge?: Charge;
 };
 
+interface IOrderBuildProps {
+    billingAddress: Address;
+    lineItems?: Array<ILineItemProps>;
+    buyer: Customer;
+    charge?: Charge;
+};
+
 export class Order extends Entity<IOrderProps>{
-    public static MAX_NUMBER_OF_LINE_ITEMS_PER_INVOICE = 7;
+    public static MAX_NUMBER_OF_LINE_ITEMS_PER_ORDER = 7;
 
     get billingAddress(): Address {
         return this.props.billingAddress;
@@ -40,45 +47,47 @@ export class Order extends Entity<IOrderProps>{
         this.props.charge = ch;
     }
 
-    public static build(props: IOrderProps, id?: UniqueEntityID): Result<Order> {
-        /** some domain validations here **/
-        if (!props.lineItems) {
-            props.lineItems = [];
-        }
+    public static build(buildProps: IOrderBuildProps, id?: UniqueEntityID): Result<Order> {
+    /** some domain validations here **/
+        
+        const props: IOrderProps = {
+            billingAddress: buildProps.billingAddress,
+            buyer: buildProps.buyer,
+            lineItems: []
+        };
 
+        if (!buildProps.lineItems) {
+            buildProps.lineItems = [];
+        }
+        
         let errors: Array<string> = [];
 
-        if (props.lineItems.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_INVOICE) {
+        if (buildProps.lineItems.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_ORDER) {
             errors.push('Max number of line items reached');
         }
+
+        const mergeErros = (addinErrors: Array<string>) => {
+            addinErrors.forEach((error) => {
+                errors.push(error);
+            });
+        }
+        const handleLineItemResult = (lineItemResult: Result<LineItem>) => {
+            if (!lineItemResult.succeeded) { 
+                mergeErros(lineItemResult.errors);
+            }
+
+            props.lineItems.push(lineItemResult.value)
+        }
+
+        buildProps.lineItems.forEach((item) => {
+            const lineItemResult = LineItem.build(item);
+            handleLineItemResult(lineItemResult)
+        })
 
         if (errors.length > 0) {
             return Result.fail<Order>(errors);
         }
         
         return Result.success<Order>(new Order(props, id));
-    }
-    
-    public addLineItem(lineItem: LineItem): Result<void> {
-        if (!this.props.lineItems) {
-            this.props.lineItems = [lineItem];
-            return Result.success<void>();
-        }
-
-        if (this.props.lineItems.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_INVOICE) {
-            return Result.fail<void>('Max number of genres reached')
-        } 
-
-        this.props.lineItems.push(lineItem);
-        return Result.success<void>();
-    }
-
-    public removeLineItem(lineItem: LineItem): Result<void> {
-        this.lineItems = this.props.lineItems.filter((li) => {
-            return !li.equals(lineItem);
-        });
-
-        return 
-    }
-    
+    }    
 }

@@ -1,16 +1,9 @@
 import { Entity } from '@entities';
 import Guard from '@shared/guard';
 import MapperRegistry from './mapper-registry';
-import { UniqueEntityID } from '../../entities/unique-entity-id';
-
-interface IdentityMap {
-  [entity: string]: Entity<any>[]
-};
+import IdentityMap from './identity-map';
 
 interface IUnitOfWork {
-  isNew(e: Entity<any>): boolean;
-  isClean(e: Entity<any>): boolean;
-  load(entity: string, id: UniqueEntityID): Entity<any> | undefined
   registerNew(e: Entity<any>): void;
   registerClean(e: Entity<any>): void;
   registerDirty(e: Entity<any>): void;
@@ -23,7 +16,13 @@ export class UnitOfWork implements IUnitOfWork {
   private _dirtyObjects: Entity<any>[];
   private _removedObjects: Entity<any>[];
   private _identityMap: IdentityMap;
-  private static _current: UnitOfWork;
+
+  constructor(identityMap: IdentityMap) {
+    this._newObjects = [];
+    this._dirtyObjects = [];
+    this._removedObjects = [];
+    this._identityMap = identityMap;
+  }
 
   private _isOneOf(obj: Entity<any>, entities: Entity<any>[]) {
     return entities.filter((e) => {
@@ -45,20 +44,12 @@ export class UnitOfWork implements IUnitOfWork {
     return removed;
   }
 
-  private _addToIdentityMap(obj: Entity<any>) {
-    const entity = obj.constructor.name;
-
-    const registered = this._identityMap[entity].filter((e) => {
-      return e.equals(obj);
-    }).length > 0;
-
-    if (!registered) {
-      this._identityMap[entity].push(obj);
-    }
-  }
-
   private _isDirty(obj: Entity<any>) {
     return this._isOneOf(obj, this._dirtyObjects);
+  }
+
+  private _isNew(obj: Entity<any>): boolean {
+    return this._isOneOf(obj, this._newObjects);
   }
 
   private _isRemoved(obj: Entity<any>) {
@@ -69,61 +60,38 @@ export class UnitOfWork implements IUnitOfWork {
     return this._remove(obj, this._newObjects);
   }
 
-  private _removeClean(obj: Entity<any>): boolean {
-    const className = obj.constructor.name;
-    return this._remove(obj, this._identityMap[className]);
-  }
-
   private _removeDirty(obj: Entity<any>): boolean {
     return this._remove(obj, this._dirtyObjects);
-  }
-
-  public isNew(obj: Entity<any>): boolean {
-    return this._isOneOf(obj, this._newObjects);
-  }
-
-  public isClean(obj: Entity<any>): boolean {
-    const className = obj.constructor.name;
-    return this._isOneOf(obj, this._identityMap[className]) && !this.isNew(obj);
-  }
-
-  public load(entity: string, id: UniqueEntityID): Entity<any> | undefined {
-    if (!this._identityMap[entity])
-      return;
-
-    return this._identityMap[entity].find((e) => {
-      e.id.equals(id);
-    });
   }
 
   public registerClean(obj: Entity<any>) {
     const className = obj.constructor.name;
     Guard.againstNullOrUndefined(obj.id, `${className} Id`);
-    this._addToIdentityMap(obj);
+    this._identityMap.add(obj);
   }
 
   public registerNew(obj: Entity<any>) {
     Guard.againstNullOrUndefined(obj.id, `${obj.constructor.name} Id`);
     Guard.isTrue(`${obj.constructor.name} of ID ${obj.id.toValue()} already registered as Dirty`, !this._isDirty(obj));
     Guard.isTrue(`${obj.constructor.name} of ID ${obj.id.toValue()} already registered as Removed`, !this._isRemoved(obj));
-    Guard.isTrue(`${obj.constructor.name} of ID ${obj.id.toValue()} already registered as New`, !this.isNew(obj));
+    Guard.isTrue(`${obj.constructor.name} of ID ${obj.id.toValue()} already registered as New`, !this._isNew(obj));
     
     this._newObjects.push(obj);
-    this._addToIdentityMap(obj);
+    this._identityMap.add(obj);
   }
 
   public registerDirty(obj: Entity<any>) {
       Guard.againstNullOrUndefined(obj.id, `${obj.constructor.name} Id`);
       Guard.isTrue(`${obj.constructor.name} of ID ${obj.id.toValue()} already registered as Removed`, !this._isRemoved(obj))
     
-      if (!this._isDirty(obj) && !this.isNew(obj)) {
+      if (!this._isDirty(obj) && !this._isNew(obj)) {
         this._dirtyObjects.push(obj);
       }
   }
 
   public registerRemoved(obj: Entity<any>) {
     Guard.againstNullOrUndefined(obj.id, `${obj.constructor.name} Id`);
-    this._removeClean(obj);
+    this._identityMap.remove(obj);
 
     if (this._removeNew(obj)) {
       return;
@@ -158,17 +126,5 @@ export class UnitOfWork implements IUnitOfWork {
     await this._insertNew();
     await this._updateDirty();
     await this._deleteRemoved();
-  }
-
-  public static newCurrent() {
-    UnitOfWork.setCurrent(new UnitOfWork());
-  }
-
-  public static setCurrent(uow: UnitOfWork) {
-    UnitOfWork._current = uow;
-  }
-
-  public static getCurrent(): UnitOfWork {
-    return UnitOfWork._current;
   }
 }

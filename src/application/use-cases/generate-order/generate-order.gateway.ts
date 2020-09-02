@@ -1,6 +1,9 @@
-import { Customer, UniqueEntityID } from '@entities';
+import { Customer, UniqueEntityID, Product, Order } from '@entities';
 
-export default interface GenerateOrderGateway {
-  getCustomerById(id: UniqueEntityID): Promise<Customer>;
-  generateNewOrderId(): UniqueEntityID;
+export interface GenerateOrderGateway {
+  startTransaction(): void;
+  endTransaction(): Promise<void>;
+  save(order: Order): Promise<void>;
+  findCustomerById(id: UniqueEntityID): Promise<Customer>;
+  findProductById(id: UniqueEntityID): Promise<Product>;
 };

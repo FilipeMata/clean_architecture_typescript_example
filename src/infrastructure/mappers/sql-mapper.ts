@@ -1,5 +1,5 @@
 import { Entity } from '@entities';
-import { Mapper } from 'src/adapters/gateways/mapper-registry';
+import { Mapper } from 'src/adapters/gateways/mappers';
 
 export default abstract class SQLMapper implements Mapper {
   private _dbName: string;
@@ -37,7 +37,10 @@ export default abstract class SQLMapper implements Mapper {
 
     let options: any = {
       where: criteria,
-      transaction: t
+    }
+
+    if (t) {
+      options.transaction = t;
     }
 
     const row = await this._db.findOne(options);
@@ -53,8 +56,11 @@ export default abstract class SQLMapper implements Mapper {
 
     let options: any = {
       where: conditions,
-      transaction: t,
       raw: true
+    }
+
+    if (t) {
+      options.transaction = t;
     }
 
     const rows = await this._db.findAll(options);

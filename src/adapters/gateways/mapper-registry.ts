@@ -1,33 +1,34 @@
-import { Entity } from '@entities'
-
-export interface Mapper {
-  find(criteria: any): Promise<Entity<any>>
-  findAll(criteria: any): Promise<Entity<any>[]>
-  insert(e: Entity<any>): Promise<void>;
-  update(e: Entity<any>): Promise<void>;
-  delete(e: Entity<any>): Promise<void>;
-};
-
-export interface Mappers {
-  [entity: string]: Mapper
-};
+import { Mapper, Mappers } from "./mappers";
 
 export default class MapperRegistry {
-  public static mappers: Mappers;
+  private static _soleinstance: MapperRegistry;
+  private _mappers: Mappers;
 
-  public static init(mappers: Mappers) {
-    MapperRegistry.mappers = mappers;
+  private constructor(mappers: Mappers) {
+    this._mappers = mappers;
   }
 
-  public static getEntiyMapper(entityClass: string): Mapper {
-    if (!MapperRegistry.mappers) {
+  public getEntityMapper(entityName: string): Mapper {
+    return this._mappers[entityName];
+  }
+
+  public static initialize(mappers: Mappers) {
+    MapperRegistry._soleinstance = new MapperRegistry(mappers);
+  }
+
+  public static getInstance(): MapperRegistry {
+    return MapperRegistry._soleinstance;
+  }
+
+  public static getEntiyMapper(entityName: string): Mapper {
+    if (!MapperRegistry.getInstance()) {
       throw new Error('There is no initialized Mappers');
     }
 
-    if (!MapperRegistry.mappers[entityClass]) {
-      throw new Error(`There is no initialized Mapper for ${entityClass} entity`);
+    if (!MapperRegistry.getInstance().getEntityMapper(entityName)) {
+      throw new Error(`There is no initialized Mapper for ${entityName} entity`);
     }
 
-    return MapperRegistry.mappers[entityClass];
+    return MapperRegistry.getInstance().getEntityMapper(entityName);
   }
 };

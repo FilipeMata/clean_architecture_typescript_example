@@ -1,6 +1,11 @@
-import { AddressDTO, LineItemDTO } from '@aplication/dtos';
+import { AddressDTO } from '@aplication/dtos';
 
-export default interface GenerateOrderRequestDTO {
+interface LineItemDTO {
+  productId: string,
+  quantity: number
+};
+
+export interface GenerateOrderRequestDTO {
   items: Array<LineItemDTO>,
   customerId: string,
   billingAddress?: AddressDTO,

@@ -4,4 +4,5 @@ import FindableProduct from './mixins/findable-product.rep';
 import FindableOrder from './mixins/findable-order';
 
 
-export const DeatailOrderGateway = FindableOrder(FindableProduct(FindableCustomer(BaseRepository)));
+export const DeatailOrderGateway = FindableOrder(BaseRepository);
+export const GenerateOrderGateway = FindableCustomer(FindableProduct(BaseRepository));

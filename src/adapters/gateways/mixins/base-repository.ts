@@ -1,12 +1,13 @@
 import { Entity, UniqueEntityID } from '@entities';
+import IdentityMap from '../identity-map';
 import MapperRegistry from '../mapper-registry';
-import { UnitOfWork } from '../unit-of-work';
+import { UnitOfWork } from '../unit-of-work';4
 
 export interface IRepository {
   startTransaction(): void;
   abstractFindAll(entityName: string, criteria: any): Promise<Entity<any>[]>;
   abstractFind(entityName: string, id: UniqueEntityID): Promise<Entity<any>>;
-  endTransaction(): void;
+  endTransaction(): Promise<void>;
   remove(e: Entity<any>): Promise<void>;
   removeCollection(entities: Entity<any>[]): Promise<void>;
   save(e: Entity<any>): Promise<void>;
@@ -15,35 +16,37 @@ export interface IRepository {
 
 export default class BaseRepository implements IRepository {
   protected uow: UnitOfWork | undefined;
+  protected identityMap: IdentityMap
+
+  constructor() {
+    this.identityMap = new IdentityMap();
+  }
 
   public startTransaction() {
-    this.uow = new UnitOfWork();
+    this.uow = new UnitOfWork(this.identityMap);
   }
 
   public async abstractFind(entityName: string, id: UniqueEntityID): Promise<Entity<any>> {
-    let entity = this.uow.load(entityName, id);
+    let entity = this.identityMap.load(entityName, id);
 
-    if(!entity) {
-      entity = await MapperRegistry.getEntiyMapper(entityName).find({id: id.toValue()});
+    if (!entity) {
+      entity = await MapperRegistry.getEntiyMapper(entityName).find({ id: id.toValue() });
     }
 
     if(!entity) {
       return null;
     }
 
-    this.uow.registerClean(entity);
+    this.identityMap.add(entity);
     return entity;
   }
 
   public async abstractFindAll(entityName: string, criteria: any): Promise<Entity<any>[]> {
     const reload = (entity: Entity<any>) => {
-      if (!this.uow) 
-        entity;
-
-      const loaded = this.uow.load(entityName, entity.id);
+      const loaded = this.identityMap.load(entityName, entity.id);
 
       if (!loaded) {
-        this.uow.registerClean(loaded);
+        this.identityMap.add(loaded);
         return entity;
       }
 
@@ -59,14 +62,15 @@ export default class BaseRepository implements IRepository {
     return entities;
   }
 
-
   public async save(e: Entity<any>) {
-    if (this.uow.isNew(e) || this.uow.isClean(e)) {
-      this.uow.registerDirty(e);
-      return;
-    }
+    const entityName = e.constructor.name;
+    const registered = this.identityMap.load(entityName, e.id);
 
-    this.uow.registerNew(e);
+    if (registered) {
+      this.uow.registerDirty(e);
+    } else {
+      this.uow.registerNew(e);
+    }
   }
 
   public async saveCollection(entities: Entity<any>[]) {
