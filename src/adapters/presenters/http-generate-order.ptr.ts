@@ -1,5 +1,4 @@
-import OutputPort from '../../application/output-port';
-import { GenerateOrder } from '@aplication/useCases';
+import { OutputPort, GenerateOrder } from '@useCases';
 
 type GenerateOrderHTTPView = {
   statusCode: number,

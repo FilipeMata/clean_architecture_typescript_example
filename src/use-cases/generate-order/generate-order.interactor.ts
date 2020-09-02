@@ -1,6 +1,5 @@
 import { Order, Address, UniqueEntityID } from '@entities';
-import OutputPort from '../../output-port';
-import { GenerateOrder } from '@aplication/useCases';
+import { OutputPort, GenerateOrder } from '@useCases';
 
 export class GenerateOrderInteractor {
   private _gateway: GenerateOrder.GenerateOrderGateway;

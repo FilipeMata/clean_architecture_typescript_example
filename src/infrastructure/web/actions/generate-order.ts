@@ -1,16 +1,12 @@
 import * as Adapters from '@adapters';
-import * as UseCases from '@aplication/useCases';
-
+import { GenerateOrder } from '@useCases';
 import { Request, Response } from 'express';
-
-const GenerateOrder = UseCases.GenerateOrder;
-const GenerateOrderInteractor = GenerateOrder.GenerateOrderInteractor;
  
 export default async function generateOrder(req: Request, res: Response) {
   const generateOrderPresenter = new Adapters.Presenters.HTTPGenerateOrderPresenter();
   const generateOrderGateway = new Adapters.Gateways.GenerateOrderGateway();
 
-  const generateOrderInteractor = new GenerateOrderInteractor(
+  const generateOrderInteractor = new GenerateOrder.GenerateOrderInteractor(
     generateOrderGateway,
     generateOrderPresenter
   );

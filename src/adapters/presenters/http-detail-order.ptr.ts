@@ -1,5 +1,4 @@
-import OutputPort from '../../application/output-port';
-import { DetailOrderResponseDTO } from '../../application/use-cases/detail-order/detail-order-response.dto';
+import { OutputPort, DetailOrder } from '@useCases';
 
 type DetailOrderHTTPView = {
   statusCode: number,
@@ -8,14 +7,14 @@ type DetailOrderHTTPView = {
   headers?: JSON
 };
 
-export class HTTPDetailOrderPresenter implements OutputPort<DetailOrderResponseDTO>{
+export class HTTPDetailOrderPresenter implements OutputPort<DetailOrder.DetailOrderResponseDTO>{
   private _view: DetailOrderHTTPView;
 
   get view(): DetailOrderHTTPView {
     return this._view;
   } 
 
-  public show(response: DetailOrderResponseDTO) {
+  public show(response: DetailOrder.DetailOrderResponseDTO) {
     if (response.failures && response.failures.invalidOrderId) {
       this._view = {
         statusCode: 404,

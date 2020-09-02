@@ -1,7 +1,7 @@
 import { Entity } from '@entities';
-import { Mapper } from 'src/adapters/gateways/mappers';
+import { Gateways } from '@adapters';
 
-export default abstract class SQLMapper implements Mapper {
+export default abstract class SQLMapper implements Gateways.Mapper {
   private _dbName: string;
   private _scope: any;
   protected _db: any;

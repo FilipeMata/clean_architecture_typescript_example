@@ -1,4 +1,4 @@
-import { AddressDTO } from '@aplication/dtos';
+import { AddressDTO } from '@useCases/common/dtos';
 
 interface LineItemDTO {
   productId: string,

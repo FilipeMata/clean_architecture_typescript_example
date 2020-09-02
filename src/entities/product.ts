@@ -1,7 +1,3 @@
-/**
- * @author: Filipe Mata
- */
-
 import { Entity, UniqueEntityID } from '@entities';
 import { Result } from '@shared/Result';
 

@@ -1,4 +1,4 @@
-import { GenerateOrder } from '@aplication/useCases'
+import { GenerateOrder } from '@useCases'
 
 type HTTPDetailOrderInput = {
   params: any,

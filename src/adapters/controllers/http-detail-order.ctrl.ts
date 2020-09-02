@@ -1,4 +1,4 @@
-import { DetailOrder } from '@aplication/useCases'
+import { DetailOrder } from '@useCases'
 
 type APIDetailOrderInput = {
   params: any,

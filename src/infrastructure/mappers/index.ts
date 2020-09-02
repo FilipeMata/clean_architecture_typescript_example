@@ -1,5 +1,4 @@
-export * as RepositoryMapper from './old/repository.mapper';
-export * as sqlCustomerMapper from './old/sql-customer.mapper.old';
-export * as sqlOrderMapper from './sql-order.mapper';
-export * as sqlLineItemMapper from './sql-line-item.mapper';
-export * as sqlProductMapper from './sql-product.mapper';
+export * as SqlCustomerMapper from './sql-customer.mapper';
+export * as SqlOrderMapper from './sql-order.mapper';
+export * as SqlLineItemMapper from './sql-line-item.mapper';
+export * as SqlProductMapper from './sql-product.mapper';

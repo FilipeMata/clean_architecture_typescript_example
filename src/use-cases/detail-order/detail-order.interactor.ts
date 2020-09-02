@@ -1,6 +1,5 @@
 import { UniqueEntityID, Product, LineItem, Customer } from '@entities';
-import OutputPort from '../../output-port';
-import { DetailOrder } from '@aplication/useCases';
+import { DetailOrder, OutputPort } from '@useCases';
 
 export class DetailOrderInteractor {
   private _gateway: DetailOrder.DetailOrderGateway;

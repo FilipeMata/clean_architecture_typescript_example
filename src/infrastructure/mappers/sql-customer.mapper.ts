@@ -1,5 +1,5 @@
 import SQLMapper from './sql-mapper';
-import { Customer, UniqueEntityID,  Address, IAddressProps } from '@entities';
+import { Customer, UniqueEntityID,  Address } from '@entities';
 
 export default class SqlCustomerMapper extends SQLMapper {
   constructor(db: any) {

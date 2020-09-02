@@ -24,17 +24,11 @@
       "@entities": [
         "src/entities/index"
       ],
-      "@aplication/useCases": [
-        "src/application/use-cases/index"
+      "@useCases": [
+        "src/use-cases/index"
       ],
-      "@aplication/gateways": [
-        "src/application/gateways/index"
-      ],
-      "@aplication/dtos": [
-        "src/application/dtos/index"
-      ],
-      "@aplication/dtos/*": [
-        "src/application/dtos/*"
+      "@useCases/common/*": [
+        "src/use-cases/common/*"
       ],
       "@shared/*": [
         "src/shared/*"

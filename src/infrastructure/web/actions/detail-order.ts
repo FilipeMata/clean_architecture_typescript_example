@@ -1,16 +1,13 @@
 import * as Adapters from '@adapters';
-import * as UseCases from '@aplication/useCases';
+import { DetailOrder } from '@useCases';
 
 import { Request, Response } from 'express';
-
-const DetailOrder = UseCases.DetailOrder;
-const DetailOrderInteractor = DetailOrder.DetailOrderInteractor;
  
 export default async function detailOrder(req: Request, res: Response) {
   const detailOrderPresenter = new Adapters.Presenters.HTTPDetailOrderPresenter();
   const detailOrderGateway = new Adapters.Gateways.DeatailOrderGateway();
 
-  const detailOrderInteractor = new DetailOrderInteractor(
+  const detailOrderInteractor = new DetailOrder.DetailOrderInteractor(
     detailOrderGateway,
     detailOrderPresenter
   );
