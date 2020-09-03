@@ -41,7 +41,7 @@ export class GerencianetInvoiceGateway implements Gateways.InvoiceGateway {
       .oneStep([], body)
       .then(function (data: any) {
         data = data.data;
-        console.log(data);
+        
         return {
           invoiceNumber: data.charge_id,
           invoiceUrl: data.link

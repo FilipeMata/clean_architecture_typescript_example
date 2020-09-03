@@ -53,7 +53,6 @@ export default class SqlOrderMapper extends SQLMapper {
   }
 
   public toPersistence(order: Order): any {
-    console.log('$$$$$$$$$$$$$', order.invoiceNumber, order.invoiceUrl);
     return {
       id: order.id.toValue(),
       customer_id: order.buyer.id.toValue(),
@@ -86,6 +85,7 @@ export default class SqlOrderMapper extends SQLMapper {
     }
 
     const row = await this._db.findOne(options);
+    
     if(!row) {
       return null;
     }

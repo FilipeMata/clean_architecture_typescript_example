@@ -15,22 +15,31 @@ export class HTTPDetailOrderPresenter implements OutputPort<DetailOrder.DetailOr
   } 
 
   public show(response: DetailOrder.DetailOrderResponseDTO) {
-    if (response.failures) {
+    if (response.success) {
       this._view = {
-        statusCode: 500,
-        message: 'Unexpecet server error'
+        statusCode: 200,
+        body: {
+          data: response.success
+        }
+      };
+
+      return;
+    }
+
+    if (response.failures.includes('order_not_found')) {
+      this._view = {
+        statusCode: 404,
+        message: 'Not found'
       };
       
       return;
     }
 
     this._view = {
-      statusCode: 200,
-      body: {
-        data: response.success
-      }
+      statusCode: 500,
+      message: 'Unexpecet server error'
     };
-
-    return;
+      
+    return;  
   }
 };
