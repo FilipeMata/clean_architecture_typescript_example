@@ -18,7 +18,7 @@ export default class BaseRepository implements IRepository {
   protected uow: UnitOfWork | undefined;
   protected identityMap: IdentityMap
 
-  constructor() {
+  constructor(...args: any[]) {
     this.identityMap = new IdentityMap();
   }
 

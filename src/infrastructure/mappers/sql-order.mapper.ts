@@ -53,6 +53,7 @@ export default class SqlOrderMapper extends SQLMapper {
   }
 
   public toPersistence(order: Order): any {
+    console.log('$$$$$$$$$$$$$', order.invoiceNumber, order.invoiceUrl);
     return {
       id: order.id.toValue(),
       customer_id: order.buyer.id.toValue(),
@@ -140,11 +141,11 @@ export default class SqlOrderMapper extends SQLMapper {
 
     await this._lineItemMapper
       .deleteByCriteria({
-        order_id: order.id
+        order_id: order.id.toValue()
       });
 
     await this._lineItemMapper
-      .insertCollection(order.lineItems);
+      .insertCollection(order.lineItems, order.id);
   }
 
   /**
@@ -153,7 +154,7 @@ export default class SqlOrderMapper extends SQLMapper {
   public async delete(order: Order): Promise<void> {
     await this._lineItemMapper
       .deleteByCriteria({
-        order_id: order.id
+        order_id: order.id.toValue
       });
     
     await super.delete(order);

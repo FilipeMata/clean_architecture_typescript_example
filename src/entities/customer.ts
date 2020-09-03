@@ -13,7 +13,7 @@ export interface ICustomer {
 export class Customer extends Entity<ICustomer>{
 
     get document(): string {
-        return this.props.name;
+        return this.props.document;
     }
 
     get name(): string {

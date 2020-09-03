@@ -49,6 +49,7 @@ export class GetOrderDataInteractor {
     try {
       order = await this._gateway
         .findOrderById(new UniqueEntityID(orderId));
+      console.log('****************', order.buyer.document);
     } catch (err) {
       return Result.fail<OrderData>([
         'unexpected_failure'

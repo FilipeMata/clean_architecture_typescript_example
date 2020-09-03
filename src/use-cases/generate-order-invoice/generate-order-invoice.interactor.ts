@@ -2,7 +2,7 @@ import { GenerateOrderInvoice, OutputPort } from '@useCases';
 import { GetOrderDataInteractor } from '@useCases/common/get-order-data' 
 import { UniqueEntityID, Order } from '@entities';
 
-class GenerateOrderInvoiceInteractor {
+export class GenerateOrderInvoiceInteractor {
   private _getOrderDataInteractor: GetOrderDataInteractor;
   private _gateway: GenerateOrderInvoice.GenerateOrderInvoiceGateway;
   private _presenter: OutputPort<GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO>;
@@ -33,10 +33,10 @@ class GenerateOrderInvoiceInteractor {
 
     try {
       this._gateway.startTransaction();
-      const { invoiceNumber, invoiceUrl } = await this._gateway
+      const invoiceData = await this._gateway
         .generateInvoice(orderDataResult.value);
 
-      order.invoice(invoiceNumber, invoiceUrl);
+      order.invoice(invoiceData.invoiceNumber, invoiceData.invoiceUrl);
 
       this._gateway.save(order);
       this._gateway.endTransaction();
@@ -53,5 +53,3 @@ class GenerateOrderInvoiceInteractor {
     }
   }
 }
-
-export { GenerateOrderInvoiceInteractor };

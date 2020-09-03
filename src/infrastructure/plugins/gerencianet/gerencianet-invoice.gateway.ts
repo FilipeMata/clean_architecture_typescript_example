@@ -22,13 +22,13 @@ export class GerencianetInvoiceGateway implements Gateways.InvoiceGateway {
     const body = {
       payment: {
         banking_billet: {
-          expire_at: '2019-08-30',
+          expire_at: '2020-10-30',
           customer: {
             name: orderData.buyer.name,
             email: orderData.buyer.email,
             cpf: orderData.buyer.document,
             birth: orderData.buyer.birthdate,
-            phone_number: orderData.buyer.cellphone
+            phone_number: `${orderData.buyer.cellphone}`
           }
         }
       },
@@ -39,11 +39,12 @@ export class GerencianetInvoiceGateway implements Gateways.InvoiceGateway {
     
     return gerencianet
       .oneStep([], body)
-      .then((data: any) {
+      .then(function (data: any) {
+        data = data.data;
         console.log(data);
         return {
           invoiceNumber: data.charge_id,
-          invoiceUrl: data.link;
+          invoiceUrl: data.link
         }
       })
       .catch((err: any) => {
