@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.DataTypes.UUID,
         allowNull: false
       },
-      invoice_numer: {
+      invoice_number: {
         type: Sequelize.DataTypes.STRING,
         unique: true,
         allowNull: true
