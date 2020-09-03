@@ -12,16 +12,12 @@ module.exports = {
         type: Sequelize.DataTypes.UUID,
         allowNull: false
       },
-      charge_id: {
-        type: Sequelize.DataTypes.INTEGER,
+      invoice_numer: {
+        type: Sequelize.DataTypes.STRING,
         unique: true,
         allowNull: true
       },
-      payment_method: {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: true
-      },
-      charge_status: {
+      invoice_url: {
         type: Sequelize.DataTypes.STRING,
         allowNull: true
       },
@@ -39,7 +35,7 @@ module.exports = {
       return queryInterface.addIndex('orders', ['customer_id']);
     })
     .then(() => {
-      return queryInterface.addIndex('orders', ['charge_id']);
+      return queryInterface.addIndex('orders', ['invoice_number']);
     })
   },
   down: (queryInterface) => {

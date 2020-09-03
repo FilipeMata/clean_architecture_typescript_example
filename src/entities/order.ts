@@ -1,4 +1,4 @@
-import { Address, LineItem, ILineItemProps, Charge, Customer }  from '@entities';
+import { Address, LineItem, ILineItemProps, Customer }  from '@entities';
 import { Entity, UniqueEntityID } from '@entities';
 import { Result } from '@shared/Result';
 
@@ -7,8 +7,7 @@ interface IOrderProps {
     lineItems?: Array<LineItem>;
     buyer: Customer;
     invoiceNumber?: string,
-    invoiceUrl?: string,
-    charge?: Charge;
+    invoiceUrl?: string;
 };
 
 interface IOrderBuildProps {
@@ -26,6 +25,14 @@ export class Order extends Entity<IOrderProps>{
         return this.props.billingAddress;
     }
 
+    get invoiceNumber(): string {
+        return this.props.invoiceNumber;
+    }
+
+    get invoiceUrl(): string {
+        return this.props.invoiceUrl;
+    }
+ 
     get lineItems(): Array<LineItem> {        
         return this.props.lineItems || [];
     }
@@ -38,17 +45,9 @@ export class Order extends Entity<IOrderProps>{
         return this.props.buyer;
     }
 
-    get charge (): Charge | undefined {
-        return this.props.charge;
-    }
-
     private constructor(props: IOrderProps, id?: UniqueEntityID) {
         super(props, id);
     }  
-
-    public linkCharge(ch: Charge): void {
-        this.props.charge = ch;
-    }
 
     public invoice(invoiceNumber: string, invoiceUrl?: string) {
         this.props.invoiceNumber = invoiceNumber;

@@ -8,6 +8,8 @@ import applyMixings  from '@shared/applyMixings';
 
 export { Mapper, Mappers } from './mappers';
 export { MapperRegistry } from './mapper-registry';
+export { InvoiceGateway } from './services/invoice.service';
+export { OrderData, InvoiceData } from '@useCases/common/dtos'
 
 export const GetOrderDataGateway = MixOrderRepository(BaseRepository);
 export const GenerateOrderGateway = MixCustomerRepositoy(MixProductRepository(BaseRepository));

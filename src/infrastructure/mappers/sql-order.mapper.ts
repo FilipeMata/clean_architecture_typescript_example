@@ -1,6 +1,6 @@
 import SQLMapper from './sql-mapper';
 import { Customer, UniqueEntityID } from '@entities';
-import { Address, IAddressProps, LineItem, Order, Charge } from '@entities';
+import { Address, IAddressProps, LineItem, Order } from '@entities';
 import SqlLineItemMapper from './sql-line-item.mapper';
 import SqlCustomerMapper from './sql-customer.mapper';
 
@@ -23,12 +23,6 @@ export default class SqlOrderMapper extends SQLMapper {
   }
 
   public toDomain(orderRowDTO: any): Order {
-    const chargeProps = {
-      number: orderRowDTO.charge_id,
-      paymentMethod: orderRowDTO.payment_method,
-      status: orderRowDTO.charge_status
-    };
-
     const addressProps: IAddressProps = orderRowDTO.billing_address;
 
     let lineItems: Array<LineItem> = [];
@@ -48,7 +42,8 @@ export default class SqlOrderMapper extends SQLMapper {
       billingAddress: Address.build(addressProps).value,
       buyer: buyer,
       lineItems: lineItems,
-      charge: orderRowDTO.charge_id ? Charge.build(chargeProps).value : undefined
+      invoiceNumber: orderRowDTO.invoice_number,
+      invoiceUrl: orderRowDTO.invoice_url
     };
 
     const orderId = new UniqueEntityID(orderRowDTO.id);
@@ -61,9 +56,8 @@ export default class SqlOrderMapper extends SQLMapper {
     return {
       id: order.id.toValue(),
       customer_id: order.buyer.id.toValue(),
-      charge_id: order.charge ? +order.charge.toValue().number : null,
-      payment_method: order.charge ? order.charge.toValue().paymentMethod : null,
-      charge_status: order.charge ? order.charge.toValue().status : null,
+      invoice_number: order.invoiceNumber,
+      invoice_url: order.invoiceUrl,
       billing_address: order.billingAddress.toValue()
     }
   }

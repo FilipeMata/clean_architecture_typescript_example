@@ -6,6 +6,5 @@ export interface GenerateOrderInvoiceGateway {
   endTransaction(): Promise<void>,
   findOrderById(orderId: UniqueEntityID): Promise<Order>;
   generateInvoice(orderData: OrderData): Promise<InvoiceData>;
-  cancelInvoice(invoiceNumber: string): Promise<void>;
   save(order: Order): Promise<void>;
 }

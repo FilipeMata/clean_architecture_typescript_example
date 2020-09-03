@@ -11,6 +11,7 @@ interface CustomerDTO {
   name: string;
   cellphone: string;
   email: string;
+  birthdate: string;
 }
 
 interface LineItemDTO {

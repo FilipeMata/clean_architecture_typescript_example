@@ -13,16 +13,12 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.UUID,
       allowNull: false
     },
-    charge_id: {
-      type: DataTypes.INTEGER,
+    invoice_number: {
+      type: DataTypes.STRING,
       unique: true,
       allowNull: true
     },
-    payment_method: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    charge_status: {
+    invoice_url: {
       type: DataTypes.STRING,
       allowNull: true
     },

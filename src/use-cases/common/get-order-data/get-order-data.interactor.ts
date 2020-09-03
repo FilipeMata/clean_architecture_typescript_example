@@ -39,6 +39,7 @@ export class GetOrderDataInteractor {
       email: customer.email,
       cellphone: customer.cellphone,
       address: customer.address.toValue(),
+      birthdate: customer.birthdate.toString()
     }
   }
 

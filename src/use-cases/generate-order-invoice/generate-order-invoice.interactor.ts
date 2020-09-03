@@ -39,8 +39,6 @@ class GenerateOrderInvoiceInteractor {
       });
     };
 
-    let invoiceNumber;
-
     try {
       this._gateway.startTransaction();
       const { invoiceNumber, invoiceUrl } = await this._gateway
@@ -56,8 +54,6 @@ class GenerateOrderInvoiceInteractor {
       });
 
     } catch(err) {
-      await this._cancelInvoice(invoiceNumber);
-
       this._presenter.show({
         success: false,
         failures: ['unexpected_failure']
