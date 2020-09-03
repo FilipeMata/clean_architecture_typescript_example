@@ -1,76 +1,31 @@
-import { UniqueEntityID, Product, LineItem, Customer } from '@entities';
 import { DetailOrder, OutputPort } from '@useCases';
+import { GetOrderDataInteractor } from '@useCases/common/get-order-data';
 
 export class DetailOrderInteractor {
-  private _gateway: DetailOrder.DetailOrderGateway;
+  private _getOrderDataInteractor: GetOrderDataInteractor;
   private _presenter: OutputPort<DetailOrder.DetailOrderResponseDTO>;
 
   constructor(
-    gateway: DetailOrder.DetailOrderGateway,
+    getOrderDataInteractor: GetOrderDataInteractor,
     presenter: OutputPort<DetailOrder.DetailOrderResponseDTO>
   ) {
-    this._gateway = gateway;
+    this._getOrderDataInteractor = getOrderDataInteractor;
     this._presenter = presenter;
   }
 
-  private _mapProduct(product: Product) {
-    return {
-      name: product.name,
-      description: product.description,
-      price: product.price
-    };
-  }
+  public async execute(orderId: string) {    
+    const orderDataResult = await this._getOrderDataInteractor
+      .execute(orderId);
 
-  private _mapLineItem(lineItems: LineItem[]) {
-    const itemsDTO = [];
-    for (const lineItem of lineItems) {
-      const item = {
-        product: this._mapProduct(lineItem.product),
-        quantity: lineItem.quantity
-      };
-
-      itemsDTO.push(item);
+    if (!orderDataResult.succeeded) {
+      return this._presenter.show({
+        failures: orderDataResult.errors
+      });
     }
 
-    return itemsDTO;
-  }
-
-  private _mapCustomer(customer: Customer) {
-    return {
-      name: customer.name,
-      document: customer.document,
-      email: customer.email,
-      cellphone: customer.cellphone,
-      address: customer.address.toValue(),
-    }
-  }
-
-  public async execute(orderId: string) {
-    let response: DetailOrder.DetailOrderResponseDTO = {};
-
-    const order = await this._gateway
-      .findOrderById(new UniqueEntityID(orderId));
-
-    if (!order) {
-      response.failures = {
-        invalidOrderId: true
-      };
-
-      return this._presenter.show(response);
-    }
-
-    response.success = {
-      id: order.id.toString(),
-      billingAddress: order.billingAddress.toValue(),
-      lineItems: this._mapLineItem(order.lineItems),
-      buyer: this._mapCustomer(order.buyer)
-    };
-
-    if (!!order.charge) {
-      response.success.charge = order.charge.toValue()
-    }
-
-    return this._presenter.show(response);
+    return this._presenter.show({
+      success: orderDataResult.value
+    });
   }
 }
 

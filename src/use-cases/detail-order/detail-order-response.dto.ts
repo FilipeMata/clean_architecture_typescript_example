@@ -1,43 +1,7 @@
-import { AddressDTO } from '@useCases/common/dtos';
-
-export interface DetailOrderResponseProductDTO {
-  name: string,
-  description: string,
-  price: number
-};
-
-export interface DetailOrderResponseCustomerDTO {
-  document: string;
-  name: string;
-  cellphone: string;
-  email: string;
-}
-
-export interface DetailOrderResponseLineItemDTO {
-  product: DetailOrderResponseProductDTO,
-  quantity: number
-};
-
-export interface DetailOrderResponseChargeDTO {
-  number: string;
-  paymentMethod: string;
-  status: string;
-};
-
-interface DetailOrderSuccess {
-  id: string,
-  billingAddress: AddressDTO,
-  lineItems: Array<DetailOrderResponseLineItemDTO>
-  buyer: DetailOrderResponseCustomerDTO,
-  charge?: DetailOrderResponseChargeDTO
-};
-
-interface DetailOrderFailures {
-  invalidOrderId?: boolean
-}
+import { OrderData } from '@useCases/common/dtos';
 
 export interface DetailOrderResponseDTO {
-  success?: DetailOrderSuccess,
-  failures?: DetailOrderFailures
+  success?: OrderData,
+  failures?: string[]
 };
 

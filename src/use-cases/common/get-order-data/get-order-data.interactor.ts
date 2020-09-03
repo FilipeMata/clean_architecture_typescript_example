@@ -1,0 +1,74 @@
+import { UniqueEntityID, Product, LineItem, Customer, Order } from '@entities';
+import { GetOrderData } from '@useCases';
+import { OrderData } from '@useCases/common/dtos';
+import { Result } from '@shared/Result';
+
+export class GetOrderDataInteractor {
+  private _gateway: GetOrderData.GetOrderDataGateway;
+
+  constructor(gateway: GetOrderData.GetOrderDataGateway) {
+    this._gateway = gateway;
+  }
+
+  private _mapProduct(product: Product) {
+    return {
+      name: product.name,
+      description: product.description,
+      price: product.price
+    };
+  }
+
+  private _mapLineItem(lineItems: LineItem[]) {
+    const itemsDTO = [];
+    for (const lineItem of lineItems) {
+      const item = {
+        product: this._mapProduct(lineItem.product),
+        quantity: lineItem.quantity
+      };
+
+      itemsDTO.push(item);
+    }
+
+    return itemsDTO;
+  }
+
+  private _mapCustomer(customer: Customer) {
+    return {
+      name: customer.name,
+      document: customer.document,
+      email: customer.email,
+      cellphone: customer.cellphone,
+      address: customer.address.toValue(),
+    }
+  }
+
+  public async execute(orderId: string): Promise<Result<OrderData>> {
+    let order: Order;
+
+    try {
+      order = await this._gateway
+        .findOrderById(new UniqueEntityID(orderId));
+    } catch (err) {
+      return Result.fail<OrderData>([
+        'unexpected_failure'
+      ]);
+    }
+
+    if (!order) {
+      return Result.fail<OrderData>([
+        'invalid_order'
+      ]);
+    }
+
+    const response: OrderData = {
+      id: order.id.toString(),
+      billingAddress: order.billingAddress.toValue(),
+      lineItems: this._mapLineItem(order.lineItems),
+      buyer: this._mapCustomer(order.buyer)
+    };
+
+    return Result.success<OrderData>(response);
+  }
+}
+
+
