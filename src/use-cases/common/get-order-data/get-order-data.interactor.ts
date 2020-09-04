@@ -43,16 +43,22 @@ export class GetOrderDataInteractor {
     }
   }
 
-  public async execute(orderId: string): Promise<Result<OrderData>> {
+  public async execute(orderRef: string | Order): Promise<Result<OrderData>> {
     let order: Order;
 
-    try {
-      order = await this._gateway
-        .findOrderById(new UniqueEntityID(orderId));
-    } catch (err) {
-      return Result.fail<OrderData>([
-        'unexpected_failure'
-      ]);
+    if (orderRef instanceof Order) {
+      order = orderRef;
+    }
+
+    if (!order && typeof orderRef === 'string') {
+      try {
+        order = await this._gateway
+          .findOrderById(new UniqueEntityID(orderRef));
+      } catch (err) {
+        return Result.fail<OrderData>([
+          'unexpected_failure'
+        ]);
+      }
     }
 
     if (!order) {

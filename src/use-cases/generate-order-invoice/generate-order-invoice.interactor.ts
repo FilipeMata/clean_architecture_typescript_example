@@ -1,6 +1,6 @@
 import { GenerateOrderInvoice, OutputPort } from '@useCases';
 import { GetOrderDataInteractor } from '@useCases/common/get-order-data' 
-import { UniqueEntityID, Order } from '@entities';
+import { UniqueEntityID } from '@entities';
 
 export class GenerateOrderInvoiceInteractor {
   private _getOrderDataInteractor: GetOrderDataInteractor;
@@ -22,7 +22,7 @@ export class GenerateOrderInvoiceInteractor {
       .findOrderById(new UniqueEntityID(orderId));
 
     const orderDataResult = await this._getOrderDataInteractor
-      .execute(orderId);
+      .execute(order);
     
     if (!orderDataResult.succeeded) {
       return this._presenter.show({
