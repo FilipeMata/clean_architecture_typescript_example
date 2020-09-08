@@ -17,14 +17,6 @@ class GenerateOrderInvoiceInteractor {
     this._presenter = presenter;
   }
 
-  private async _cancelInvoice(invoiceNumber: string) {
-    try {
-      this._gateway.cancelInvoice(invoiceNumber)
-    } catch(err) {
-      console.log(err);
-    }
-  }
-
   public async execute(orderId: string) {
     const order = await this._gateway
       .findOrderById(new UniqueEntityID(orderId));

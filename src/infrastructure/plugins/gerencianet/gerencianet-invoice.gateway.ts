@@ -5,13 +5,21 @@ const credentials = require('./credentials');
 
 export class GerencianetInvoiceGateway implements Gateways.InvoiceGateway {
   public async generateInvoice(orderData: Gateways.OrderData): Promise<Gateways.InvoiceData> {
-    var options = {
+    const options = {
       client_id: credentials.client_id,
       client_secret: credentials.client_secret,
       sandbox: credentials.sandbox
     }
     
-    var body = {
+    const items = orderData.lineItems.map((item) => {
+      return {
+        name: item.product.name,
+        value: item.product.price,
+        amount: item.quantity
+      };
+    });
+
+    const body = {
       payment: {
         banking_billet: {
           expire_at: '2019-08-30',
@@ -24,24 +32,23 @@ export class GerencianetInvoiceGateway implements Gateways.InvoiceGateway {
           }
         }
       },
-    
-      items: [{
-        name: 'Product 1',
-        value: 1000,
-        amount: 2
-      }],
-      shippings: [{
-        name: 'Default Shipping Cost',
-        value: 100
-      }]
+      items: items
     }
     
     var gerencianet = new Gerencianet(options);
     
-    gerencianet
+    return gerencianet
       .oneStep([], body)
-      .then(console.log)
-      .catch(console.log)
-      .done();
+      .then((data: any) {
+        console.log(data);
+        return {
+          invoiceNumber: data.charge_id,
+          invoiceUrl: data.link;
+        }
+      })
+      .catch((err: any) => {
+        console.log(err);
+        throw new Error('fail_to_generate_invoice');
+      });
   }
 }
