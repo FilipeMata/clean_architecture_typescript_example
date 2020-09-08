@@ -6,6 +6,8 @@ interface IOrderProps {
     billingAddress: Address;
     lineItems?: Array<LineItem>;
     buyer: Customer;
+    invoiceNumber?: string,
+    invoiceUrl?: string,
     charge?: Charge;
 };
 
@@ -13,7 +15,8 @@ interface IOrderBuildProps {
     billingAddress: Address;
     lineItems?: Array<ILineItemProps>;
     buyer: Customer;
-    charge?: Charge;
+    invoiceNumber?: string,
+    invoiceUrl?: string
 };
 
 export class Order extends Entity<IOrderProps>{
@@ -47,13 +50,20 @@ export class Order extends Entity<IOrderProps>{
         this.props.charge = ch;
     }
 
+    public invoice(invoiceNumber: string, invoiceUrl?: string) {
+        this.props.invoiceNumber = invoiceNumber;
+        this.props.invoiceUrl = invoiceUrl;
+    }
+
     public static build(buildProps: IOrderBuildProps, id?: UniqueEntityID): Result<Order> {
     /** some domain validations here **/
         
         const props: IOrderProps = {
             billingAddress: buildProps.billingAddress,
             buyer: buildProps.buyer,
-            lineItems: []
+            lineItems: [],
+            invoiceNumber: buildProps.invoiceNumber,
+            invoiceUrl: buildProps.invoiceUrl
         };
 
         if (!buildProps.lineItems) {

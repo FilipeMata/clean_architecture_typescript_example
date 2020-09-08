@@ -1,5 +1,6 @@
 import { GenerateOrderInvoice, OutputPort } from '@useCases';
 import { GetOrderDataInteractor } from '@useCases/common/get-order-data' 
+import { UniqueEntityID, Order } from '@entities';
 
 class GenerateOrderInvoiceInteractor {
   private _getOrderDataInteractor: GetOrderDataInteractor;
@@ -16,7 +17,18 @@ class GenerateOrderInvoiceInteractor {
     this._presenter = presenter;
   }
 
+  private async _cancelInvoice(invoiceNumber: string) {
+    try {
+      this._gateway.cancelInvoice(invoiceNumber)
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
   public async execute(orderId: string) {
+    const order = await this._gateway
+      .findOrderById(new UniqueEntityID(orderId));
+
     const orderDataResult = await this._getOrderDataInteractor
       .execute(orderId);
     
@@ -27,8 +39,30 @@ class GenerateOrderInvoiceInteractor {
       });
     };
 
-    const invoiceData = await this._gateway
-      .generateInvoice(orderDataResult.value);
+    let invoiceNumber;
+
+    try {
+      this._gateway.startTransaction();
+      const { invoiceNumber, invoiceUrl } = await this._gateway
+        .generateInvoice(orderDataResult.value);
+
+      order.invoice(invoiceNumber, invoiceUrl);
+
+      this._gateway.save(order);
+      this._gateway.endTransaction();
+
+      this._presenter.show({
+        success: true
+      });
+
+    } catch(err) {
+      await this._cancelInvoice(invoiceNumber);
+
+      this._presenter.show({
+        success: false,
+        failures: ['unexpected_failure']
+      });
+    }
   }
 }
 

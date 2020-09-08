@@ -1,13 +1,13 @@
 import { OrderData, InvoiceData } from '@useCases/common/dtos'
 
-export default interface InvoiceService {
+export interface InvoiceGateway {
   generateInvoice(orderData: OrderData): Promise<InvoiceData>
 }
 
-export class InvoiceGateway implements InvoiceService {
-  private _invoiceService: InvoiceService;
+export default class InvoiceService implements InvoiceGateway {
+  private _invoiceService: InvoiceGateway;
 
-  constructor(invoiceService: InvoiceService) {
+  constructor(invoiceService: InvoiceGateway) {
     this._invoiceService = invoiceService
   }
 
