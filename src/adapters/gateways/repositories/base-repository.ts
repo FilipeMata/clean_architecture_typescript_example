@@ -1,7 +1,7 @@
 import { Entity, UniqueEntityID } from '@entities';
 import IdentityMap from '../identity-map';
-import { MapperRegistry } from '../mapper-registry';
-import { UnitOfWork } from '../unit-of-work';4
+import { TransactionalDataMappers } from '../mappers';
+import { UnitOfWork } from '../unit-of-work';
 
 export interface IRepository {
   startTransaction(): void;
@@ -17,20 +17,22 @@ export interface IRepository {
 export default class BaseRepository implements IRepository {
   protected uow: UnitOfWork | undefined;
   protected identityMap: IdentityMap
+  private _dataMappers: TransactionalDataMappers
 
   constructor(...args: any[]) {
     this.identityMap = new IdentityMap();
+    this._dataMappers = args[0].dataMappers;
   }
 
   public startTransaction() {
-    this.uow = new UnitOfWork(this.identityMap);
+    this.uow = new UnitOfWork(this.identityMap, this._dataMappers);
   }
 
   public async abstractFind(entityName: string, id: UniqueEntityID): Promise<Entity<any>> {
     let entity = this.identityMap.load(entityName, id);
 
     if (!entity) {
-      entity = await MapperRegistry.getEntiyMapper(entityName).find({ id: id.toValue() });
+      entity = await this._dataMappers.getEntityMapper(entityName).find({ id: id.toValue() });
     }
 
     if(!entity) {
@@ -53,7 +55,7 @@ export default class BaseRepository implements IRepository {
       return loaded;
     }
 
-    let entities = await MapperRegistry.getEntiyMapper(entityName).findAll(criteria);
+    let entities = await this._dataMappers.getEntityMapper(entityName).findAll(criteria);
     
     for (let i = 0; i < entities.length; i++) {
       entities[i] = reload(entities[i]);

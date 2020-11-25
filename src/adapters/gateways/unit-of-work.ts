@@ -1,7 +1,7 @@
 import { Entity } from '@entities';
 import Guard from '@shared/guard';
-import { MapperRegistry } from './mapper-registry';
 import IdentityMap from './identity-map';
+import { TransactionalDataMappers } from './mappers';
 
 interface IUnitOfWork {
   registerNew(e: Entity<any>): void;
@@ -16,12 +16,14 @@ export class UnitOfWork implements IUnitOfWork {
   private _dirtyObjects: Entity<any>[];
   private _removedObjects: Entity<any>[];
   private _identityMap: IdentityMap;
+  private _dataMappers: TransactionalDataMappers;
 
-  constructor(identityMap: IdentityMap) {
+  constructor(identityMap: IdentityMap, dataMappers: TransactionalDataMappers) {
     this._newObjects = [];
     this._dirtyObjects = [];
     this._removedObjects = [];
     this._identityMap = identityMap;
+    this._dataMappers = dataMappers;
   }
 
   private _isOneOf(obj: Entity<any>, entities: Entity<any>[]) {
@@ -106,25 +108,32 @@ export class UnitOfWork implements IUnitOfWork {
 
   private async _insertNew() {
     for (const newObject of this._newObjects) {
-      MapperRegistry.getEntiyMapper(newObject.constructor.name).insert(newObject);
+      await this._dataMappers.getEntityMapper(newObject.constructor.name).insert(newObject);
     }
   }
 
   private async _updateDirty() {
     for (const dirtyObject of this._dirtyObjects) {
-      MapperRegistry.getEntiyMapper(dirtyObject.constructor.name).update(dirtyObject);
+      await this._dataMappers.getEntityMapper(dirtyObject.constructor.name).update(dirtyObject);
     }
   }
 
   private async _deleteRemoved() {
     for (const removedObject of this._removedObjects) {
-      MapperRegistry.getEntiyMapper(removedObject.constructor.name).delete(removedObject);
+      await this._dataMappers.getEntityMapper(removedObject.constructor.name).delete(removedObject);
     }
   }
 
   public async commit() {
-    await this._insertNew();
-    await this._updateDirty();
-    await this._deleteRemoved();
+    try {
+      await this._dataMappers.startTransaction();
+      await this._insertNew();
+      await this._updateDirty();
+      await this._deleteRemoved();
+      await this._dataMappers.commitTransaction();
+    } catch (err) {
+      await this._dataMappers.rollbackTransaction();
+      throw err;
+    }
   }
 }

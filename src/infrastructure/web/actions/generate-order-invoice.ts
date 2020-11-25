@@ -2,13 +2,19 @@ import { GerencianetInvoiceGateway } from '@infrastructure/plugins/gerencianet/g
 import { Gateways, Presenters, Controllers } from '@adapters';
 import { GenerateOrderInvoice, GetOrderData } from '@useCases';
 import { Request, Response } from 'express';
+import { SequelizeDataMappers } from '@infrastructure/plugins/sequelize-data-mappers'
+const models = require('./../../db/models');
+
+const dataMappers = new SequelizeDataMappers(models);
 
 export default async function generateOrder(req: Request, res: Response) {
-  const getOrderDataGateway = new Gateways.GetOrderDataGateway();
+  const getOrderDataGateway = new Gateways.GetOrderDataGateway({
+    dataMappers: dataMappers
+  });
   const getOrderDataInteractor = new GetOrderData.GetOrderDataInteractor(getOrderDataGateway);
   const gerencianetInvoiceGateway = new GerencianetInvoiceGateway();
   const generateOrderInvoicePresenter = new Presenters.HTTPGenerateOrderInvoicePresenter();
-  const generateOrderInvoiceGateway = new Gateways.GenerateOrderInvoiceGateway({ invoiceGateway: gerencianetInvoiceGateway });
+  const generateOrderInvoiceGateway = new Gateways.GenerateOrderInvoiceGateway({ invoiceGateway: gerencianetInvoiceGateway, dataMappers: dataMappers });
 
   const generateOrderInvoiceInteractor = new GenerateOrderInvoice.GenerateOrderInvoiceInteractor(
     getOrderDataInteractor,

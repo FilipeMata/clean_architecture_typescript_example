@@ -1,15 +1,16 @@
 import SQLMapper from './sql-mapper';
 import { LineItem, UniqueEntityID } from '@entities';
 import SqlProductMapper from './sql-product.mapper';
+import { Transaction } from 'sequelize';
 
 export default class SqlLineItemMapper extends SQLMapper {
   private _productMapper: SqlProductMapper;
   private _connections: any;
 
-  constructor(db: any) {
+  constructor(db: any, transaction: Transaction) {
     const dbName = 'store';
     const modelName = 'line_item';
-    super(dbName, modelName, db);
+    super(dbName, modelName, db, transaction);
     this._connections = db;
     this._productMapper = new SqlProductMapper(db);
   }

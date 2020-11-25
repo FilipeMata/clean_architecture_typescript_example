@@ -1,10 +1,14 @@
 import * as Adapters from '@adapters';
 import { GenerateOrder } from '@useCases';
 import { Request, Response } from 'express';
+import { SequelizeDataMappers } from '@infrastructure/plugins/sequelize-data-mappers'
+const models = require('./../../db/models');
  
 export default async function generateOrder(req: Request, res: Response) {
   const generateOrderPresenter = new Adapters.Presenters.HTTPGenerateOrderPresenter();
-  const generateOrderGateway = new Adapters.Gateways.GenerateOrderGateway();
+  const generateOrderGateway = new Adapters.Gateways.GenerateOrderGateway({
+    dataMappers: new SequelizeDataMappers(models)
+  });
 
   const generateOrderInteractor = new GenerateOrder.GenerateOrderInteractor(
     generateOrderGateway,

@@ -3,6 +3,7 @@ import { Customer, UniqueEntityID } from '@entities';
 import { Address, IAddressProps, LineItem, Order } from '@entities';
 import SqlLineItemMapper from './sql-line-item.mapper';
 import SqlCustomerMapper from './sql-customer.mapper';
+import { Transaction } from 'sequelize';
 
 export default class SqlOrderMapper extends SQLMapper {
   private _lineItemMapper: SqlLineItemMapper;
@@ -11,15 +12,15 @@ export default class SqlOrderMapper extends SQLMapper {
   private _productModel: any;
   private _customerMapper: SqlCustomerMapper;
 
-  constructor(db: any) {
+  constructor(db: any, transaction?: Transaction) {
     const dbName = 'store';
     const modelName = 'order';
-    super(dbName, modelName, db);
+    super(dbName, modelName, db, transaction);
     this._lineItemModel = db.store.line_item;
     this._customerModel = db.store.customer;
     this._productModel = db.store.product;
-    this._lineItemMapper = new SqlLineItemMapper(db);
-    this._customerMapper = new SqlCustomerMapper(db);
+    this._lineItemMapper = new SqlLineItemMapper(db, transaction);
+    this._customerMapper = new SqlCustomerMapper(db, transaction);
   }
 
   public toDomain(orderRowDTO: any): Order {

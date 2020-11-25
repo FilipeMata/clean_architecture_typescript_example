@@ -1,11 +1,12 @@
 import SQLMapper from './sql-mapper';
 import { Product, UniqueEntityID } from '@entities';
+import { Transaction } from 'sequelize';
 
 export default class SqlProductMapper extends SQLMapper {
-  constructor(db: any) {
+  constructor(db: any, transaction?: Transaction) {
     const dbName = 'store';
     const modelName = 'product';
-    super(dbName, modelName, db);;
+    super(dbName, modelName, db, transaction);;
   }
 
   public toDomain(productRowDTO: any): Product {

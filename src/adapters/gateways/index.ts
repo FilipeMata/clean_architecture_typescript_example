@@ -4,8 +4,7 @@ import MixProductRepository from './repositories/product.rep';
 import MixOrderRepository from './repositories/order.rep';
 import MixInvoiceService from './services/invoice.service';
 
-export { Mapper, Mappers } from './mappers';
-export { MapperRegistry } from './mapper-registry';
+export { DataMapper, TransactionalDataMappers } from './mappers';
 export { InvoiceGateway } from './services/invoice.service';
 export { OrderData, InvoiceData } from '@useCases/common/dtos'
 

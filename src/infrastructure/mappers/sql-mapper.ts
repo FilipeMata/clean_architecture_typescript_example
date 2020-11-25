@@ -1,26 +1,22 @@
 import { Entity } from '@entities';
 import { Gateways } from '@adapters';
+import { Transaction } from 'sequelize';
 
-export default abstract class SQLMapper implements Gateways.Mapper {
-  private _dbName: string;
-  private _scope: any;
+export default abstract class SQLMapper implements Gateways.DataMapper {
   protected _db: any;
   protected _models: any;
-  protected _transaction: any;
+  protected _transaction: Transaction | undefined;
   
-  constructor(dbName: string, modelName: string, connections: any, scope?: any) {
-    this._dbName = dbName;
+  constructor(dbName: string, modelName: string, connections: any, transaction?: Transaction) {
     this._db = connections[dbName][modelName];
-    this._scope = scope;
+    this._transaction = transaction;
   }
 
   public abstract toPersistence(entity: Entity<any>): any;
   public abstract toDomain(row: any): Entity<any>;
 
   protected async _getTransaction(): Promise<any> {
-    if (this._scope) {
-      return this._scope.getTransaction(this._dbName);
-    }
+    return this._transaction;
   }
 
   public async insert(entity: Entity<any>): Promise<void> {
@@ -28,8 +24,8 @@ export default abstract class SQLMapper implements Gateways.Mapper {
 
     return await this._db.create(
       this.toPersistence(entity), {
-      transaction: t
-    });
+        transaction: t
+      });
   }
 
   public async find(criteria: any): Promise<Entity<any>>{

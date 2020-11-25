@@ -11,10 +11,6 @@ import BaseRouter from './infrastructure/web/routes';
 import logger from '@shared/Logger';
 import { UniqueEntityIDGeneratorFactory } from '@entities';
 import UUIDEntityGenerator from '@infrastructure/plugins/uuid-id-generator';
-import * as Adapters from '@adapters';
-import mappers from '@infrastructure/plugins/mappers';
-
-const MapperRegistry = Adapters.Gateways.MapperRegistry;
 
 // init id factories
 
@@ -28,10 +24,6 @@ UniqueEntityIDGeneratorFactory
 
 console.log('Entity ID Generators initialized');
 
-MapperRegistry
-    .initialize(mappers);
-
-console.log('Mappers initialized');
 // Init express
 const app = express();
 

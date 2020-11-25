@@ -22,7 +22,7 @@ export class GenerateOrderInteractor {
       if(!billingAddressOrError.succeeded) {
         return this._presenter.show({
           success: false,
-          failures: ['missing_billing_address']
+          failures: ['missing_order_billing_address']
         });
       }
 

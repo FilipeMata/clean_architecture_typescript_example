@@ -1,6 +1,6 @@
 import { Entity } from '@entities'
 
-export interface Mapper {
+export interface DataMapper {
   find(criteria: any): Promise<Entity<any>>
   findAll(criteria: any): Promise<Entity<any>[]>
   insert(e: Entity<any>): Promise<void>;
@@ -8,6 +8,9 @@ export interface Mapper {
   delete(e: Entity<any>): Promise<void>;
 };
 
-export interface Mappers {
-  [entity: string]: Mapper
-};
+export interface TransactionalDataMappers {
+  startTransaction(): Promise<void>;
+  getEntityMapper(entity: string): DataMapper;
+  commitTransaction(): Promise<void>;
+  rollbackTransaction(): Promise<void>;
+}

@@ -1,11 +1,12 @@
 import SQLMapper from './sql-mapper';
-import { Customer, UniqueEntityID,  Address } from '@entities';
+import { Customer, UniqueEntityID, Address } from '@entities';
+import { Transaction } from 'sequelize';
 
 export default class SqlCustomerMapper extends SQLMapper {
-  constructor(db: any) {
+  constructor(db: any, transaction: Transaction) {
     const dbName = 'store';
     const modelName = 'customer';
-    super(dbName, modelName, db);
+    super(dbName, modelName, db, transaction);
   }
 
   public toDomain(customerRowDTO: any): Customer {
