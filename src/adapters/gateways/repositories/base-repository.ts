@@ -48,7 +48,7 @@ export default class BaseRepository implements IRepository {
       const loaded = this.identityMap.load(entityName, entity.id);
 
       if (!loaded) {
-        this.identityMap.add(loaded);
+        this.identityMap.add(entity);
         return entity;
       }
 
