@@ -1,5 +1,5 @@
 import { Product, UniqueEntityID } from '@entities';
-import { Repository } from './base-repository';
+import { Repository } from '../../common/repositories/base-repository';
 
 export default function MixProductRepository<TBase extends Repository>(BaseRepository: TBase) {
   return class ProductRepository extends BaseRepository {

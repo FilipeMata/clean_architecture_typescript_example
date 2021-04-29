@@ -1,5 +1,5 @@
 import { Transaction, Sequelize } from 'sequelize';
-import { DataMapper, TransactionalDataMappers } from '../../adapters/gateways/mappers';
+import { DataMapper, TransactionalDataMappers } from '../../adapters/common/mappers';
 import SqlOrderMapper from '../mappers/sql-order.mapper';
 import SqlProductMapper from '../mappers/sql-product.mapper';
 import SqlCustomerMapper from '../mappers/sql-customer.mapper';

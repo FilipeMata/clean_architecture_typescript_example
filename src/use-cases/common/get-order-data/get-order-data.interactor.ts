@@ -3,11 +3,15 @@ import { GetOrderData } from '@useCases';
 import { OrderData } from '@useCases/common/dtos';
 import { Result } from '@shared/Result';
 
+interface GetOrderDataInteractorParams {
+  getOrderDataGateway: GetOrderData.GetOrderDataGateway
+}
+
 export class GetOrderDataInteractor {
   private _gateway: GetOrderData.GetOrderDataGateway;
 
-  constructor(gateway: GetOrderData.GetOrderDataGateway) {
-    this._gateway = gateway;
+  constructor(params: GetOrderDataInteractorParams) {
+    this._gateway = params.getOrderDataGateway;
   }
 
   private _mapProduct(product: Product) {
