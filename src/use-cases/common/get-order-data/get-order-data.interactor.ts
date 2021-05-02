@@ -7,7 +7,7 @@ interface GetOrderDataInteractorParams {
   getOrderDataGateway: GetOrderData.GetOrderDataGateway
 }
 
-export class GetOrderDataInteractor {
+export default class GetOrderDataInteractor {
   private _gateway: GetOrderData.GetOrderDataGateway;
 
   constructor(params: GetOrderDataInteractorParams) {

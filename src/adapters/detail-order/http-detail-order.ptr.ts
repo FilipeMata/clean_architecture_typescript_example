@@ -1,33 +1,38 @@
 import { OutputPort, DetailOrder } from '@useCases';
+import { OrderData } from '@useCases/common/dtos';
+import { HTTPResponse, HTTPResponseHandler } from '../common/types';
 
-type DetailOrderHTTPView = {
-  statusCode: number,
-  message?: string,
-  body?: any,
-  headers?: JSON
-};
+interface HTTPDetailOrderPresenterParams{
+  httpResponseHandler: HTTPResponseHandler<{
+    data: OrderData
+  }>
+}
 
-export class HTTPDetailOrderPresenter implements OutputPort<DetailOrder.DetailOrderResponseDTO>{
-  private _view: DetailOrderHTTPView;
+export default class HTTPDetailOrderPresenter implements OutputPort<DetailOrder.DetailOrderResponseDTO>{
+  private _responseHandler: HTTPResponseHandler<{
+    data: OrderData
+  }>;
 
-  get view(): DetailOrderHTTPView {
-    return this._view;
-  } 
+  constructor(params: HTTPDetailOrderPresenterParams) {
+    this._responseHandler = params.httpResponseHandler;
+  }
 
   public show(response: DetailOrder.DetailOrderResponseDTO) {
+    let view: HTTPResponse<{
+      data: OrderData
+    }>;
+
     if (response.success) {
-      this._view = {
+      view = {
         statusCode: 200,
         body: {
-          data: response.success
+          data: response.success 
         }
       };
-
-      return;
     }
 
-    if (response.failures.includes('order_not_found')) {
-      this._view = {
+    else if (response.failures.includes('order_not_found')) {
+      view = {
         statusCode: 404,
         message: 'Not found'
       };
@@ -35,11 +40,13 @@ export class HTTPDetailOrderPresenter implements OutputPort<DetailOrder.DetailOr
       return;
     }
 
-    this._view = {
-      statusCode: 500,
-      message: 'Unexpecet server error'
-    };
+    else {
+      view = {
+        statusCode: 500,
+        message: 'Unexpecet server error'
+      };
+    }
       
-    return;  
+    return this._responseHandler.send(view);
   }
 };

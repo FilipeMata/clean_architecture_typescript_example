@@ -8,10 +8,10 @@ export type HTTPRequest<Params, Headers, Body, Query> = {
 export type HTTPResponse<T> = {
   statusCode: number,
   message?: string,
-  body?: any,
+  body?: T,
   headers?: JSON
 };
 
-export interface ResponseHandler<T> {
+export interface HTTPResponseHandler<T> {
   send(response: HTTPResponse<T>): Promise<void>
 }

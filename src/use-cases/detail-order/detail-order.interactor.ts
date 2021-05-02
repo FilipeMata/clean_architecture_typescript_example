@@ -6,7 +6,7 @@ interface DetailOrderInteractorParams {
   detailOrderDataPresenter: OutputPort<DetailOrder.DetailOrderResponseDTO>
 }
 
-export class DetailOrderInteractor {
+export default class DetailOrderInteractor {
   private _getOrderDataInteractor: GetOrderDataInteractor;
   private _presenter: OutputPort<DetailOrder.DetailOrderResponseDTO>;
 

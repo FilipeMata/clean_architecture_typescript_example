@@ -6,7 +6,7 @@ interface GenerateOrderInteractorParams {
   generateOrderPresenter: OutputPort<GenerateOrder.GenerateOrderResponseDTO>
 }
 
-export class GenerateOrderInteractor {
+export default class GenerateOrderInteractor {
   private _gateway: GenerateOrder.GenerateOrderGateway;
   private _presenter: OutputPort<GenerateOrder.GenerateOrderResponseDTO>;
 

@@ -1,15 +1,14 @@
-import { GenerateOrderInvoice, OutputPort } from '@useCases';
-import { GetOrderDataInteractor } from '@useCases/common/get-order-data' 
+import { GenerateOrderInvoice, GetOrderData, OutputPort } from '@useCases';
 import { UniqueEntityID } from '@entities';
 
 interface GenerateOrderInvoiceInteractorParams {
-  getOrderDataInteractor: GetOrderDataInteractor,
+  getOrderDataInteractor: GetOrderData.GetOrderDataInteractor,
   generateOrderInvoiceGateway: GenerateOrderInvoice.GenerateOrderInvoiceGateway,
   generateOrderInvoicePresenter: OutputPort<GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO>
 }
 
-export class GenerateOrderInvoiceInteractor {
-  private _getOrderDataInteractor: GetOrderDataInteractor;
+export default class GenerateOrderInvoiceInteractor {
+  private _getOrderDataInteractor: GetOrderData.GetOrderDataInteractor;
   private _gateway: GenerateOrderInvoice.GenerateOrderInvoiceGateway;
   private _presenter: OutputPort<GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO>;
 

@@ -1,34 +1,34 @@
 import { OutputPort, GenerateOrderInvoice } from '@useCases';
+import { HTTPResponse, HTTPResponseHandler } from '../common/types';
 
-type GenerateOrderInvoiceHTTPView = {
-  statusCode: number,
-  message?: string,
-  body?: any,
-  headers?: JSON
-};
+interface HTTPGenerateOrderInvoicePresenterParams{
+  httpResponseHandler: HTTPResponseHandler<void>
+}
 
-export class HTTPGenerateOrderInvoicePresenter implements OutputPort<GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO>{
-  private _view: GenerateOrderInvoiceHTTPView;
+export default class HTTPGenerateOrderInvoicePresenter implements OutputPort<GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO>{
+  private _responseHandler: HTTPResponseHandler<void>;
 
-  get view(): GenerateOrderInvoiceHTTPView {
-    return this._view;
-  } 
+  constructor(params: HTTPGenerateOrderInvoicePresenterParams) {
+    this._responseHandler = params.httpResponseHandler;
+  }
 
   public show(response: GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO) {
-    if (response.failures) {
-      this._view = {
+    let view: HTTPResponse<void>;
+    
+    if (!response.success) {
+      view = {
         statusCode: 500,
         message: 'Unexpected Error'
       };
-      return;
+
+      /** Treat other failures here */
+    }
+    else {
+      view = {
+        statusCode: 200
+      };
     }
 
-    /** Treat other failures here */
-
-    this._view = {
-      statusCode: 200
-    };
-
-    return;
+    return this._responseHandler.send(view);
   }
 };
