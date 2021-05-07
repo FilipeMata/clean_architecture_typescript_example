@@ -28,7 +28,7 @@
     "morgan": "^1.10.0",
     "mysql2": "^2.1.0",
     "sequelize": "^5.21.12",
-    "underscore": "^1.10.2",
+    "underscore": "^1.12.1",
     "uuid": "^8.2.0",
     "winston": "^3.2.1"
   },
