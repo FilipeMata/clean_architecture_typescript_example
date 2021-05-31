@@ -11,17 +11,47 @@ const isEntity = (obj: any): obj is Entity<any> => {
 };
 
 export abstract class Entity<T> {
+  private _dirtyProperties: string[];
   protected readonly _id: UniqueEntityID;
   protected props: T;
+  public readonly isNew: boolean;
 
-  constructor(props: T, id?: UniqueEntityID) {
+  constructor(props: T, id?: UniqueEntityID, isNew?: boolean) {
+
+    const handler = () => {
+      const setPropertyDirty = (prop: string) => {
+        if (!this.isNew) {
+          this._dirtyProperties.push(prop);
+        }
+      }
+
+      return {
+        set: function(obj: any, prop: string, value: any) {    
+          obj[prop] = value;
+          setPropertyDirty(prop);
+          return true;
+        }
+      };
+    }
+    
     const idGenerator = UniqueEntityIDGeneratorFactory.getInstance().getIdGeneratorFor(this);
     this._id = id ? id : idGenerator.nextId();
-    this.props = props;
+    
+    if (!id && !isNew) {
+      throw new Error('When ID is missing isNew must be informed');
+    }
+
+    this.isNew = id ? !!isNew : true;
+    this._dirtyProperties = [];
+    this.props = new Proxy(props, handler());
   }
 
   get id (): UniqueEntityID {
     return this._id;
+  }
+
+  public getDirtyProps(): string[] {
+    return this._dirtyProperties;
   }
   
   public equals (entity?: Entity<T>) : boolean {

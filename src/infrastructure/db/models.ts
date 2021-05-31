@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import lodash from 'lodash';
-import SequelizeLib, { Sequelize, Options } from 'sequelize';
+import { Sequelize, Options } from 'sequelize';
+import sequelize from 'sequelize';
 import { CustomerModel } from './models/store/customer';
 import { OrderModel } from './models/store/order';
 import { ProductModel } from './models/store/product';
@@ -15,11 +16,11 @@ type ModelMap = {
   line_item: typeof LineItemModel
 }
 
-export type DB = {
-  Sequelize: typeof SequelizeLib
+export interface DB {
+  sequelize: Sequelize,
   connections: {
     [k: string]: Sequelize
-  }
+  },
   models: ModelMap
 }
 
@@ -37,7 +38,7 @@ export const loadModels = async (): Promise<DB> => {
   }
 
   const dbObj: any = {
-    Sequelize: SequelizeLib,
+    sequelize: sequelize,
     connections: {},
     models: {}
   };
@@ -56,7 +57,7 @@ export const loadModels = async (): Promise<DB> => {
         retry: {
           max: 3
         },
-        isolationLevel: SequelizeLib.Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+        isolationLevel: sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED,
         bindParam: false,
       };
 
