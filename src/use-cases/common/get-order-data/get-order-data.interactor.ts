@@ -1,14 +1,13 @@
 import { UniqueEntityID, Product, LineItem, Customer, Order } from '@entities';
-import { GetOrderData } from '@useCases';
 import { OrderData } from '@useCases/common/dtos';
 import { Result } from '@shared/Result';
+import { GetOrderDataGateway } from './get-order-data.ports';
 
 interface GetOrderDataInteractorParams {
-  getOrderDataGateway: GetOrderData.GetOrderDataGateway
+  getOrderDataGateway: GetOrderDataGateway
 }
-
 export default class GetOrderDataInteractor {
-  private _gateway: GetOrderData.GetOrderDataGateway;
+  private _gateway: GetOrderDataGateway;
 
   constructor(params: GetOrderDataInteractorParams) {
     this._gateway = params.getOrderDataGateway;

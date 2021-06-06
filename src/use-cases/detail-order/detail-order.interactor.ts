@@ -1,18 +1,18 @@
-import { DetailOrder, OutputPort } from '@useCases';
 import { GetOrderDataInteractor } from '@useCases/common/get-order-data';
+import { DetailOrderPresenter } from './detail-order.ports';
 
 interface DetailOrderInteractorParams {
   getOrderDataInteractor: GetOrderDataInteractor,
-  detailOrderDataPresenter: OutputPort<DetailOrder.DetailOrderResponseDTO>
+  detailOrderPresenter: DetailOrderPresenter
 }
 
 export default class DetailOrderInteractor {
   private _getOrderDataInteractor: GetOrderDataInteractor;
-  private _presenter: OutputPort<DetailOrder.DetailOrderResponseDTO>;
+  private _presenter: DetailOrderPresenter;
 
   constructor(params: DetailOrderInteractorParams) {
     this._getOrderDataInteractor = params.getOrderDataInteractor;
-    this._presenter = params.detailOrderDataPresenter;
+    this._presenter = params.detailOrderPresenter;
   }
 
   public async execute(orderId: string) {    

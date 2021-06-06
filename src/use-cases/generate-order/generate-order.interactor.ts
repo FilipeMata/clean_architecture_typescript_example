@@ -1,21 +1,22 @@
 import { Order, Address, UniqueEntityID } from '@entities';
-import { OutputPort, GenerateOrder } from '@useCases';
+import { GenerateOrderGateway, GenerateOrderPresenter } from './generate-order.ports';
+import { GenerateOrderRequestDTO } from './generate-order.dtos';
 
 interface GenerateOrderInteractorParams {
-  generateOrderGateway: GenerateOrder.GenerateOrderGateway,
-  generateOrderPresenter: OutputPort<GenerateOrder.GenerateOrderResponseDTO>
+  generateOrderGateway: GenerateOrderGateway,
+  generateOrderPresenter: GenerateOrderPresenter
 }
 
 export default class GenerateOrderInteractor {
-  private _gateway: GenerateOrder.GenerateOrderGateway;
-  private _presenter: OutputPort<GenerateOrder.GenerateOrderResponseDTO>;
+  private _gateway: GenerateOrderGateway;
+  private _presenter: GenerateOrderPresenter;
 
   constructor(params: GenerateOrderInteractorParams) {
     this._gateway = params.generateOrderGateway;
     this._presenter = params.generateOrderPresenter;
   }
 
-  public async execute(data: GenerateOrder.GenerateOrderRequestDTO) {
+  public async execute(data: GenerateOrderRequestDTO) {
     let billingAddress: Address | undefined;
 
     if(!!data.billingAddress) {

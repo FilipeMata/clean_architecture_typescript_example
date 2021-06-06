@@ -1,16 +1,20 @@
-import { GenerateOrderInvoice, GetOrderData, OutputPort } from '@useCases';
+import { GetOrderData } from '@useCases';
 import { UniqueEntityID } from '@entities';
+import { 
+  GenerateOrderInvoiceGateway, 
+  GenerateOrderInvoicePresenter 
+} from './generate-order-invoice.ports';
 
 interface GenerateOrderInvoiceInteractorParams {
   getOrderDataInteractor: GetOrderData.GetOrderDataInteractor,
-  generateOrderInvoiceGateway: GenerateOrderInvoice.GenerateOrderInvoiceGateway,
-  generateOrderInvoicePresenter: OutputPort<GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO>
+  generateOrderInvoiceGateway: GenerateOrderInvoiceGateway,
+  generateOrderInvoicePresenter: GenerateOrderInvoicePresenter
 }
 
 export default class GenerateOrderInvoiceInteractor {
   private _getOrderDataInteractor: GetOrderData.GetOrderDataInteractor;
-  private _gateway: GenerateOrderInvoice.GenerateOrderInvoiceGateway;
-  private _presenter: OutputPort<GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO>;
+  private _gateway: GenerateOrderInvoiceGateway;
+  private _presenter: GenerateOrderInvoicePresenter;
 
   constructor(params: GenerateOrderInvoiceInteractorParams) {
     this._getOrderDataInteractor = params.getOrderDataInteractor;

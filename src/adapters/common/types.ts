@@ -5,13 +5,17 @@ export type HTTPRequest<Params, Headers, Body, Query> = {
   query?: Query
 }
 
+type HTTPHeaders = {
+  [key: string]: string
+}
+
 export type HTTPResponse<T> = {
   statusCode: number,
   message?: string,
   body?: T,
-  headers?: JSON
+  headers?: HTTPHeaders
 };
 
 export interface HTTPResponseHandler<T> {
-  send(response: HTTPResponse<T>): Promise<void>
+  send(response: HTTPResponse<T>): any
 }
