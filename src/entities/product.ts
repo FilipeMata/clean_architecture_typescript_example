@@ -1,13 +1,19 @@
-import { Entity, UniqueEntityID } from '@entities';
-import { Result } from '@shared/Result';
+import { Entity, EntityError, UniqueEntityID } from '@entities';
 
-interface IProductProps {
+interface ProductProps {
+    id?: UniqueEntityID,
     name: string;
     description: string;
     price: number;
 };
 
-export class Product extends Entity<IProductProps>{
+export class ProductError extends EntityError {
+    constructor(errors: string[]) {
+      super('Product', errors);
+    }
+}
+  
+export class Product extends Entity<ProductProps>{
 
     get name (): string {
         return this.props.name;
@@ -21,22 +27,22 @@ export class Product extends Entity<IProductProps>{
         return this.props.price;
     }
 
-    private constructor (props: IProductProps, id?: UniqueEntityID) {
-        super(props, id);
+    private constructor (props: ProductProps) {
+        super(props, !!props.id);
     }  
 
-    public static build(props: IProductProps, id?: UniqueEntityID): Result<Product> { 
+    public static build(props: ProductProps): Product { 
         /** some domain validations here **/
         const errors: Array<string> = [];
 
         if (props.price < 0) {
-            errors.push('price_too_low');
+            errors.push('Product price is too low');
         }
 
         if(errors.length > 0) {
-            return Result.fail<Product>(errors);
+            throw new ProductError(errors);
         }
 
-        return Result.success<Product>(new Product(props, id));
+        return new Product(props);
     }
 }

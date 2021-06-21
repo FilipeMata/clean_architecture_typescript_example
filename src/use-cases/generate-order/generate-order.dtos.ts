@@ -11,8 +11,3 @@ export interface GenerateOrderRequestDTO {
   billingAddress?: AddressDTO,
   shouldConsiderCustomerAddressForBilling?: boolean
 };
-
-export interface GenerateOrderResponseDTO {
-  success: boolean;
-  failures?: string[];
-};

@@ -1,5 +1,4 @@
 import { Customer, UniqueEntityID, Product, Order } from '@entities';
-import { GenerateOrderResponseDTO } from './generate-order.dtos';
 
 export interface GenerateOrderGateway {
   startTransaction(): void;
@@ -8,7 +7,3 @@ export interface GenerateOrderGateway {
   findCustomerById(id: UniqueEntityID): Promise<Customer>;
   findProductById(id: UniqueEntityID): Promise<Product>;
 };
-
-export interface GenerateOrderPresenter {
-  show(result: GenerateOrderResponseDTO): void | Promise<void>;
-}

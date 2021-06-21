@@ -1,37 +1,46 @@
-import { Entity, UniqueEntityID, Product } from '@entities';
-import { Result } from '@shared/Result';
+import { Entity, UniqueEntityID, EntityError } from '@entities';
 
-export interface ILineItemProps {
-  product: Product,
+export interface LineItemBasicProps {
+  productId: UniqueEntityID,
   quantity: number;
 };
 
-export class LineItem extends Entity<ILineItemProps>{
+export interface LineItemProps extends LineItemBasicProps {
+  id?: UniqueEntityID
+};
 
-  get product(): Product {
-    return this.props.product;
+export class LineItemError extends EntityError {
+  constructor(errors: string[]) {
+    super('LineItem', errors);
+  }
+}
+
+export class LineItem extends Entity<LineItemProps>{
+
+  get productId(): UniqueEntityID {
+    return this.props.productId;
   }
 
   get quantity(): number {
     return this.props.quantity;
   }
 
-  private constructor(props: ILineItemProps, id?: UniqueEntityID) {
-    super(props, id);
+  private constructor(props: LineItemProps, isNew: boolean) {
+    super(props, isNew);
   }
 
-  public static build(props: ILineItemProps, id?: UniqueEntityID): Result<LineItem> {
+  public static build(props: LineItemProps, isNew: boolean): LineItem {
     /** some domain validations here **/
     const errors: Array<string> = [];
 
     if (props.quantity % 1 !== 0) {
-      errors.push('line_item_quantity_must_be_integer');
+      errors.push('Line Item quantity must be integer');
     }
 
     if (errors.length > 0) {
-      return Result.fail<LineItem>(errors);
+      throw new LineItemError(errors)
     }
 
-    return Result.success<LineItem>(new LineItem(props, id));
+    return new LineItem(props, isNew);
   }
 }

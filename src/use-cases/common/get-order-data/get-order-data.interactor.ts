@@ -1,7 +1,7 @@
 import { UniqueEntityID, Product, LineItem, Customer, Order } from '@entities';
 import { OrderData } from '@useCases/common/dtos';
-import { Result } from '@shared/Result';
 import { GetOrderDataGateway } from './get-order-data.ports';
+import { ApplicationError } from '@useCases/common/errors';
 
 interface GetOrderDataInteractorParams {
   getOrderDataGateway: GetOrderDataGateway
@@ -21,11 +21,15 @@ export default class GetOrderDataInteractor {
     };
   }
 
-  private _mapLineItem(lineItems: LineItem[]) {
+  private async _mapLineItem(lineItems: LineItem[]) {
     const itemsDTO = [];
     for (const lineItem of lineItems) {
+
+      const product = await this._gateway
+        .findProductById(lineItem.productId);
+      
       const item = {
-        product: this._mapProduct(lineItem.product),
+        product: this._mapProduct(product),
         quantity: lineItem.quantity
       };
 
@@ -46,7 +50,7 @@ export default class GetOrderDataInteractor {
     }
   }
 
-  public async execute(orderRef: string | Order): Promise<Result<OrderData>> {
+  public async execute(orderRef: string | Order): Promise<OrderData> {
     let order: Order;
 
     if (orderRef instanceof Order) {
@@ -54,30 +58,23 @@ export default class GetOrderDataInteractor {
     }
 
     if (!order && typeof orderRef === 'string') {
-      try {
-        order = await this._gateway
-          .findOrderById(new UniqueEntityID(orderRef));
-      } catch (err) {
-        return Result.fail<OrderData>([
-          'unexpected_failure'
-        ]);
-      }
+      order = await this._gateway
+        .findOrderById(new UniqueEntityID(orderRef));
     }
 
     if (!order) {
-      return Result.fail<OrderData>([
-        'order_not_found'
-      ]);
+      throw new ApplicationError('order_not_found');
     }
 
-    const response: OrderData = {
+    const buyer  = await this._gateway
+      .findCustomerById(order.buyerId);
+
+    return {
       id: order.id.toString(),
       billingAddress: order.billingAddress.toValue(),
-      lineItems: this._mapLineItem(order.lineItems),
-      buyer: this._mapCustomer(order.buyer)
+      lineItems: await this._mapLineItem(order.lineItems),
+      buyer: this._mapCustomer(buyer)
     };
-
-    return Result.success<OrderData>(response);
   }
 }
 

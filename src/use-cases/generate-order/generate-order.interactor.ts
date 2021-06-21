@@ -1,32 +1,31 @@
 import { Order, Address, UniqueEntityID } from '@entities';
-import { GenerateOrderGateway, GenerateOrderPresenter } from './generate-order.ports';
+import { GenerateOrderGateway } from './generate-order.ports';
 import { GenerateOrderRequestDTO } from './generate-order.dtos';
+import Interactor from '@useCases/common/interactor';
+import Presenter from '@useCases/common/presenter';
+import { ApplicationError } from '@useCases/common/errors';
 
 interface GenerateOrderInteractorParams {
   generateOrderGateway: GenerateOrderGateway,
-  generateOrderPresenter: GenerateOrderPresenter
+  generateOrderPresenter: Presenter<void>
 }
 
-export default class GenerateOrderInteractor {
+export default class GenerateOrderInteractor extends Interactor<GenerateOrderRequestDTO, void>{
   private _gateway: GenerateOrderGateway;
-  private _presenter: GenerateOrderPresenter;
 
   constructor(params: GenerateOrderInteractorParams) {
+    super(params.generateOrderPresenter)
     this._gateway = params.generateOrderGateway;
-    this._presenter = params.generateOrderPresenter;
   }
 
-  public async execute(data: GenerateOrderRequestDTO) {
+  protected async execute(data: GenerateOrderRequestDTO) {
     let billingAddress: Address | undefined;
 
     if(!!data.billingAddress) {
       const billingAddressOrError = Address.build(data.billingAddress);
       
-      if(!billingAddressOrError.succeeded) {
-        return this._presenter.show({
-          success: false,
-          failures: ['missing_order_billing_address']
-        });
+      if (!billingAddressOrError.succeeded) {
+        throw new ApplicationError('missing_order_billing_address');
       }
 
       billingAddress = billingAddressOrError.value;
@@ -36,10 +35,7 @@ export default class GenerateOrderInteractor {
       .findCustomerById(new UniqueEntityID(data.customerId));
 
     if (!customer) {
-      return this._presenter.show({
-        success: false,
-        failures: ['customer_not_found']
-      });
+      throw new ApplicationError('customer_not_found');
     }
 
     if (data.shouldConsiderCustomerAddressForBilling) {
@@ -47,52 +43,24 @@ export default class GenerateOrderInteractor {
     }
 
     if (!billingAddress) {
-      return this._presenter.show({
-        success: false,
-        failures: ['missing_order_billing_address']
-      });
+      throw new ApplicationError('missing_order_billing_address');
     }
 
-    const lineItems = [];
-
-    for (const item of data.items) {
-      const product = await this._gateway
-        .findProductById(new UniqueEntityID(item.productId));
-
-      lineItems.push({
-        product: product,
+    const lineItems = data.items.map((item) => {
+      return {
+        productId: new UniqueEntityID(item.productId),
         quantity: item.quantity
-      });
-    }
+      }
+    });
 
-    const orderResult = Order.build({
+    const order = Order.build({
       billingAddress: billingAddress,
-      lineItems: lineItems,
-      buyer: customer
+      lineItems,
+      buyerId: customer.id
     });
 
-    if (!orderResult.succeeded) {
-      return this._presenter.show({
-        success: false,
-        failures: orderResult.errors
-      });
-    }
-
-    const order = orderResult.value;
-
-    try {
-      await this._gateway.startTransaction();
-      await this._gateway.save(order);
-      await this._gateway.endTransaction();
-    } catch (err) {
-      return this._presenter.show({
-        success: false,
-        failures: ['unexpected_failure']
-      });
-    }
-
-    return this._presenter.show({
-      success: true
-    });
+    await this._gateway.startTransaction();
+    await this._gateway.save(order);
+    await this._gateway.endTransaction();
   }
 }
