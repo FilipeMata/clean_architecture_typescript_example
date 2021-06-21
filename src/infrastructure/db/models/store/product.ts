@@ -1,13 +1,7 @@
+import ProductDBModel from '@adapters/common/types/product-db-model';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
-interface ProductModelAttributes {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-}
-
-export class ProductModel extends Model implements ProductModelAttributes {
+export class ProductModel extends Model implements ProductDBModel {
   public id: number;
   public name: string;
   public description: string;

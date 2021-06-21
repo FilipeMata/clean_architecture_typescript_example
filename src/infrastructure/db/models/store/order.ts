@@ -1,16 +1,8 @@
+import OrderDBModel from '@adapters/common/types/order-db-model';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 import { LineItemModel } from './line-item';
 
-interface OrderModelAttributes {
-  id: string;
-  customer_id: string;
-  invoice_number: string;
-  invoice_url: number;
-  billing_address: JSON;
-  line_items?: LineItemModel[];
-}
-
-export class OrderModel extends Model implements OrderModelAttributes {
+export class OrderModel extends Model implements OrderDBModel {
   public id: string;
   public customer_id: string;
   public invoice_number: string;

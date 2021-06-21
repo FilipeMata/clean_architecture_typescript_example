@@ -1,16 +1,7 @@
+import CustomerDBModel from '@adapters/common/types/customer-db-model';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
-interface CustomerModelAttributes {
-  id: string;
-  document: string;
-  name: string;
-  cellphone: number;
-  email: string;
-  birthdate: Date;
-  address: JSON;
-}
-
-export class CustomerModel extends Model implements CustomerModelAttributes{
+export class CustomerModel extends Model implements CustomerDBModel {
   public id: string;
   public document: string;
   public name: string;

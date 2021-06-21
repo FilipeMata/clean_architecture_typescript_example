@@ -1,13 +1,7 @@
+import LineItemDBModel from '@adapters/common/types/line-item-db-model';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
-interface LineItemModelAttributes {
-  id: string;
-  order_id: string;
-  product_id: number;
-  quantity: number;
-}
-
-export class LineItemModel extends Model implements LineItemModelAttributes {
+export class LineItemModel extends Model implements LineItemDBModel {
   public id: string;
   public order_id: string;
   public product_id: number;
