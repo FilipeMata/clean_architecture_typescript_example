@@ -1,60 +1,40 @@
 import { GetOrderData } from '@useCases';
 import { UniqueEntityID } from '@entities';
-import { 
-  GenerateOrderInvoiceGateway, 
-  GenerateOrderInvoicePresenter 
-} from './generate-order-invoice.ports';
+import { GenerateOrderInvoiceGateway } from './generate-order-invoice.ports';
+import Interactor from '@useCases/common/interactor';
+import Presenter from '@useCases/common/presenter';
 
 interface GenerateOrderInvoiceInteractorParams {
   getOrderDataInteractor: GetOrderData.GetOrderDataInteractor,
   generateOrderInvoiceGateway: GenerateOrderInvoiceGateway,
-  generateOrderInvoicePresenter: GenerateOrderInvoicePresenter
+  generateOrderInvoicePresenter: Presenter<void>
 }
 
-export default class GenerateOrderInvoiceInteractor {
+export default class GenerateOrderInvoiceInteractor extends Interactor<string, void> {
   private _getOrderDataInteractor: GetOrderData.GetOrderDataInteractor;
   private _gateway: GenerateOrderInvoiceGateway;
-  private _presenter: GenerateOrderInvoicePresenter;
 
   constructor(params: GenerateOrderInvoiceInteractorParams) {
+    super(params.generateOrderInvoicePresenter);
     this._getOrderDataInteractor = params.getOrderDataInteractor;
     this._gateway = params.generateOrderInvoiceGateway;
-    this._presenter = params.generateOrderInvoicePresenter;
   }
 
-  public async execute(orderId: string) {
+  protected async execute(orderId: string) {
     const order = await this._gateway
       .findOrderById(new UniqueEntityID(orderId));
 
-    const orderDataResult = await this._getOrderDataInteractor
+    const orderData = await this._getOrderDataInteractor
       .execute(order);
-    
-    if (!orderDataResult.succeeded) {
-      return this._presenter.show({
-        success: false,
-        failures: orderDataResult.errors
-      });
-    };
 
-    try {
-      this._gateway.startTransaction();
-      const invoiceData = await this._gateway
-        .generateInvoice(orderDataResult.value);
+    await this._gateway.startTransaction();
 
-      order.invoice(invoiceData.invoiceNumber, invoiceData.invoiceUrl);
+    const invoiceData = await this._gateway
+      .generateInvoice(orderData);
 
-      this._gateway.save(order);
-      this._gateway.endTransaction();
+    order.invoice(invoiceData.invoiceNumber, invoiceData.invoiceUrl);
 
-      this._presenter.show({
-        success: true
-      });
-
-    } catch(err) {
-      this._presenter.show({
-        success: false,
-        failures: ['unexpected_failure']
-      });
-    }
+    await this._gateway.save(order);
+    await this._gateway.endTransaction();
   }
 }

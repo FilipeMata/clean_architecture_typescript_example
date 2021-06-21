@@ -1,33 +1,25 @@
+import { OrderData } from '@useCases/common/dtos';
 import { GetOrderDataInteractor } from '@useCases/common/get-order-data';
-import { DetailOrderPresenter } from './detail-order.ports';
+import Interactor from '@useCases/common/interactor';
+import Presenter from '@useCases/common/presenter';
 
 interface DetailOrderInteractorParams {
   getOrderDataInteractor: GetOrderDataInteractor,
-  detailOrderPresenter: DetailOrderPresenter
+  detailOrderPresenter: Presenter<OrderData>
 }
 
-export default class DetailOrderInteractor {
+export default class DetailOrderInteractor extends Interactor<string, OrderData> {
   private _getOrderDataInteractor: GetOrderDataInteractor;
-  private _presenter: DetailOrderPresenter;
 
   constructor(params: DetailOrderInteractorParams) {
+    super(params.detailOrderPresenter);
     this._getOrderDataInteractor = params.getOrderDataInteractor;
-    this._presenter = params.detailOrderPresenter;
   }
 
-  public async execute(orderId: string) {    
-    const orderDataResult = await this._getOrderDataInteractor
-      .execute(orderId);
+  protected async execute(orderId: string) {
 
-    if (!orderDataResult.succeeded) {
-      return this._presenter.show({
-        failures: orderDataResult.errors
-      });
-    }
-
-    return this._presenter.show({
-      success: orderDataResult.value
-    });
+      return await this._getOrderDataInteractor
+        .execute(orderId);
   }
 }
 

@@ -10,18 +10,62 @@ const isEntity = (obj: any): obj is Entity<any> => {
   return obj instanceof Entity;
 };
 
-export abstract class Entity<T> {
+interface Properties {
+  id?: UniqueEntityID
+}
+
+export class EntityError extends Error {
+  public readonly errors: string[];
+
+  constructor(entity: string, errors: string[]) {
+    super();
+    const constructorName = this.constructor.name;
+    this.name = constructorName;
+    this.message = `Failed while manipulating ${entity} entity`;
+    this.errors = errors;
+  }
+}
+
+export abstract class Entity<T extends Properties> {
+  private _dirtyProperties: string[];
   protected readonly _id: UniqueEntityID;
   protected props: T;
+  public readonly isNew: boolean;
 
-  constructor(props: T, id?: UniqueEntityID) {
+  constructor(props: T, isNew: boolean = true) {
+    const handler = () => {
+      const setPropertyDirty = (prop: string) => {
+        if (!this.isNew) {
+          this._dirtyProperties.push(prop);
+        }
+      }
+
+      return {
+        set: function(obj: any, prop: string, value: any) {    
+          obj[prop] = value;
+          setPropertyDirty(prop);
+          return true;
+        }
+      };
+    }
+    
+    if (!props.id && !isNew) {
+      throw new Error('Dirty Entities must has an ID');
+    }
+    
     const idGenerator = UniqueEntityIDGeneratorFactory.getInstance().getIdGeneratorFor(this);
-    this._id = id ? id : idGenerator.nextId();
-    this.props = props;
+    this._id = props.id ? props.id : idGenerator.nextId();
+    this.isNew = isNew;
+    this._dirtyProperties = [];
+    this.props = new Proxy(props, handler());
   }
 
   get id (): UniqueEntityID {
     return this._id;
+  }
+
+  public getDirtyProps(): string[] {
+    return this._dirtyProperties;
   }
   
   public equals (entity?: Entity<T>) : boolean {
