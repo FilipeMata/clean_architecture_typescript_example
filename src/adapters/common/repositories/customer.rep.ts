@@ -1,11 +1,31 @@
 import { Customer, UniqueEntityID } from '@entities';
-import { Repository } from './base-repository';
+import CustomerPersistenceData, { toDomain } from '../types/customer-persistence-data';
+import { DataMapper } from '../types/data-mapper';
+import { Criteria } from '../types/criteria';
 
-export default function MixCustomerRepository<TBase extends Repository>(Base: TBase) {
-  return class CustomerRepository extends Base {
+type GConstructor<T = {}> = new (...args: any[]) => T;
+
+export default function MixCustomerRepository<TBase extends GConstructor>(Gateway: TBase) {
+  
+  return class CustomerRepository extends Gateway {
+
+    private _customerDataMapper: DataMapper<CustomerPersistenceData>
+
+    constructor(...args: any[]) {
+      super(...args);
+      this._customerDataMapper = args[0].customerDataMapper;
+    }
+
     public async findCustomerById(customerId: UniqueEntityID): Promise<Customer> {
-      const customer = await this.abstractFind('Customer', customerId);
-      return customer as Customer;
+      const criteria = new Criteria<CustomerPersistenceData>({
+        id: {
+          $equal: +customerId.toValue()
+        }
+      });
+
+      const customerPersistenceData = await this._customerDataMapper.find({ criteria })
+
+      return toDomain(customerPersistenceData);
     }
   }
 }

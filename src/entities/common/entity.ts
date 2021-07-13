@@ -1,10 +1,5 @@
 import { UniqueEntityIDGeneratorFactory, UniqueEntityID } from '@entities';
-
-/**
- * 
- * @desc Entities are object that encapsulates corporation business rules. 
- * We determine it's equality throgh entity unique id, if it exists.
- */
+import { DomainError } from './domain-error';
 
 const isEntity = (obj: any): obj is Entity<any> => {
   return obj instanceof Entity;
@@ -14,18 +9,17 @@ interface Properties {
   id?: UniqueEntityID
 }
 
-export class EntityError extends Error {
-  public readonly errors: string[];
-
-  constructor(entity: string, errors: string[]) {
-    super();
-    const constructorName = this.constructor.name;
-    this.name = constructorName;
-    this.message = `Failed while manipulating ${entity} entity`;
-    this.errors = errors;
+export class EntityError extends DomainError {
+  constructor(entity: string, errors: string[] | string) {
+    super(`Failed while manipulating ${entity} entity`, errors);
   }
 }
 
+/**
+ * 
+ * @desc Entities are object that encapsulates corporation business rules. 
+ * We determine it's equality throgh entity unique id, if it exists.
+ */
 export abstract class Entity<T extends Properties> {
   private _dirtyProperties: string[];
   protected readonly _id: UniqueEntityID;

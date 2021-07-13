@@ -1,34 +1,32 @@
 import { Order, Address, UniqueEntityID } from '@entities';
-import { GenerateOrderGateway } from './generate-order.ports';
-import { GenerateOrderRequestDTO } from './generate-order.dtos';
+import GenerateOrderGateway from './generate-order.gateway';
+import GenerateOrderRequestDTO from './generate-order.dtos';
 import Interactor from '@useCases/common/interactor';
 import Presenter from '@useCases/common/presenter';
 import { ApplicationError } from '@useCases/common/errors';
+import { GetOrderDataInteractor, OrderData } from '@useCases/common/get-order-data';
 
 interface GenerateOrderInteractorParams {
   generateOrderGateway: GenerateOrderGateway,
-  generateOrderPresenter: Presenter<void>
+  generateOrderPresenter: Presenter<void>,
+  getOrderDataInteractor: GetOrderDataInteractor
 }
 
-export default class GenerateOrderInteractor extends Interactor<GenerateOrderRequestDTO, void>{
+export default class GenerateOrderInteractor extends Interactor<GenerateOrderRequestDTO, OrderData>{
   private _gateway: GenerateOrderGateway;
+  private _getOrderDataInteractor: GetOrderDataInteractor;
 
   constructor(params: GenerateOrderInteractorParams) {
     super(params.generateOrderPresenter)
     this._gateway = params.generateOrderGateway;
+    this._getOrderDataInteractor = params.getOrderDataInteractor;
   }
 
   protected async execute(data: GenerateOrderRequestDTO) {
     let billingAddress: Address | undefined;
 
     if(!!data.billingAddress) {
-      const billingAddressOrError = Address.build(data.billingAddress);
-      
-      if (!billingAddressOrError.succeeded) {
-        throw new ApplicationError('missing_order_billing_address');
-      }
-
-      billingAddress = billingAddressOrError.value;
+      billingAddress = Address.build(data.billingAddress);
     }
 
     const customer = await this._gateway
@@ -46,21 +44,17 @@ export default class GenerateOrderInteractor extends Interactor<GenerateOrderReq
       throw new ApplicationError('missing_order_billing_address');
     }
 
-    const lineItems = data.items.map((item) => {
-      return {
-        productId: new UniqueEntityID(item.productId),
-        quantity: item.quantity
-      }
-    });
-
     const order = Order.build({
       billingAddress: billingAddress,
-      lineItems,
+      lineItems: data.items,
       buyerId: customer.id
     });
 
     await this._gateway.startTransaction();
-    await this._gateway.save(order);
+    await this._gateway.saveOrder(order);
     await this._gateway.endTransaction();
+
+    return await this._getOrderDataInteractor
+      .execute(order);
   }
 }

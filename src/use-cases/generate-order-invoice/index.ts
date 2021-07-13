@@ -1,4 +1,7 @@
 import GenerateOrderInvoiceInteractor from './generate-order-invoice.interactor';
+import GenerateOrderGateway from './generate-order-invoice.gateway';
 
-export * from './generate-order-invoice.ports';
-export { GenerateOrderInvoiceInteractor };
+export {
+  GenerateOrderInvoiceInteractor,
+  GenerateOrderGateway
+};

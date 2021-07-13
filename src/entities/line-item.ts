@@ -1,12 +1,18 @@
 import { Entity, UniqueEntityID, EntityError } from '@entities';
 
-export interface LineItemBasicProps {
+export interface LineItemBasicBuildProps {
+  productId: number,
+  quantity: number;
+}
+
+export interface LineItemBuidProps extends LineItemBasicBuildProps {
+  id: number
+}
+
+export interface LineItemProps {
+  id: UniqueEntityID
   productId: UniqueEntityID,
   quantity: number;
-};
-
-export interface LineItemProps extends LineItemBasicProps {
-  id?: UniqueEntityID
 };
 
 export class LineItemError extends EntityError {
@@ -29,7 +35,7 @@ export class LineItem extends Entity<LineItemProps>{
     super(props, isNew);
   }
 
-  public static build(props: LineItemProps, isNew: boolean): LineItem {
+  public static build(props: LineItemBuidProps, isNew: boolean): LineItem {
     /** some domain validations here **/
     const errors: Array<string> = [];
 
@@ -41,6 +47,10 @@ export class LineItem extends Entity<LineItemProps>{
       throw new LineItemError(errors)
     }
 
-    return new LineItem(props, isNew);
+    return new LineItem({
+      id: new UniqueEntityID(props.id),
+      productId: new UniqueEntityID(props.productId),
+      quantity: props.quantity
+    }, isNew);
   }
 }

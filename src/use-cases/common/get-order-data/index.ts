@@ -1,4 +1,9 @@
+import OrderData from './get-order-data.dtos';
+import GetOrderDataGateway from './get-order-data.gateway';
 import GetOrderDataInteractor from './get-order-data.interactor';
 
-export * from './get-order-data.ports';
-export { GetOrderDataInteractor };
+export {
+  OrderData,
+  GetOrderDataGateway,
+  GetOrderDataInteractor
+}

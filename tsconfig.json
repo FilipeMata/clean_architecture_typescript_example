@@ -24,11 +24,8 @@
       "@entities": [
         "src/entities/index"
       ],
-      "@useCases": [
-        "src/use-cases/index"
-      ],
-      "@useCases/common/*": [
-        "src/use-cases/common/*"
+      "@useCases/*": [
+        "src/use-cases/*"
       ],
       "@shared/*": [
         "src/shared/*"

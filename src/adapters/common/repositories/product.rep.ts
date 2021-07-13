@@ -1,11 +1,31 @@
 import { Product, UniqueEntityID } from '@entities';
-import { Repository } from '../../common/repositories/base-repository';
+import { DataMapper } from '../types/data-mapper';
+import { Criteria } from '../types/criteria';
+import ProductPersistenceData, { toDomain } from '../types/product-persistence-data';
 
-export default function MixProductRepository<TBase extends Repository>(BaseRepository: TBase) {
-  return class ProductRepository extends BaseRepository {
+type GConstructor<T = {}> = new (...args: any[]) => T;
+
+export default function MixProductRepository<TBase extends GConstructor>(Gateway: TBase) {
+  
+  return class ProductRepository extends Gateway {
+
+    private _productDataMaper: DataMapper<ProductPersistenceData>;
+
+    constructor(...args: any[]) {
+      super(...args);
+      this._productDataMaper = args[0].productDataMapper;
+    }
+    
     public async findProductById(productId: UniqueEntityID): Promise<Product> {
-      const product = await this.abstractFind('Product', productId);
-      return product as Product;
+      const criteria = new Criteria<ProductPersistenceData>({
+        id: {
+          $equal: +productId.toValue()
+        }
+      });
+
+      const productPersistenceData = await this._productDataMaper.find({ criteria })
+
+      return toDomain(productPersistenceData);
     }
   }
 }

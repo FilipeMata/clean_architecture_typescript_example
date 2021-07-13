@@ -1,34 +1,36 @@
-import { GenerateOrderInvoice } from '@useCases';
-import { HTTPResponse, HTTPResponseHandler } from '../common/types';
+import { ApplicationError } from '@useCases/common/errors';
+import Presenter from '@useCases/common/presenter';
+import { HTTPResponseHandler } from '@adapters/common/types/http-response';
 
 interface HTTPGenerateOrderInvoicePresenterParams{
   httpResponseHandler: HTTPResponseHandler<void>
 }
 
-export default class HTTPGenerateOrderInvoicePresenter implements GenerateOrderInvoice.GenerateOrderInvoicePresenter {
+export default class HTTPGenerateOrderInvoicePresenter implements Presenter<void> {
   private _responseHandler: HTTPResponseHandler<void>;
 
   constructor(params: HTTPGenerateOrderInvoicePresenterParams) {
     this._responseHandler = params.httpResponseHandler;
   }
 
-  public show(response: GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO) {
-    let view: HTTPResponse<void>;
-    
-    if (!response.success) {
-      view = {
-        statusCode: 500,
-        message: 'Unexpected Error'
-      };
+  public showSuccess() {
+    return this._responseHandler.send({
+      statusCode: 204
+    });
+  }
 
-      /** Treat other failures here */
-    }
-    else {
-      view = {
-        statusCode: 200
-      };
+  public showError(error: Error) {
+
+    if (error instanceof ApplicationError && error.code === 'order_not_found') {
+      return this._responseHandler.send({
+        statusCode: 404,
+        message: 'Order not found'
+      });
     }
 
-    return this._responseHandler.send(view);
+    return this._responseHandler.send({
+      statusCode: 500,
+      message: 'Unexpected server error'
+    });
   }
 };

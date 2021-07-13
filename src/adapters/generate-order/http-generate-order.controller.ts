@@ -1,32 +1,35 @@
-import { GenerateOrder } from '@useCases'
-import { AddressDTO } from '@useCases/common/dtos';
-import { HTTPRequest } from '../common/types';
+import { AddressProps } from '@entities';
+import {
+  GenerateOrderInteractor,
+  GenerateOrderRequestDTO
+} from '@useCases/generate-order';
+import HTTPRequest from '@adapters/common/types/http-request';
 
 interface HTTPGenerateOrderBody {
   customer_id: string,
   items: {
-    product_id: string,
+    product_id: number,
     quantity: number
   }[],
-  billing_address: AddressDTO,
+  billing_address: AddressProps,
   use_customer_address: boolean
 }
 
 type HTTPGenerateOrderInput = HTTPRequest<void, void, HTTPGenerateOrderBody, void>
 
 interface HTTPGenerateOrderControllerParams {
-  generateOrderInteractor: GenerateOrder.GenerateOrderInteractor
+  generateOrderInteractor: GenerateOrderInteractor
 }
 
 export default class HTTPGenerateOrderController {
-  private _interactor: GenerateOrder.GenerateOrderInteractor
+  private _interactor: GenerateOrderInteractor
 
   constructor(params: HTTPGenerateOrderControllerParams) {
     this._interactor = params.generateOrderInteractor;
   }
 
   async run(input: HTTPGenerateOrderInput) {
-    const request: GenerateOrder.GenerateOrderRequestDTO = {
+    const request: GenerateOrderRequestDTO = {
       customerId: input.body.customer_id,
       items: input.body.items.map((item) => {
         return {
@@ -38,6 +41,6 @@ export default class HTTPGenerateOrderController {
       shouldConsiderCustomerAddressForBilling: input.body.use_customer_address
     };
 
-    await this._interactor.execute(request);
+    await this._interactor.run(request);
   }
 };

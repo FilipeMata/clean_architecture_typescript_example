@@ -1,6 +1,8 @@
-import { DetailOrder } from '@useCases';
-import { OrderData } from '@useCases/common/dtos';
-import { HTTPResponse, HTTPResponseHandler } from '../common/types';
+import { ApplicationError } from '@useCases/common/errors';
+import { OrderData } from '@useCases/common/get-order-data';
+import Presenter from '@useCases/common/presenter';
+import { HTTPResponseHandler } from '@adapters/common/types/http-response';
+
 
 interface HTTPDetailOrderPresenterParams{
   httpResponseHandler: HTTPResponseHandler<{
@@ -8,7 +10,7 @@ interface HTTPDetailOrderPresenterParams{
   }>
 }
 
-export default class HTTPDetailOrderPresenter implements DetailOrder.DetailOrderPresenter{
+export default class HTTPDetailOrderPresenter implements Presenter<OrderData>{
   private _responseHandler: HTTPResponseHandler<{
     data: OrderData
   }>;
@@ -17,34 +19,28 @@ export default class HTTPDetailOrderPresenter implements DetailOrder.DetailOrder
     this._responseHandler = params.httpResponseHandler;
   }
 
-  public show(response: DetailOrder.DetailOrderResponseDTO) {
-    let view: HTTPResponse<{
-      data: OrderData
-    }>;
+  public showSuccess(response: OrderData) {
+    const view = {
+      statusCode: 200,
+      body: {
+        data: response 
+      }
+    };
 
-    if (response.success) {
-      view = {
-        statusCode: 200,
-        body: {
-          data: response.success 
-        }
-      };
-    }
-
-    else if (response.failures.includes('order_not_found')) {
-      view = {
-        statusCode: 404,
-        message: 'Not found'
-      };
-    }
-
-    else {
-      view = {
-        statusCode: 500,
-        message: 'Unexpecet server error'
-      };
-    }
-      
     return this._responseHandler.send(view);
+  }
+
+  public showError(error: Error) {
+    if (error instanceof ApplicationError && error.code === 'order_not_found') {
+      return this._responseHandler.send({
+        statusCode: 404,
+        message: 'Order not found'
+      });
+    }
+
+    return this._responseHandler.send({
+      statusCode: 500,
+      message: 'Unexpected server error'
+    });
   }
 };

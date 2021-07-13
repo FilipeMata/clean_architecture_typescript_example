@@ -1,6 +1,6 @@
-import { EntityError } from "@entities";
-import { ApplicationError } from "./errors";
-import Presenter from "./presenter";
+import { DomainError } from '@entities';
+import { ApplicationError } from './errors';
+import Presenter from './presenter';
 
 export default abstract class Interactor<InputModel, ResponseModel> {
 
@@ -20,7 +20,7 @@ export default abstract class Interactor<InputModel, ResponseModel> {
       this._presenter.showSuccess(response);
     } catch (err) {
       
-      if (err instanceof ApplicationError || err instanceof EntityError) {
+      if (err instanceof ApplicationError || err instanceof DomainError) {
         return this._presenter.showError(err as Error);
       }
 

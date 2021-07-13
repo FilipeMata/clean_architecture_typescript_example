@@ -1,4 +1,4 @@
-import { AddressDTO } from '@useCases/common/dtos';
+import { AddressProps } from '@entities';
 
 interface ProductDTO {
   name: string,
@@ -19,9 +19,9 @@ interface LineItemDTO {
   quantity: number
 };
 
-export interface OrderData {
+export default interface OrderData {
   id: string,
-  billingAddress: AddressDTO,
+  billingAddress: AddressProps,
   lineItems: Array<LineItemDTO>
   buyer: CustomerDTO
 };

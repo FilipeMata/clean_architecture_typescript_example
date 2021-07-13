@@ -1,26 +1,34 @@
-import { Address, LineItem, LineItemProps, LineItemBasicProps, EntityError }  from '@entities';
+import { Address, LineItem, LineItemProps, LineItemBasicBuildProps, LineItemBuidProps, EntityError }  from '@entities';
 import { Entity, UniqueEntityID } from '@entities';
 
+interface OrderLineItemBuildProps extends LineItemBasicBuildProps {
+    id?: number
+}
+
+export interface Invoice {
+    number: string,
+    url?: string
+}
+  
 interface OrderProps {
     id?: UniqueEntityID;
     billingAddress: Address;
     lineItems?: Array<LineItem>;
     buyerId: UniqueEntityID;
-    invoiceNumber?: string,
-    invoiceUrl?: string;
+    invoice?: Invoice
 };
 
 interface OrderBuildProps {
     id?: UniqueEntityID;
     billingAddress: Address;
-    lineItems?: Array<LineItemProps>;
+    builtLineItems?: Array<LineItem>;
+    lineItems?: Array<OrderLineItemBuildProps>;
     buyerId: UniqueEntityID;
-    invoiceNumber?: string,
-    invoiceUrl?: string
+    invoice?: Invoice
 };
 
 export class OrderError extends EntityError {
-    constructor(errors: string[]) {
+    constructor(errors: string[] | string) {
       super('Order', errors);
     }
 }
@@ -33,20 +41,12 @@ export class Order extends Entity<OrderProps>{
         return this.props.billingAddress;
     }
 
-    get invoiceNumber(): string {
-        return this.props.invoiceNumber;
-    }
-
-    get invoiceUrl(): string {
-        return this.props.invoiceUrl;
+    get invoice(): Invoice {
+        return this.props.invoice;
     }
  
     get lineItems(): Array<LineItem> {        
         return this.props.lineItems || [];
-    }
-
-    set lineItems(lineItems: LineItem[]) {
-        this.props.lineItems = lineItems;
     }
 
     get buyerId(): UniqueEntityID {
@@ -58,40 +58,49 @@ export class Order extends Entity<OrderProps>{
         this._lastLineItemId = this.lineItems[this.lineItems.length - 1].id;
     }  
 
-    public invoice(invoiceNumber: string, invoiceUrl?: string) {
-        this.props.invoiceNumber = invoiceNumber;
-        this.props.invoiceUrl = invoiceUrl;
+    public addInvoice(invoice: Invoice) {
+        if (this.invoice) {
+            throw new OrderError('Order already has an invoice');
+        }
+
+        this.props.invoice = invoice;
     }
 
-    public addLineItem(lineItemBasicProps: LineItemBasicProps) {
+    public addLineItem(lineItemBasicProps: LineItemBasicBuildProps) {
         const errors: string[] = [];
-
-        let lineItemProps = lineItemBasicProps as LineItemProps;
 
         if (this.lineItems.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_ORDER) {
             errors.push('Max line items reached');
         }
 
-        lineItemProps.id = new UniqueEntityID(+this._lastLineItemId.toValue() + 1);
+        const nextLineItemID = +this._lastLineItemId.toValue() + 1;
+
+        let lineItemProps: LineItemBuidProps = {
+            id: nextLineItemID,
+            productId: lineItemBasicProps.productId,
+            quantity: lineItemBasicProps.quantity
+        };
+        
         const lineItem = LineItem.build(lineItemProps, true);
         
         if (errors.length > 0) {
             throw new OrderError(errors);
         }
         
-        this._lastLineItemId = lineItemProps.id;
+        this._lastLineItemId = lineItem.id;
         this.lineItems.push(lineItem);
     }
 
-    public static build(buildProps: OrderBuildProps, id?: UniqueEntityID): Order {
+    public static build(buildProps: OrderBuildProps): Order {
         /** some domain validations here **/
+
+        buildProps.builtLineItems.sort((a, b) => +a.id.toValue() - +b.id.toValue());
         
         const props: OrderProps = {
             billingAddress: buildProps.billingAddress,
             buyerId: buildProps.buyerId,
-            lineItems: [],
-            invoiceNumber: buildProps.invoiceNumber,
-            invoiceUrl: buildProps.invoiceUrl
+            lineItems: buildProps.builtLineItems || [],
+            invoice: buildProps.invoice
         };
 
         const errors: string[] = [];
@@ -116,21 +125,25 @@ export class Order extends Entity<OrderProps>{
 
         if (!!buildProps.id) {
 
-            buildProps.lineItems.sort((a, b) => +a.id.toValue() - +b.id.toValue());
+            buildProps.lineItems.sort((a, b) => +a.id - +b.id);
             for (let i = 0; i < buildProps.lineItems.length; i++) {
+
+                if (!buildProps.lineItems[i].id) {
+                    return;
+                }
     
-                const lineItem = LineItem.build(buildProps.lineItems[i], false);
+                const lineItem = LineItem.build(buildProps.lineItems[i] as LineItemBuidProps, false);
                 props.lineItems.push(lineItem);
             }
         } else {
 
             for (let i = 0; i < buildProps.lineItems.length; i++) {
     
-                let newLineItemProps = buildProps.lineItems[i] as LineItemProps;
+                let newLineItemProps = buildProps.lineItems[i];
                 const lastLineItem = props.lineItems[props.lineItems.length - 1];
-                newLineItemProps.id = new UniqueEntityID((+lastLineItem?.id?.toValue() || 0) + 1);
+                newLineItemProps.id = (+lastLineItem?.id?.toValue() || 0) + 1;
     
-                const newlineItem = LineItem.build(newLineItemProps, true);
+                const newlineItem = LineItem.build(newLineItemProps as LineItemBuidProps, true);
                 props.lineItems.push(newlineItem);
             }
         }

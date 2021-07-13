@@ -1,5 +1,9 @@
 import GenerateOrderInteractor from './generate-order.interactor';
+import GenerateOrderRequestDTO from './generate-order.dtos';
+import GenerateOrderGateway from './generate-order.gateway';
 
-export * from './generate-order.dtos';
-export { GenerateOrderInteractor };
-export * from './generate-order.ports';
+export {
+  GenerateOrderInteractor,
+  GenerateOrderRequestDTO,
+  GenerateOrderGateway
+};

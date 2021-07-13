@@ -8,3 +8,7 @@ export default interface HTTPResponse<T> {
   body?: T,
   headers?: HTTPHeaders
 };
+
+export interface HTTPResponseHandler<T> {
+  send(response: HTTPResponse<T>): void
+}

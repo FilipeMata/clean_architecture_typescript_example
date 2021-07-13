@@ -1,7 +1,7 @@
 import { Entity, UniqueEntityID, Address, EntityError } from '@entities';
 
 export interface CustomerProps {
-    id?: UniqueEntityID,
+    id: UniqueEntityID,
     document: string;
     name: string;
     cellphone: string;

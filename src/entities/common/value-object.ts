@@ -1,5 +1,13 @@
+import { DomainError } from "./domain-error";
+
 interface ValueObjectProps {
   [index: string]: any;
+}
+
+export class ValueObjectError extends DomainError {
+  constructor(valueObject: string, errors: string[]) {
+    super(`Failed while building ${valueObject} object`, errors);
+  }
 }
 
 /**
@@ -16,6 +24,10 @@ export abstract class ValueObject<T extends ValueObjectProps> {
     }
 
     this.props = baseProps;
+  }
+
+  public toValue(): T {
+    return this.props;
   }
 
   public equals(vo?: ValueObject<T>): boolean {

@@ -1,5 +1,5 @@
-import { GenerateOrderInvoice } from '@useCases'
-import { HTTPRequest } from '../common/types';
+import { GenerateOrderInvoiceInteractor } from '@useCases/generate-order-invoice'
+import HTTPRequest from '@adapters/common/types/http-request';
 
 interface HTTPGenerateOrderInvoiceParams {
   order_id: string
@@ -8,11 +8,11 @@ interface HTTPGenerateOrderInvoiceParams {
 type HTTPGenerateOrderInvoiceInput = HTTPRequest<HTTPGenerateOrderInvoiceParams, void, void, void>
 
 interface HTTPGenerateOrderInvoiceControllerParams {
-  generateOrderInteractor: GenerateOrderInvoice.GenerateOrderInvoiceInteractor
+  generateOrderInteractor: GenerateOrderInvoiceInteractor
 }
 
 export default class HTTPGenerateOrderInvoiceController {
-  private _interactorr: GenerateOrderInvoice.GenerateOrderInvoiceInteractor
+  private _interactorr: GenerateOrderInvoiceInteractor
 
   constructor(params: HTTPGenerateOrderInvoiceControllerParams) {
     this._interactorr = params.generateOrderInteractor;
@@ -20,6 +20,6 @@ export default class HTTPGenerateOrderInvoiceController {
 
   async run(input: HTTPGenerateOrderInvoiceInput) {
     const orderId = input.params.order_id;
-    await this._interactorr.execute(orderId);
+    await this._interactorr.run(orderId);
   }
 };

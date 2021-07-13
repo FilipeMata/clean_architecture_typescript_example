@@ -1,17 +1,17 @@
-import { GetOrderData } from '@useCases';
 import { UniqueEntityID } from '@entities';
-import { GenerateOrderInvoiceGateway } from './generate-order-invoice.ports';
+import GenerateOrderInvoiceGateway from './generate-order-invoice.gateway';
 import Interactor from '@useCases/common/interactor';
 import Presenter from '@useCases/common/presenter';
+import { GetOrderDataInteractor } from '@useCases/common/get-order-data';
 
 interface GenerateOrderInvoiceInteractorParams {
-  getOrderDataInteractor: GetOrderData.GetOrderDataInteractor,
+  getOrderDataInteractor: GetOrderDataInteractor,
   generateOrderInvoiceGateway: GenerateOrderInvoiceGateway,
   generateOrderInvoicePresenter: Presenter<void>
 }
 
 export default class GenerateOrderInvoiceInteractor extends Interactor<string, void> {
-  private _getOrderDataInteractor: GetOrderData.GetOrderDataInteractor;
+  private _getOrderDataInteractor: GetOrderDataInteractor;
   private _gateway: GenerateOrderInvoiceGateway;
 
   constructor(params: GenerateOrderInvoiceInteractorParams) {
@@ -21,20 +21,20 @@ export default class GenerateOrderInvoiceInteractor extends Interactor<string, v
   }
 
   protected async execute(orderId: string) {
+    await this._gateway.startTransaction();
+
     const order = await this._gateway
       .findOrderById(new UniqueEntityID(orderId));
 
     const orderData = await this._getOrderDataInteractor
       .execute(order);
-
-    await this._gateway.startTransaction();
-
-    const invoiceData = await this._gateway
+    
+    const invoice = await this._gateway
       .generateInvoice(orderData);
 
-    order.invoice(invoiceData.invoiceNumber, invoiceData.invoiceUrl);
+    order.addInvoice(invoice);
 
-    await this._gateway.save(order);
+    await this._gateway.saveOrder(order);
     await this._gateway.endTransaction();
   }
 }

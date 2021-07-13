@@ -1,5 +1,5 @@
-import { DetailOrder } from '@useCases'
-import { HTTPRequest } from '../common/types';
+import { DetailOrderInteractor } from '@useCases/detail-order';
+import HTTPRequest from '@adapters/common/types/http-request';
 
 interface HTTPDetailOrderParams {
   id: string
@@ -8,17 +8,17 @@ interface HTTPDetailOrderParams {
 type HTTPDetailOrderInput = HTTPRequest<HTTPDetailOrderParams, void, void, void>
 
 interface HttpDetailOrderControllerParams {
-  detailOrderInteractor: DetailOrder.DetailOrderInteractor
+  detailOrderInteractor: DetailOrderInteractor
 }
 
 export default class HttpDetailOrderController {
-  private _interactor: DetailOrder.DetailOrderInteractor
+  private _interactor: DetailOrderInteractor
 
   constructor(params: HttpDetailOrderControllerParams) {
     this._interactor = params.detailOrderInteractor;
   }
 
   async run(input: HTTPDetailOrderInput) {
-    await this._interactor.execute(input.params.id);
+    await this._interactor.run(input.params.id);
   }
 };

@@ -1,5 +1,4 @@
-import { OrderData } from '@useCases/common/dtos';
-import { GetOrderDataInteractor } from '@useCases/common/get-order-data';
+import { GetOrderDataInteractor, OrderData } from '@useCases/common/get-order-data';
 import Interactor from '@useCases/common/interactor';
 import Presenter from '@useCases/common/presenter';
 

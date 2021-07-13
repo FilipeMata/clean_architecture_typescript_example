@@ -1,13 +1,15 @@
-import { OrderData, InvoiceData } from '@useCases/common/dtos'
+import { Invoice } from "@entities";
+import { OrderData } from "@useCases/common/get-order-data";
+
 
 type GConstructor<T = {}> = new (...args: any[]) => T;
 
 export interface InvoiceGateway {
-  generateInvoice(orderData: OrderData): Promise<InvoiceData>
+  generateInvoice(orderData: OrderData): Promise<Invoice>
 }
 
-export default function MixInvoiceService<TBase extends GConstructor>(Base: TBase) {
-  return class InvoiceService extends Base implements InvoiceGateway {
+export default function MixInvoiceService<TBase extends GConstructor>(Gateway: TBase) {
+  return class InvoiceService extends Gateway implements InvoiceGateway {
     private _invoiceGateway: InvoiceGateway;
 
     constructor(...args: any[]) {
@@ -15,7 +17,7 @@ export default function MixInvoiceService<TBase extends GConstructor>(Base: TBas
       this._invoiceGateway = args[0].invoiceGateway;
     }
 
-    public async generateInvoice(orderData: OrderData): Promise<InvoiceData> {
+    public async generateInvoice(orderData: OrderData): Promise<Invoice> {
       return this._invoiceGateway.generateInvoice(orderData);
     }
   }

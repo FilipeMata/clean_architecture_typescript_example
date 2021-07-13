@@ -1,6 +1,6 @@
 import { UniqueEntityID, Product, LineItem, Customer, Order } from '@entities';
-import { OrderData } from '@useCases/common/dtos';
-import { GetOrderDataGateway } from './get-order-data.ports';
+import OrderData from './get-order-data.dtos';
+import GetOrderDataGateway from './get-order-data.gateway';
 import { ApplicationError } from '@useCases/common/errors';
 
 interface GetOrderDataInteractorParams {

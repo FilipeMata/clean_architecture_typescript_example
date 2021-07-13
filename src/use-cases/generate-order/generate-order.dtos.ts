@@ -1,13 +1,8 @@
-import { AddressDTO } from '@useCases/common/dtos';
+import { AddressProps, LineItemBasicBuildProps } from '@entities';
 
-interface LineItemDTO {
-  productId: string,
-  quantity: number
-};
-
-export interface GenerateOrderRequestDTO {
-  items: Array<LineItemDTO>,
+export default interface GenerateOrderRequestDTO {
+  items: Array<LineItemBasicBuildProps>,
   customerId: string,
-  billingAddress?: AddressDTO,
+  billingAddress?: AddressProps,
   shouldConsiderCustomerAddressForBilling?: boolean
 };
