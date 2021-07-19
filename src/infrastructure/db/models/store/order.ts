@@ -1,12 +1,12 @@
-import OrderDBModel from '@adapters/common/types/order-db-model';
+import OrderPersistenceData from '@adapters/common/order-persistence-data';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 import { LineItemModel } from './line-item';
 
-export class OrderModel extends Model implements OrderDBModel {
+export class OrderModel extends Model implements OrderPersistenceData {
   public id: string;
-  public customer_id: string;
+  public customer_id: number;
   public invoice_number: string;
-  public invoice_url: number;
+  public invoice_url: string;
   public billing_address: JSON;
   public line_items?: LineItemModel[];
 }
@@ -16,12 +16,11 @@ export default (sequelize: Sequelize) => {
     id: {
       type: DataTypes.UUID,
       unique: true,
-      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false
     },
     customer_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false
     },
     invoice_number: {

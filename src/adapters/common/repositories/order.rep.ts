@@ -1,8 +1,8 @@
 import { Order, UniqueEntityID, LineItem } from '@entities';
-import { DataMapper } from '../types/data-mapper';
-import OrderPersistenceData, * as OrderMapper from '../types/order-persistence-data';
-import LineItemPersistenceData, * as LineItemMapper from '../types/line-item-persistence-data';
-import { Criteria } from '../types/criteria';
+import { DataMapper } from '../data-mapper';
+import OrderPersistenceData, * as OrderMapper from '../order-persistence-data';
+import LineItemPersistenceData, * as LineItemMapper from '../line-item-persistence-data';
+import { Criteria } from '../criteria';
 
 type GConstructor<T = {}> = new (...args: any[]) => T;
 

@@ -1,4 +1,4 @@
-import { UnitOfWork } from "../types/unit-of-work";
+import { UnitOfWork } from "../unit-of-work";
 
 type GConstructor<T = {}> = new (...args: any[]) => T;
 

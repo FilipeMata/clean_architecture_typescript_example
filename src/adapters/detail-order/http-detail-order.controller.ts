@@ -1,5 +1,5 @@
 import { DetailOrderInteractor } from '@useCases/detail-order';
-import HTTPRequest from '@adapters/common/types/http-request';
+import HTTPRequest from '@adapters/common/http-request';
 
 interface HTTPDetailOrderParams {
   id: string

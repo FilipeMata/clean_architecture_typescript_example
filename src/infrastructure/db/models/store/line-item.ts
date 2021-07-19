@@ -1,8 +1,8 @@
-import LineItemDBModel from '@adapters/common/types/line-item-db-model';
+import LineItemPersistenceData from '@adapters/common/line-item-persistence-data';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
-export class LineItemModel extends Model implements LineItemDBModel {
-  public id: string;
+export class LineItemModel extends Model implements LineItemPersistenceData {
+  public id: number;
   public order_id: string;
   public product_id: number;
   public quantity: number;
@@ -11,14 +11,13 @@ export class LineItemModel extends Model implements LineItemDBModel {
 export default (sequelize: Sequelize) => {
   return LineItemModel.init({
     id: {
-      type: DataTypes.UUID,
-      unique: true,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       allowNull: false
     },
     order_id: {
       type: DataTypes.UUID,
+      primaryKey: true,
       allowNull: false
     },
     product_id: {

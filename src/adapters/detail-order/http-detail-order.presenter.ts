@@ -1,7 +1,7 @@
 import { ApplicationError } from '@useCases/common/errors';
 import { OrderData } from '@useCases/common/get-order-data';
 import Presenter from '@useCases/common/presenter';
-import { HTTPResponseHandler } from '@adapters/common/types/http-response';
+import { HTTPResponseHandler } from '@adapters/common/http-response';
 
 
 interface HTTPDetailOrderPresenterParams{

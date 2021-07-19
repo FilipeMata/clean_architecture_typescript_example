@@ -1,7 +1,7 @@
-import ProductDBModel from '@adapters/common/types/product-db-model';
+import ProductPersistenceData from '@adapters/common/product-persistence-data';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
-export class ProductModel extends Model implements ProductDBModel {
+export class ProductModel extends Model implements ProductPersistenceData {
   public id: number;
   public name: string;
   public description: string;

@@ -1,7 +1,7 @@
 import { Product, UniqueEntityID } from '@entities';
-import { DataMapper } from '../types/data-mapper';
-import { Criteria } from '../types/criteria';
-import ProductPersistenceData, { toDomain } from '../types/product-persistence-data';
+import { DataMapper } from '../data-mapper';
+import { Criteria } from '../criteria';
+import ProductPersistenceData, { toDomain } from '../product-persistence-data';
 
 type GConstructor<T = {}> = new (...args: any[]) => T;
 

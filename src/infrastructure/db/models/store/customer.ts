@@ -1,11 +1,11 @@
-import CustomerDBModel from '@adapters/common/types/customer-db-model';
+import CustomerPersistenceData from '@adapters/common/customer-persistence-data';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
-export class CustomerModel extends Model implements CustomerDBModel {
-  public id: string;
+export class CustomerModel extends Model implements CustomerPersistenceData {
+  public id: number;
   public document: string;
   public name: string;
-  public cellphone: number;
+  public cellphone: string;
   public email: string;
   public birthdate: Date;
   public address: JSON;
@@ -14,9 +14,9 @@ export class CustomerModel extends Model implements CustomerDBModel {
 export default (sequelize: Sequelize) => {
   return CustomerModel.init({
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.BIGINT.UNSIGNED,
       unique: true,
-      defaultValue: DataTypes.UUIDV4,
+      autoIncrement: true,
       primaryKey: true,
       allowNull: false
     },
@@ -29,7 +29,7 @@ export default (sequelize: Sequelize) => {
       allowNull: false
     },
     cellphone: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.STRING,
       allowNull: false
     },
     email: {
