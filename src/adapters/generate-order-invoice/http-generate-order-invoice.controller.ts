@@ -1,5 +1,5 @@
 import { GenerateOrderInvoiceInteractor } from '@useCases/generate-order-invoice'
-import HTTPRequest from '@adapters/common/http-request';
+import HTTPRequest from '@adapters/common/models/http-request';
 
 interface HTTPGenerateOrderInvoiceParams {
   order_id: string

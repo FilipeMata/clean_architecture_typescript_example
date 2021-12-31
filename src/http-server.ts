@@ -1,4 +1,4 @@
-import './load-env'; // Must be the first import
+import './load-env';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 

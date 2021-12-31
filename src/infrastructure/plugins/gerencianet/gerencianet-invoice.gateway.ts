@@ -1,12 +1,12 @@
 import { InvoiceGateway } from '@adapters/common/services/invoice.service';
-import { InvoiceData } from '../../../use-cases/common/dtos/invoice-data.dto';
-import { OrderData } from '../../../use-cases/common/dtos/order-data.dto';
+import { Invoice } from '@entities';
+import { OrderData } from '@useCases/common/get-order-data';
 
 const Gerencianet = require('gn-api-sdk-node');
 const credentials = require('./credentials');
 
 export class GerencianetInvoiceGateway implements InvoiceGateway {
-  public async generateInvoice(orderData: OrderData): Promise<InvoiceData> {
+  public async generateInvoice(orderData: OrderData): Promise<Invoice> {
     const options = {
       client_id: credentials.client_id,
       client_secret: credentials.client_secret,

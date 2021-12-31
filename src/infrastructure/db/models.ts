@@ -9,7 +9,7 @@ import { ProductModel } from './models/store/product';
 import { LineItemModel } from './models/store/line-item';
 import relations from './relations';
 
-type ModelMap = {
+export type ModelMap = {
   customer: typeof CustomerModel,
   order: typeof OrderModel,
   product: typeof ProductModel,
@@ -101,6 +101,10 @@ export const loadModels = async (): Promise<DB> => {
 export const getModels = () => {
   return db;
 };
+
+export const getModel = (modelName: keyof ModelMap) => {
+  return db.models[modelName];
+}
 
 export const unloadModels = async (): Promise<void> => {
   if (!db) {

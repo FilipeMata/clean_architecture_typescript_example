@@ -1,7 +1,7 @@
 import LineItemPersistenceData, * as LineItemMapper from "./line-item-persistence-data";
 import { Address, AddressProps, Invoice, Order, UniqueEntityID } from "@entities";
 
-export default interface OrderPersistenceFields {
+export default interface OrderPersistenceData {
   id: string;
   customer_id: number;
   invoice_number?: string;
@@ -10,7 +10,7 @@ export default interface OrderPersistenceFields {
   line_items?: LineItemPersistenceData[];
 }
 
-export function toDomain(order: OrderPersistenceFields): Order {
+export function toDomain(order: OrderPersistenceData): Order {
   let invoice: Invoice;
 
   if (order.invoice_url && order.invoice_number) {
@@ -29,8 +29,8 @@ export function toDomain(order: OrderPersistenceFields): Order {
   });
 }
 
-export function toPersistence(order: Order): Partial<OrderPersistenceFields> {
-  const orderPersistenceData: Partial<OrderPersistenceFields> = {};
+export function toPersistence(order: Order): Partial<OrderPersistenceData> {
+  const orderPersistenceData: Partial<OrderPersistenceData> = {};
   
   if (order.isNew || order.getDirtyProps().includes('id')) {
     orderPersistenceData.id = '' + order.id.toValue();

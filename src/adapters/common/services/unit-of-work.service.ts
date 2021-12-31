@@ -1,4 +1,4 @@
-import { UnitOfWork } from "../unit-of-work";
+import { UnitOfWork } from "../interfaces/unit-of-work";
 
 type GConstructor<T = {}> = new (...args: any[]) => T;
 
@@ -15,12 +15,12 @@ export default function MixUnitOfWorkService<TBase extends GConstructor>(Gateway
       return this._uow.startTransaction();
     }
 
-    public async commit(): Promise<void> {
-      return this._uow.commit();
+    public async commitTransaction(): Promise<void> {
+      return this._uow.commitTransaction();
     }
 
-    public async rollback(): Promise<void> {
-      return this._uow.rollback();
+    public async rollbackTransaction(): Promise<void> {
+      return this._uow.rollbackTransaction();
     }
   }
 }

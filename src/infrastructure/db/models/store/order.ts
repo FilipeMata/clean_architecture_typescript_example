@@ -1,4 +1,4 @@
-import OrderPersistenceData from '@adapters/common/order-persistence-data';
+import OrderPersistenceData from '@adapters/common/models/order-persistence-data';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 import { LineItemModel } from './line-item';
 

@@ -21,20 +21,25 @@ export default class GenerateOrderInvoiceInteractor extends Interactor<string, v
   }
 
   protected async execute(orderId: string) {
-    await this._gateway.startTransaction();
-
-    const order = await this._gateway
-      .findOrderById(new UniqueEntityID(orderId));
-
-    const orderData = await this._getOrderDataInteractor
-      .execute(order);
-    
-    const invoice = await this._gateway
-      .generateInvoice(orderData);
-
-    order.addInvoice(invoice);
-
-    await this._gateway.saveOrder(order);
-    await this._gateway.endTransaction();
+    try {
+      await this._gateway.startTransaction();
+  
+      const order = await this._gateway
+        .findOrderById(new UniqueEntityID(orderId));
+  
+      const orderData = await this._getOrderDataInteractor
+        .execute(order);
+      
+      const invoice = await this._gateway
+        .generateInvoice(orderData);
+  
+      order.addInvoice(invoice);
+  
+      await this._gateway.saveOrder(order);
+      await this._gateway.commitTransaction();
+    } catch(err) {
+      await this._gateway.rollbackTransaction();
+      throw err;
+    }
   }
 }

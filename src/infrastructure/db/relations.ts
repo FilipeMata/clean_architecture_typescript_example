@@ -15,5 +15,5 @@ export default (db: DB): void => {
 
   db.models.line_item.hasOne(
     db.models.product, { sourceKey: 'product_id', foreignKey: 'id' }
-  )
+  );
 };

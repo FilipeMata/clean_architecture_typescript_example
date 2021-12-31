@@ -3,7 +3,7 @@ import {
   GenerateOrderInteractor,
   GenerateOrderRequestDTO
 } from '@useCases/generate-order';
-import HTTPRequest from '@adapters/common/http-request';
+import HTTPRequest from '@adapters/common/models/http-request';
 
 interface HTTPGenerateOrderBody {
   customer_id: string,

@@ -1,4 +1,4 @@
-import CustomerPersistenceData from '@adapters/common/customer-persistence-data';
+import CustomerPersistenceData from '@adapters/common/models/customer-persistence-data';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
 export class CustomerModel extends Model implements CustomerPersistenceData {

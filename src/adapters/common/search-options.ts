@@ -12,7 +12,7 @@ export type Include<Model> = {
   includes?: Include<any>[]
 }
 
-export interface SearchOptions<Type, > {
+export interface SearchOptions<Type> {
   criteria: Criteria<Type>;
   includes?: Include<any>[]
   orderBy?: SearchOrder;

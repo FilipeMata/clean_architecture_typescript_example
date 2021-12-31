@@ -1,10 +1,10 @@
-import { UniqueEntityIDGeneratorFactory } from './entities/id-generator-factory';
-import UUIDUniqueEntityIDGenerator from './infrastructure/plugins/uuid-id-generator';
 
+import UUIDUniqueEntityIDGenerator from './infrastructure/plugins/uuid-id-generator'
 import { loadModels, unloadModels } from './infrastructure/db/models';
 import { startHttpServer, shutdownHttpServer } from './http-server';
 import { loadContainer } from './infrastructure/container';
 import { AwilixContainer } from 'awilix';
+import { UniqueEntityIDGeneratorFactory } from '@entities';
 
 declare global {
     namespace Express {

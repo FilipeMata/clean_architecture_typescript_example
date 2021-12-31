@@ -50,9 +50,14 @@ export default class GenerateOrderInteractor extends Interactor<GenerateOrderReq
       buyerId: customer.id
     });
 
-    await this._gateway.startTransaction();
-    await this._gateway.saveOrder(order);
-    await this._gateway.endTransaction();
+    try {
+      await this._gateway.startTransaction();
+      await this._gateway.saveOrder(order);
+      await this._gateway.commitTransaction();
+    } catch(err) {
+      await this._gateway.rollbackTransaction();
+      throw err;
+    }
 
     return await this._getOrderDataInteractor
       .execute(order);

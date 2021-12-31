@@ -1,4 +1,4 @@
-import LineItemPersistenceData from '@adapters/common/line-item-persistence-data';
+import LineItemPersistenceData from '@adapters/common/models/line-item-persistence-data';
 import { Sequelize, Model, DataTypes } from 'sequelize';
 
 export class LineItemModel extends Model implements LineItemPersistenceData {

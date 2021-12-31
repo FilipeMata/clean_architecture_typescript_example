@@ -1,4 +1,4 @@
-import { UnitOfWork } from '@adapters/common/unit-of-work';
+import { UnitOfWork } from '@adapters/common/interfaces/unit-of-work';
 import { Transaction } from 'sequelize/types';
 import { DB, getModels } from './models';
 
@@ -15,12 +15,14 @@ export class SequelizeUnitOfWork implements UnitOfWork {
       .transaction({autocommit: false});
   }
   
-  public async commit(): Promise<void> {
+  public async commitTransaction(): Promise<void> {
     await this._transaction?.commit();
+    this._transaction = null;
   }
 
-  public async rollback(): Promise<void> {
+  public async rollbackTransaction(): Promise<void> {
     await this._transaction?.rollback();
+    this._transaction = null;
   }
 
   get transaction (): Transaction {

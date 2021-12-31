@@ -1,32 +1,8 @@
+import { SequelizeUnitOfWork } from '@infrastructure/db/sequelize-unit-of-work';
 import { AwilixContainer, asValue } from 'awilix';
 import { Request, Response, NextFunction } from 'express';
-import { HTTPResponseHandler } from '@adapters/common/types';
-import { HTTPResponse } from '@adapters/common/types';
+import ExpressResponseHandler from '../express-response-handler';
 
-
-class ExpressResponseHandler<T> implements HTTPResponseHandler<T> {
-  private _response: Response;
-
-  constructor(response: Response) {
-    this._response = response;
-  }
-
-  public send(data: HTTPResponse<T>): any {
-    if(data.headers) {
-      Object.keys(data.headers).forEach((key: string) => {
-        this._response.setHeader(key, data.headers[key])
-      });
-    }
-    
-    this._response.status(data.statusCode);
-
-    if (data.body) {
-      return this._response.json(data.body);
-    }
-
-    return this._response.send(data.message);
-  }
-}
 
 export default (container: AwilixContainer) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -34,6 +10,7 @@ export default (container: AwilixContainer) => {
 
     scope.register({
       httpResponseHandler: asValue(new ExpressResponseHandler<any>(res)),
+      unitOfWork: asValue(new SequelizeUnitOfWork())
     });
 
     req.container = scope;

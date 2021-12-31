@@ -17,7 +17,7 @@ module.exports = {
         allowNull: false
       },
       cellphone: {
-        type: Sequelize.DataTypes.INTEGER.UNSIGNED,
+        type: Sequelize.DataTypes.BIGINT.UNSIGNED,
         allowNull: false
       },
       email: {

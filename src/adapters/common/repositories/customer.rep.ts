@@ -1,7 +1,6 @@
 import { Customer, UniqueEntityID } from '@entities';
-import CustomerPersistenceData, { toDomain } from '../customer-persistence-data';
-import { DataMapper } from '../data-mapper';
-import { Criteria } from '../criteria';
+import { CustomerDataMapper } from '../interfaces/data-mappers';
+import { toDomain } from '../models/customer-persistence-data';
 
 type GConstructor<T = {}> = new (...args: any[]) => T;
 
@@ -9,7 +8,7 @@ export default function MixCustomerRepository<TBase extends GConstructor>(Gatewa
   
   return class CustomerRepository extends Gateway {
 
-    private _customerDataMapper: DataMapper<CustomerPersistenceData>
+    private _customerDataMapper: CustomerDataMapper
 
     constructor(...args: any[]) {
       super(...args);
@@ -17,14 +16,7 @@ export default function MixCustomerRepository<TBase extends GConstructor>(Gatewa
     }
 
     public async findCustomerById(customerId: UniqueEntityID): Promise<Customer> {
-      const criteria = new Criteria<CustomerPersistenceData>({
-        id: {
-          $equal: +customerId.toValue()
-        }
-      });
-
-      const customerPersistenceData = await this._customerDataMapper.find({ criteria })
-
+      const customerPersistenceData = await this._customerDataMapper.findById(+customerId.toValue())
       return toDomain(customerPersistenceData);
     }
   }

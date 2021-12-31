@@ -1,6 +1,6 @@
 import { ApplicationError } from '@useCases/common/errors';
 import Presenter from '@useCases/common/presenter';
-import { HTTPResponseHandler } from '@adapters/common/http-response';
+import { HTTPResponseHandler } from '@adapters/common/models/http-response';
 
 interface HTTPGenerateOrderInvoicePresenterParams{
   httpResponseHandler: HTTPResponseHandler<void>

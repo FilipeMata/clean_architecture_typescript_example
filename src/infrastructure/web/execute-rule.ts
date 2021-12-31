@@ -8,7 +8,7 @@ export default  function executeRule(rule: string) {
 
     try {
       return await controller.run(request, res, next);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err.message, { err: err });
 
       return res.status(500).json({
