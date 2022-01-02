@@ -43,7 +43,6 @@ export default class GenerateOrderInteractor extends Interactor<GenerateOrderReq
     if (!billingAddress) {
       throw new ApplicationError('missing_order_billing_address');
     }
-    console.log('CHEGOU AQUI TA');
 
     const order = Order.build({
       billingAddress: billingAddress,
