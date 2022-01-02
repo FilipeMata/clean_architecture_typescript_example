@@ -1,42 +1,39 @@
 import { Order, Address, UniqueEntityID } from '@entities';
-import { OutputPort, GenerateOrder } from '@useCases';
+import GenerateOrderGateway from './generate-order.gateway';
+import GenerateOrderRequestDTO from './generate-order.dtos';
+import Interactor from '@useCases/common/interactor';
+import Presenter from '@useCases/common/presenter';
+import { ApplicationError } from '@useCases/common/errors';
+import { GetOrderDataInteractor, OrderData } from '@useCases/common/get-order-data';
 
-export class GenerateOrderInteractor {
-  private _gateway: GenerateOrder.GenerateOrderGateway;
-  private _presenter: OutputPort<GenerateOrder.GenerateOrderResponseDTO>;
+interface GenerateOrderInteractorParams {
+  generateOrderGateway: GenerateOrderGateway,
+  generateOrderPresenter: Presenter<void>,
+  getOrderDataInteractor: GetOrderDataInteractor
+}
 
-  constructor(
-    gateway: GenerateOrder.GenerateOrderGateway,
-    presenter: OutputPort<GenerateOrder.GenerateOrderResponseDTO>
-  ) {
-    this._gateway = gateway;
-    this._presenter = presenter;
+export default class GenerateOrderInteractor extends Interactor<GenerateOrderRequestDTO, OrderData>{
+  private _gateway: GenerateOrderGateway;
+  private _getOrderDataInteractor: GetOrderDataInteractor;
+
+  constructor(params: GenerateOrderInteractorParams) {
+    super(params.generateOrderPresenter)
+    this._gateway = params.generateOrderGateway;
+    this._getOrderDataInteractor = params.getOrderDataInteractor;
   }
 
-  public async execute(data: GenerateOrder.GenerateOrderRequestDTO) {
+  protected async execute(data: GenerateOrderRequestDTO) {
     let billingAddress: Address | undefined;
 
     if(!!data.billingAddress) {
-      const billingAddressOrError = Address.build(data.billingAddress);
-      
-      if(!billingAddressOrError.succeeded) {
-        return this._presenter.show({
-          success: false,
-          failures: ['missing_order_billing_address']
-        });
-      }
-
-      billingAddress = billingAddressOrError.value;
+      billingAddress = Address.build(data.billingAddress);
     }
 
     const customer = await this._gateway
       .findCustomerById(new UniqueEntityID(data.customerId));
 
     if (!customer) {
-      return this._presenter.show({
-        success: false,
-        failures: ['customer_not_found']
-      });
+      throw new ApplicationError('customer_not_found');
     }
 
     if (data.shouldConsiderCustomerAddressForBilling) {
@@ -44,52 +41,26 @@ export class GenerateOrderInteractor {
     }
 
     if (!billingAddress) {
-      return this._presenter.show({
-        success: false,
-        failures: ['missing_order_billing_address']
-      });
+      throw new ApplicationError('missing_order_billing_address');
     }
+    console.log('CHEGOU AQUI TA');
 
-    const lineItems = [];
-
-    for (const item of data.items) {
-      const product = await this._gateway
-        .findProductById(new UniqueEntityID(item.productId));
-
-      lineItems.push({
-        product: product,
-        quantity: item.quantity
-      });
-    }
-
-    const orderResult = Order.build({
+    const order = Order.build({
       billingAddress: billingAddress,
-      lineItems: lineItems,
-      buyer: customer
+      lineItems: data.items,
+      buyerId: customer.id
     });
-
-    if (!orderResult.succeeded) {
-      return this._presenter.show({
-        success: false,
-        failures: orderResult.errors
-      });
-    }
-
-    const order = orderResult.value;
 
     try {
       await this._gateway.startTransaction();
-      await this._gateway.save(order);
-      await this._gateway.endTransaction();
-    } catch (err) {
-      return this._presenter.show({
-        success: false,
-        failures: ['unexpected_failure']
-      });
+      await this._gateway.saveOrder(order);
+      await this._gateway.commitTransaction();
+    } catch(err) {
+      await this._gateway.rollbackTransaction();
+      throw err;
     }
 
-    return this._presenter.show({
-      success: true
-    });
+    return await this._getOrderDataInteractor
+      .execute(order);
   }
 }
