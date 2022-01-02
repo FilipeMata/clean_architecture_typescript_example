@@ -18,29 +18,25 @@
       "@infrastructure/*": [
         "src/infrastructure/*"
       ],
-      "@adapters": [
-        "src/adapters/index"
+      "@adapters/*": [
+        "src/adapters/*"
       ],
       "@entities": [
         "src/entities/index"
       ],
-      "@useCases": [
-        "src/use-cases/index"
-      ],
-      "@useCases/common/*": [
-        "src/use-cases/common/*"
+      "@useCases/*": [
+        "src/use-cases/*"
       ],
       "@shared/*": [
         "src/shared/*"
-      ],
-      "@server": [
-        "src/Server"
       ]
     }
   },
   "compileOnSave": true,
   "include": [
-    "src/**/*.ts", "src/infrastructure/db/relations.js", "src/infrastructure/db/models/store/customer.js", "src/infrastructure/db/models/store/order.js", "src/infrastructure/db/models/store/line-item.js", "src/infrastructure/db/models/store/product.js", "src/infrastructure/db/models.js"
+    "src/**/*.ts", 
+    "src/**/*.js",
+    "src/**/*.json"
   ],
   "exclude": [
     "src/infrastructure/db/migrations/**/*",

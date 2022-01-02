@@ -1,4 +1,9 @@
-export * from './generate-order-request.dto';
-export * from './generate-order.interactor';
-export * from './generate-order.gateway';
-export * from './generate-order-response.dto'
+import GenerateOrderInteractor from './generate-order.interactor';
+import GenerateOrderRequestDTO from './generate-order.dtos';
+import GenerateOrderGateway from './generate-order.gateway';
+
+export {
+  GenerateOrderInteractor,
+  GenerateOrderRequestDTO,
+  GenerateOrderGateway
+};

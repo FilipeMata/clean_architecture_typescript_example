@@ -1,10 +1,11 @@
-import { OrderData, InvoiceData } from "@useCases/common/dtos";
-import { Order, UniqueEntityID } from '@entities';
+import { OrderData } from '@useCases/common/get-order-data'
+import { Invoice, Order, UniqueEntityID } from '@entities';
 
-export interface GenerateOrderInvoiceGateway {
-  startTransaction(): void,
-  endTransaction(): Promise<void>,
+export default interface GenerateOrderInvoiceGateway {
+  startTransaction(): Promise<void>;
+  commitTransaction(): Promise<void>;
+  rollbackTransaction(): Promise<void>;
   findOrderById(orderId: UniqueEntityID): Promise<Order>;
-  generateInvoice(orderData: OrderData): Promise<InvoiceData>;
-  save(order: Order): Promise<void>;
+  generateInvoice(orderData: OrderData): Promise<Invoice>;
+  saveOrder(order: Order): Promise<void>;
 }

@@ -1,13 +1,16 @@
 import { UniqueEntityID, Product, LineItem, Customer, Order } from '@entities';
-import { GetOrderData } from '@useCases';
-import { OrderData } from '@useCases/common/dtos';
-import { Result } from '@shared/Result';
+import OrderData from './get-order-data.dtos';
+import GetOrderDataGateway from './get-order-data.gateway';
+import { ApplicationError } from '@useCases/common/errors';
 
-export class GetOrderDataInteractor {
-  private _gateway: GetOrderData.GetOrderDataGateway;
+interface GetOrderDataInteractorParams {
+  getOrderDataGateway: GetOrderDataGateway
+}
+export default class GetOrderDataInteractor {
+  private _gateway: GetOrderDataGateway;
 
-  constructor(gateway: GetOrderData.GetOrderDataGateway) {
-    this._gateway = gateway;
+  constructor(params: GetOrderDataInteractorParams) {
+    this._gateway = params.getOrderDataGateway;
   }
 
   private _mapProduct(product: Product) {
@@ -18,11 +21,15 @@ export class GetOrderDataInteractor {
     };
   }
 
-  private _mapLineItem(lineItems: LineItem[]) {
+  private async _mapLineItem(lineItems: LineItem[]) {
     const itemsDTO = [];
     for (const lineItem of lineItems) {
+
+      const product = await this._gateway
+        .findProductById(lineItem.productId);
+      
       const item = {
-        product: this._mapProduct(lineItem.product),
+        product: this._mapProduct(product),
         quantity: lineItem.quantity
       };
 
@@ -43,38 +50,31 @@ export class GetOrderDataInteractor {
     }
   }
 
-  public async execute(orderRef: string | Order): Promise<Result<OrderData>> {
+  public async execute(orderRef: string | Order): Promise<OrderData> {
     let order: Order;
-
+    
     if (orderRef instanceof Order) {
       order = orderRef;
     }
-
+    
     if (!order && typeof orderRef === 'string') {
-      try {
-        order = await this._gateway
-          .findOrderById(new UniqueEntityID(orderRef));
-      } catch (err) {
-        return Result.fail<OrderData>([
-          'unexpected_failure'
-        ]);
-      }
+      order = await this._gateway
+      .findOrderById(new UniqueEntityID(orderRef));
     }
 
     if (!order) {
-      return Result.fail<OrderData>([
-        'order_not_found'
-      ]);
+      throw new ApplicationError('order_not_found');
     }
 
-    const response: OrderData = {
+    const buyer  = await this._gateway
+      .findCustomerById(order.buyerId);
+
+    return {
       id: order.id.toString(),
       billingAddress: order.billingAddress.toValue(),
-      lineItems: this._mapLineItem(order.lineItems),
-      buyer: this._mapCustomer(order.buyer)
+      lineItems: await this._mapLineItem(order.lineItems),
+      buyer: this._mapCustomer(buyer)
     };
-
-    return Result.success<OrderData>(response);
   }
 }
 

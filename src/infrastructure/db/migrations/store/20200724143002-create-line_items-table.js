@@ -3,13 +3,13 @@ module.exports = {
     return queryInterface.createTable('line_items', {
       id: {
         type: Sequelize.DataTypes.UUID,
-        unique: true,
         defaultValue: Sequelize.DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false
       },
       order_id: {
         type: Sequelize.DataTypes.UUID,
+        primaryKey: true,
         allowNull: false
       },
       product_id: {

@@ -1,7 +1,7 @@
 import { ValueObject } from '@entities';
-import { Result } from '@shared/Result';
+import { ValueObjectError } from './common/value-object';
 
-export interface IAddressProps {
+export interface AddressProps {
     street: string;
     neighborhood: string;
     city: string;
@@ -12,7 +12,13 @@ export interface IAddressProps {
     zipcode: string;
 };
 
-export class Address extends ValueObject<IAddressProps>{
+export class AddressError extends ValueObjectError {
+    constructor(errors: string[]) {
+      super('Address', errors);
+    }
+}
+
+export class Address extends ValueObject<AddressProps>{
 
     get street (): string {
         return this.props.street;
@@ -46,24 +52,11 @@ export class Address extends ValueObject<IAddressProps>{
         return this.props.zipcode;
     }
 
-    private constructor(props: IAddressProps) {
+    private constructor(props: AddressProps) {
         super(props);
     }
 
-    public toValue(): IAddressProps {
-        return {
-            street: this.street,
-            neighborhood: this.neighborhood,
-            city: this.city,
-            number: this.number,
-            state: this.state,
-            country: this.country,
-            complement: this.complement,
-            zipcode: this.zipcode
-        }
-    }
-
-    public static build(props: IAddressProps): Result<Address> {
+    public static build(props: AddressProps): Address {
         /** some domain validations here **/
 
         let errors: Array<string> = [];
@@ -75,9 +68,9 @@ export class Address extends ValueObject<IAddressProps>{
         /** put some other validations here */
 
         if (errors.length > 0) {
-            return Result.fail<Address>(errors);
+            throw new AddressError(errors);
         }
 
-        return Result.success<Address>(new Address(props))
+        return new Address(props);
     }
 }

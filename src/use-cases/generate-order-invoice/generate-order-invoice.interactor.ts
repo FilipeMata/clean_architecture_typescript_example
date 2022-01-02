@@ -1,55 +1,45 @@
-import { GenerateOrderInvoice, OutputPort } from '@useCases';
-import { GetOrderDataInteractor } from '@useCases/common/get-order-data' 
 import { UniqueEntityID } from '@entities';
+import GenerateOrderInvoiceGateway from './generate-order-invoice.gateway';
+import Interactor from '@useCases/common/interactor';
+import Presenter from '@useCases/common/presenter';
+import { GetOrderDataInteractor } from '@useCases/common/get-order-data';
 
-export class GenerateOrderInvoiceInteractor {
+interface GenerateOrderInvoiceInteractorParams {
+  getOrderDataInteractor: GetOrderDataInteractor,
+  generateOrderInvoiceGateway: GenerateOrderInvoiceGateway,
+  generateOrderInvoicePresenter: Presenter<void>
+}
+
+export default class GenerateOrderInvoiceInteractor extends Interactor<string, void> {
   private _getOrderDataInteractor: GetOrderDataInteractor;
-  private _gateway: GenerateOrderInvoice.GenerateOrderInvoiceGateway;
-  private _presenter: OutputPort<GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO>;
+  private _gateway: GenerateOrderInvoiceGateway;
 
-  constructor(
-    getOrderDataInteractor: GetOrderDataInteractor,
-    gateway: GenerateOrderInvoice.GenerateOrderInvoiceGateway,
-    presenter: OutputPort<GenerateOrderInvoice.GenerateOrderInvoiceResponseDTO>
-  ) {
-    this._getOrderDataInteractor = getOrderDataInteractor;
-    this._gateway = gateway;
-    this._presenter = presenter;
+  constructor(params: GenerateOrderInvoiceInteractorParams) {
+    super(params.generateOrderInvoicePresenter);
+    this._getOrderDataInteractor = params.getOrderDataInteractor;
+    this._gateway = params.generateOrderInvoiceGateway;
   }
 
-  public async execute(orderId: string) {
-    const order = await this._gateway
-      .findOrderById(new UniqueEntityID(orderId));
-
-    const orderDataResult = await this._getOrderDataInteractor
-      .execute(order);
-    
-    if (!orderDataResult.succeeded) {
-      return this._presenter.show({
-        success: false,
-        failures: orderDataResult.errors
-      });
-    };
-
+  protected async execute(orderId: string) {
     try {
-      this._gateway.startTransaction();
-      const invoiceData = await this._gateway
-        .generateInvoice(orderDataResult.value);
-
-      order.invoice(invoiceData.invoiceNumber, invoiceData.invoiceUrl);
-
-      this._gateway.save(order);
-      this._gateway.endTransaction();
-
-      this._presenter.show({
-        success: true
-      });
-
+      await this._gateway.startTransaction();
+  
+      const order = await this._gateway
+        .findOrderById(new UniqueEntityID(orderId));
+  
+      const orderData = await this._getOrderDataInteractor
+        .execute(order);
+      
+      const invoice = await this._gateway
+        .generateInvoice(orderData);
+  
+      order.addInvoice(invoice);
+  
+      await this._gateway.saveOrder(order);
+      await this._gateway.commitTransaction();
     } catch(err) {
-      this._presenter.show({
-        success: false,
-        failures: ['unexpected_failure']
-      });
+      await this._gateway.rollbackTransaction();
+      throw err;
     }
   }
 }

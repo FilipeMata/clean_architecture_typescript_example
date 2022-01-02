@@ -1,2 +1,3 @@
-export * from './detail-order.interactor';
-export * from './detail-order-response.dto';
+import DetailOrderInteractor from './detail-order.interactor';
+
+export { DetailOrderInteractor };

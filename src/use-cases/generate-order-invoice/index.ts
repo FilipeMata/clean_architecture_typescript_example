@@ -1,3 +1,7 @@
-export * from './generate-order-invoice-response.dto';
-export * from './generate-order-invoice.gateway';
-export * from './generate-order-invoice.interactor';
+import GenerateOrderInvoiceInteractor from './generate-order-invoice.interactor';
+import GenerateOrderGateway from './generate-order-invoice.gateway';
+
+export {
+  GenerateOrderInvoiceInteractor,
+  GenerateOrderGateway
+};

@@ -1,7 +1,7 @@
-import { Entity, UniqueEntityID, Address } from '@entities';
-import { Result } from '@shared/Result';
+import { Entity, UniqueEntityID, Address, EntityError } from '@entities';
 
-export interface ICustomer {
+export interface CustomerProps {
+    id: UniqueEntityID,
     document: string;
     name: string;
     cellphone: string;
@@ -10,7 +10,13 @@ export interface ICustomer {
     address: Address;
 };
 
-export class Customer extends Entity<ICustomer>{
+export class CustomerError extends EntityError {
+    constructor(errors: string[]) {
+      super('Customer', errors);
+    }
+}
+
+export class Customer extends Entity<CustomerProps>{
 
     get document(): string {
         return this.props.document;
@@ -36,11 +42,11 @@ export class Customer extends Entity<ICustomer>{
         return this.props.address;
     }
 
-    private constructor(props: ICustomer, id?: UniqueEntityID) {
-        super(props, id);
+    private constructor(props: CustomerProps) {
+        super(props, !props.id);
     }
 
-    public static build(props: ICustomer, id?: UniqueEntityID): Result<Customer> {
+    public static build(props: CustomerProps): Customer {
         /** some domain validations here **/
         const errors: Array<string> = [];
 
@@ -51,9 +57,9 @@ export class Customer extends Entity<ICustomer>{
         /** put other validations here */
 
         if (errors.length > 0) {
-            return Result.fail<Customer>(errors);
+            throw new CustomerError(errors);
         }
 
-        return Result.success<Customer>(new Customer(props, id));
+        return new Customer(props);
     }
 }

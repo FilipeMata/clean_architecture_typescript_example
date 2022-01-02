@@ -1,102 +1,154 @@
-import { Address, LineItem, ILineItemProps, Customer }  from '@entities';
+import { Address, LineItem, LineItemProps, LineItemBasicBuildProps, LineItemBuidProps, EntityError }  from '@entities';
 import { Entity, UniqueEntityID } from '@entities';
-import { Result } from '@shared/Result';
 
-interface IOrderProps {
+interface OrderLineItemBuildProps extends LineItemBasicBuildProps {
+    id?: number
+}
+
+export interface Invoice {
+    number: string,
+    url?: string
+}
+  
+interface OrderProps {
+    id?: UniqueEntityID;
     billingAddress: Address;
     lineItems?: Array<LineItem>;
-    buyer: Customer;
-    invoiceNumber?: string,
-    invoiceUrl?: string;
+    buyerId: UniqueEntityID;
+    invoice?: Invoice
 };
 
-interface IOrderBuildProps {
+interface OrderBuildProps {
+    id?: UniqueEntityID;
     billingAddress: Address;
-    lineItems?: Array<ILineItemProps>;
-    buyer: Customer;
-    invoiceNumber?: string,
-    invoiceUrl?: string
+    builtLineItems?: Array<LineItem>;
+    lineItems?: Array<OrderLineItemBuildProps>;
+    buyerId: UniqueEntityID;
+    invoice?: Invoice
 };
 
-export class Order extends Entity<IOrderProps>{
+export class OrderError extends EntityError {
+    constructor(errors: string[] | string) {
+      super('Order', errors);
+    }
+}
+
+export class Order extends Entity<OrderProps>{
     public static MAX_NUMBER_OF_LINE_ITEMS_PER_ORDER = 7;
+    private _lastLineItemId: UniqueEntityID;
 
     get billingAddress(): Address {
         return this.props.billingAddress;
     }
 
-    get invoiceNumber(): string {
-        return this.props.invoiceNumber;
-    }
-
-    get invoiceUrl(): string {
-        return this.props.invoiceUrl;
+    get invoice(): Invoice {
+        return this.props.invoice;
     }
  
     get lineItems(): Array<LineItem> {        
         return this.props.lineItems || [];
     }
 
-    set lineItems(lineItems: LineItem[]) {
-        this.props.lineItems = lineItems;
+    get buyerId(): UniqueEntityID {
+        return this.props.buyerId;
     }
 
-    get buyer(): Customer {
-        return this.props.buyer;
-    }
-
-    private constructor(props: IOrderProps, id?: UniqueEntityID) {
-        super(props, id);
+    private constructor(props: OrderProps) {
+        super(props, !props.id);
+        this._lastLineItemId = this.lineItems[this.lineItems.length - 1].id;
     }  
 
-    public invoice(invoiceNumber: string, invoiceUrl?: string) {
-        this.props.invoiceNumber = invoiceNumber;
-        this.props.invoiceUrl = invoiceUrl;
+    public addInvoice(invoice: Invoice) {
+        if (this.invoice) {
+            throw new OrderError('Order already has an invoice');
+        }
+
+        this.props.invoice = invoice;
     }
 
-    public static build(buildProps: IOrderBuildProps, id?: UniqueEntityID): Result<Order> {
-    /** some domain validations here **/
+    public addLineItem(lineItemBasicProps: LineItemBasicBuildProps) {
+        const errors: string[] = [];
+
+        if (this.lineItems.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_ORDER) {
+            errors.push('Max line items reached');
+        }
+
+        const nextLineItemID = +this._lastLineItemId.toValue() + 1;
+
+        let lineItemProps: LineItemBuidProps = {
+            id: nextLineItemID,
+            productId: lineItemBasicProps.productId,
+            quantity: lineItemBasicProps.quantity
+        };
         
-        const props: IOrderProps = {
+        const lineItem = LineItem.build(lineItemProps, true);
+        
+        if (errors.length > 0) {
+            throw new OrderError(errors);
+        }
+        
+        this._lastLineItemId = lineItem.id;
+        this.lineItems.push(lineItem);
+    }
+
+    public static build(buildProps: OrderBuildProps): Order {
+        /** some domain validations here **/
+
+        buildProps.builtLineItems?.sort((a, b) => +a.id.toValue() - +b.id.toValue());
+        
+        const props: OrderProps = {
+            id: buildProps.id,
             billingAddress: buildProps.billingAddress,
-            buyer: buildProps.buyer,
-            lineItems: [],
-            invoiceNumber: buildProps.invoiceNumber,
-            invoiceUrl: buildProps.invoiceUrl
+            buyerId: buildProps.buyerId,
+            lineItems: buildProps.builtLineItems || [],
+            invoice: buildProps.invoice
         };
 
-        if (!buildProps.lineItems) {
-            buildProps.lineItems = [];
+        const errors: string[] = [];
+
+        if (buildProps.lineItems?.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_ORDER) {
+            errors.push('Max line items reached');
+        }
+
+        const existentLineItemProps = buildProps.lineItems?.find((item) => !!item.id)
+        
+        if (!buildProps.id && !!existentLineItemProps) {
+            errors.push('It is not possible add existent line items to a new order');
+            throw new OrderError(errors);
         }
         
-        let errors: Array<string> = [];
+        const newLineItemProps = buildProps.lineItems?.find((item) => !item.id);
 
-        if (buildProps.lineItems.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_ORDER) {
-            errors.push('max_line_items_reached');
+        if (!!buildProps.id && newLineItemProps) {
+            errors.push('It is not allowed build an existent order with a new line item');
+            throw new OrderError(errors);
         }
 
-        const mergeErros = (addinErrors: Array<string>) => {
-            addinErrors.forEach((error) => {
-                errors.push(error);
-            });
-        }
-        const handleLineItemResult = (lineItemResult: Result<LineItem>) => {
-            if (!lineItemResult.succeeded) { 
-                mergeErros(lineItemResult.errors);
+        if (!!buildProps.id) {
+
+            buildProps.lineItems?.sort((a, b) => +a.id - +b.id);
+            for (let i = 0; i < buildProps.lineItems?.length; i++) {
+
+                if (!buildProps.lineItems[i].id) {
+                    return;
+                }
+    
+                const lineItem = LineItem.build(buildProps.lineItems[i] as LineItemBuidProps, false);
+                props.lineItems.push(lineItem);
             }
+        } else {
 
-            props.lineItems.push(lineItemResult.value)
-        }
-
-        buildProps.lineItems.forEach((item) => {
-            const lineItemResult = LineItem.build(item);
-            handleLineItemResult(lineItemResult)
-        })
-
-        if (errors.length > 0) {
-            return Result.fail<Order>(errors);
+            for (let i = 0; i < buildProps.lineItems?.length; i++) {
+    
+                let newLineItemProps = buildProps.lineItems[i];
+                const lastLineItem = props.lineItems[props.lineItems.length - 1];
+                newLineItemProps.id = (+lastLineItem?.id?.toValue() || 0) + 1;
+    
+                const newlineItem = LineItem.build(newLineItemProps as LineItemBuidProps, true);
+                props.lineItems.push(newlineItem);
+            }
         }
         
-        return Result.success<Order>(new Order(props, id));
+        return new Order(props);
     }    
 }
