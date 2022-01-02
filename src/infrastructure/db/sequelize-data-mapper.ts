@@ -1,4 +1,4 @@
-import { FindOptions, WhereOptions, Op, CreateOptions, DestroyOptions, UpdateOptions, Options, IncludeOptions } from 'sequelize/types';
+import { FindOptions, WhereOptions, Op, CreateOptions, DestroyOptions, UpdateOptions, IncludeOptions } from 'sequelize/types';
 import { ModelCtor, Model as SequelizeModel} from 'sequelize';
 import { getModels } from './models';
 import { SequelizeUnitOfWork } from './sequelize-unit-of-work';
@@ -11,8 +11,13 @@ export default abstract class SequelizeDataMapper<Model extends SequelizeModel> 
     constructor(container: any) {
       this._uow = container.unitOfWork;
 
+      const camelToUnderscore = (key: string) => {
+        var result = key.replace( /([A-Z])/g, " $1" ).slice(1);
+        return result.split(' ').join('_').toLowerCase();
+      }
+
       const re = /Sequelize(\w+)DataMapper/;
-      const modelName = this.constructor.name.replace(re, '$1').toLocaleLowerCase();
+      const modelName = camelToUnderscore(this.constructor.name.replace(re, '$1'));
       
       this._model = ((getModels().models) as any)[modelName] as ModelCtor<any>;
     }
@@ -44,9 +49,7 @@ export default abstract class SequelizeDataMapper<Model extends SequelizeModel> 
     }
 
     public async updateById(id: number | string, data: Partial<Model>) {
-      await this.update({ 
-        where: {id} 
-      }, data as any as UpdateOptions);
+      await this.update({id}, data as any as UpdateOptions);
     }
 
     private async _generateFindOptions(conditions: WhereOptions, include?: IncludeOptions[]): Promise<FindOptions> {
@@ -94,7 +97,7 @@ export default abstract class SequelizeDataMapper<Model extends SequelizeModel> 
 
     protected async update(conditions: WhereOptions, data: UpdateOptions): Promise<void> {
       const transaction = await this._uow.transaction;
-      const options: DestroyOptions = {
+      const options: UpdateOptions = {
         where: conditions
       };
 
@@ -102,6 +105,6 @@ export default abstract class SequelizeDataMapper<Model extends SequelizeModel> 
         options.transaction = transaction;
       }
   
-      await this._model.update(options, data);
+      await this._model.update(data, options);
     }
 }

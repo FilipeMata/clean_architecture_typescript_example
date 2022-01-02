@@ -3,6 +3,6 @@ import OrderRouter from './order';
 
 const router = Router();
 
-router.use('/order', OrderRouter);
+router.use('/orders', OrderRouter);
 
 export default router;

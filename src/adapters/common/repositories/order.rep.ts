@@ -9,21 +9,21 @@ export default function MixOrderRepository<TBase extends GConstructor>(Gateway: 
   
   return class OrderRepository extends Gateway {
 
-    private _orderDataMaper: OrderDataMapper;
+    private _orderDataMapper: OrderDataMapper;
     private _lineItemDataMapper: LineItemDataMapper
 
     constructor(...args: any[]) {
       super(...args);
-      this._orderDataMaper = args[0].orderDataMaper;
+      this._orderDataMapper = args[0].orderDataMapper;
       this._lineItemDataMapper = args[0].lineItemDataMapper;
     }
     
     public async findOrderById(orderId: UniqueEntityID): Promise<Order> {
-      const orderPersistenceData = await this._orderDataMaper.findByIdAndIncludeLineItems(orderId.toString());
+      const orderPersistenceData = await this._orderDataMapper.findByIdAndIncludeLineItems(orderId.toString());
       return toOrderEntity(orderPersistenceData);
     }
 
-    private async saveLineItems(lineItems: LineItem[], orderId: string) {
+    private async saveLineItems(lineItems: LineItem[], orderId: string, orderIsNew: boolean) {
       const newLineItems: LineItemPersistenceData[] = [];
 
       for (const lineItem of lineItems) {
@@ -38,10 +38,12 @@ export default function MixOrderRepository<TBase extends GConstructor>(Gateway: 
         }
       }
 
-      await this._lineItemDataMapper.deleteByOrderIdWhereIdNotInArray(
-        orderId, 
-        lineItems.map((lineItem) => +lineItem.id.toValue())
-      );
+      if (!orderIsNew) {
+        await this._lineItemDataMapper.deleteByOrderIdWhereIdNotInArray(
+          orderId, 
+          lineItems.map((lineItem) => +lineItem.id.toValue())
+        );
+      }
 
       await this._lineItemDataMapper.bulckInsert(newLineItems);
     }
@@ -50,12 +52,12 @@ export default function MixOrderRepository<TBase extends GConstructor>(Gateway: 
       const orderPersistenceData = toOrderPersistence(order);
 
       if (order.isNew) {
-        this._orderDataMaper.insert(orderPersistenceData as OrderPersistenceData);
+        await this._orderDataMapper.insert(orderPersistenceData as OrderPersistenceData);
       } else if (order.getDirtyProps()?.length > 0){
-        await this._orderDataMaper.updateById(order.id.toString(), orderPersistenceData)
+        await this._orderDataMapper.updateById(order.id.toString(), orderPersistenceData);
       }
 
-      await this.saveLineItems(order.lineItems, order.id.toString())
+      await this.saveLineItems(order.lineItems, order.id.toString(), order.isNew);
     }
   }
 }

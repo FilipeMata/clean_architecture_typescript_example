@@ -2,9 +2,8 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('customers', {
       id: {
-        type: Sequelize.DataTypes.UUID,
-        unique: true,
-        defaultValue: Sequelize.DataTypes.UUIDV4,
+        type: Sequelize.DataTypes.BIGINT.UNSIGNED,
+        autoIncrement: true,
         primaryKey: true,
         allowNull: false
       },

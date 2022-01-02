@@ -30,10 +30,10 @@ export function loadContainer(): AwilixContainer {
     `${baseDir}/adapters/**/*.controller.*`,
     `${baseDir}/adapters/**/*.gateway.*`,
     `${baseDir}/infrastructure/plugins/**/*.*`,
-    `${baseDir}/infrastructure/db/data-mppers/**/*.*`
+    `${baseDir}/infrastructure/db/data-mappers/**/*.*`
   ], {
     formatName: (name: string) => {
-      const infraLabelsRegex = /impl|mysql|redis|express|sql|aws|kms|dynamo|http|sequelize/gi;
+      const infraLabelsRegex = /impl|mysql|redis|express|sql|aws|kms|dynamo|http|sequelize|gerencianet/gi;
 
       let moduleName = name.replace(infraLabelsRegex, '');
 

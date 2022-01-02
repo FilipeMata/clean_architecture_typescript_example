@@ -5,7 +5,7 @@ import { OrderData } from '@useCases/common/get-order-data';
 const Gerencianet = require('gn-api-sdk-node');
 const credentials = require('./credentials');
 
-export class GerencianetInvoiceGateway implements InvoiceGateway {
+export default class GerencianetInvoiceGateway implements InvoiceGateway {
   public async generateInvoice(orderData: OrderData): Promise<Invoice> {
     const options = {
       client_id: credentials.client_id,
@@ -24,7 +24,7 @@ export class GerencianetInvoiceGateway implements InvoiceGateway {
     const body = {
       payment: {
         banking_billet: {
-          expire_at: '2020-10-30',
+          expire_at: '2024-10-30',
           customer: {
             name: orderData.buyer.name,
             email: orderData.buyer.email,
@@ -45,8 +45,8 @@ export class GerencianetInvoiceGateway implements InvoiceGateway {
         data = data.data;
         
         return {
-          invoiceNumber: data.charge_id,
-          invoiceUrl: data.link
+          number: data.charge_id,
+          url: data.link
         }
       })
       .catch((err: any) => {

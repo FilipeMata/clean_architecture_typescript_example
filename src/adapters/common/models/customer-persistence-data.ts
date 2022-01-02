@@ -11,6 +11,10 @@ export default interface CustomerPersistenceData {
 }
 
 export function toDomain(customer: CustomerPersistenceData): Customer {
+  if (!customer) {
+    return null;
+  }
+  
   return Customer.build({
     id: new UniqueEntityID(customer.id),
     address: Address.build(customer.address),

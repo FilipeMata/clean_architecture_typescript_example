@@ -52,14 +52,14 @@ export default class GetOrderDataInteractor {
 
   public async execute(orderRef: string | Order): Promise<OrderData> {
     let order: Order;
-
+    
     if (orderRef instanceof Order) {
       order = orderRef;
     }
-
+    
     if (!order && typeof orderRef === 'string') {
       order = await this._gateway
-        .findOrderById(new UniqueEntityID(orderRef));
+      .findOrderById(new UniqueEntityID(orderRef));
     }
 
     if (!order) {

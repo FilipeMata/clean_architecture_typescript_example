@@ -15,7 +15,6 @@ export default (sequelize: Sequelize) => {
   return CustomerModel.init({
     id: {
       type: DataTypes.BIGINT.UNSIGNED,
-      unique: true,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false

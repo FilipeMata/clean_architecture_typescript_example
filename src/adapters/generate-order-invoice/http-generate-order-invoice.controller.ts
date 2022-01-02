@@ -8,14 +8,14 @@ interface HTTPGenerateOrderInvoiceParams {
 type HTTPGenerateOrderInvoiceInput = HTTPRequest<HTTPGenerateOrderInvoiceParams, void, void, void>
 
 interface HTTPGenerateOrderInvoiceControllerParams {
-  generateOrderInteractor: GenerateOrderInvoiceInteractor
+  generateOrderInvoiceInteractor: GenerateOrderInvoiceInteractor
 }
 
 export default class HTTPGenerateOrderInvoiceController {
   private _interactorr: GenerateOrderInvoiceInteractor
 
   constructor(params: HTTPGenerateOrderInvoiceControllerParams) {
-    this._interactorr = params.generateOrderInteractor;
+    this._interactorr = params.generateOrderInvoiceInteractor;
   }
 
   async run(input: HTTPGenerateOrderInvoiceInput) {

@@ -43,7 +43,7 @@ export class Customer extends Entity<CustomerProps>{
     }
 
     private constructor(props: CustomerProps) {
-        super(props, !!props.id);
+        super(props, !props.id);
     }
 
     public static build(props: CustomerProps): Customer {

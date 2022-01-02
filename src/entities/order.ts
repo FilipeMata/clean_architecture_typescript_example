@@ -54,7 +54,7 @@ export class Order extends Entity<OrderProps>{
     }
 
     private constructor(props: OrderProps) {
-        super(props, !!props.id);
+        super(props, !props.id);
         this._lastLineItemId = this.lineItems[this.lineItems.length - 1].id;
     }  
 
@@ -94,9 +94,10 @@ export class Order extends Entity<OrderProps>{
     public static build(buildProps: OrderBuildProps): Order {
         /** some domain validations here **/
 
-        buildProps.builtLineItems.sort((a, b) => +a.id.toValue() - +b.id.toValue());
+        buildProps.builtLineItems?.sort((a, b) => +a.id.toValue() - +b.id.toValue());
         
         const props: OrderProps = {
+            id: buildProps.id,
             billingAddress: buildProps.billingAddress,
             buyerId: buildProps.buyerId,
             lineItems: buildProps.builtLineItems || [],
@@ -105,18 +106,18 @@ export class Order extends Entity<OrderProps>{
 
         const errors: string[] = [];
 
-        if (buildProps.lineItems.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_ORDER) {
+        if (buildProps.lineItems?.length >= Order.MAX_NUMBER_OF_LINE_ITEMS_PER_ORDER) {
             errors.push('Max line items reached');
         }
 
-        const existentLineItemProps = buildProps.lineItems.find((item) => !!item.id)
+        const existentLineItemProps = buildProps.lineItems?.find((item) => !!item.id)
         
         if (!buildProps.id && !!existentLineItemProps) {
             errors.push('It is not possible add existent line items to a new order');
             throw new OrderError(errors);
         }
         
-        const newLineItemProps = buildProps.lineItems.find((item) => !item.id);
+        const newLineItemProps = buildProps.lineItems?.find((item) => !item.id);
 
         if (!!buildProps.id && newLineItemProps) {
             errors.push('It is not allowed build an existent order with a new line item');
@@ -125,8 +126,8 @@ export class Order extends Entity<OrderProps>{
 
         if (!!buildProps.id) {
 
-            buildProps.lineItems.sort((a, b) => +a.id - +b.id);
-            for (let i = 0; i < buildProps.lineItems.length; i++) {
+            buildProps.lineItems?.sort((a, b) => +a.id - +b.id);
+            for (let i = 0; i < buildProps.lineItems?.length; i++) {
 
                 if (!buildProps.lineItems[i].id) {
                     return;
@@ -137,7 +138,7 @@ export class Order extends Entity<OrderProps>{
             }
         } else {
 
-            for (let i = 0; i < buildProps.lineItems.length; i++) {
+            for (let i = 0; i < buildProps.lineItems?.length; i++) {
     
                 let newLineItemProps = buildProps.lineItems[i];
                 const lastLineItem = props.lineItems[props.lineItems.length - 1];

@@ -8,6 +8,10 @@ export default interface ProductPersistenceData {
 }
 
 export function toDomain(product: ProductPersistenceData): Product {
+  if (!product) {
+    return null;
+  }
+  
   return Product.build({
     id: new UniqueEntityID(product.id),
     description: product.description,

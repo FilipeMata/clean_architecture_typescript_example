@@ -13,13 +13,21 @@ export default interface OrderPersistenceData {
 export function toDomain(order: OrderPersistenceData): Order {
   let invoice: Invoice;
 
+  if (!order) {
+    return null;
+  }
+  
   if (order.invoice_url && order.invoice_number) {
     invoice = {
       number: order.invoice_number,
       url: order.invoice_url
     }
   }
-  
+
+  if (!Array.isArray(order.line_items)) {
+    order.line_items = [order.line_items];
+  }
+
   return Order.build({
     id: new UniqueEntityID(order.id),
     billingAddress: Address.build(order.billing_address as AddressProps),
@@ -41,8 +49,8 @@ export function toPersistence(order: Order): Partial<OrderPersistenceData> {
   }
 
   if (order.isNew || order.getDirtyProps().includes('invoice')) {
-    orderPersistenceData.invoice_number = order.invoice.number;
-    orderPersistenceData.invoice_url = order.invoice.url;
+    orderPersistenceData.invoice_number = order.invoice?.number;
+    orderPersistenceData.invoice_url = order.invoice?.url;
   }
 
   if (order.isNew || order.getDirtyProps().includes('billingAddress')) {

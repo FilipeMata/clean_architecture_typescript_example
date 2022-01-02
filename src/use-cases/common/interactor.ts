@@ -19,9 +19,10 @@ export default abstract class Interactor<InputModel, ResponseModel> {
       const response = await this.execute(input);
       this._presenter.showSuccess(response);
     } catch (err) {
+      console.log(err);
       
       if (err instanceof ApplicationError || err instanceof DomainError) {
-        return this._presenter.showError(err as Error);
+        return this._presenter.showError(err);
       }
 
       return this._presenter.showError(

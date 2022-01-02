@@ -8,6 +8,10 @@ export default interface LineItemPersistenceData {
 }
 
 export function toDomain(lineItem: LineItemPersistenceData): LineItem {
+  if(!lineItem) {
+    return null;
+  }
+  
   return LineItem.build({
     id: lineItem.id,
     productId: lineItem.product_id,

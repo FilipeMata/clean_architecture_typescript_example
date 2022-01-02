@@ -28,7 +28,7 @@ export class Product extends Entity<ProductProps>{
     }
 
     private constructor (props: ProductProps) {
-        super(props, !!props.id);
+        super(props, !props.id);
     }  
 
     public static build(props: ProductProps): Product { 
