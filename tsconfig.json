@@ -12,25 +12,23 @@
     "outDir": "dist",
     "esModuleInterop": true,
     "sourceMap": true,
-    "rootDir": "./",
-    "baseUrl": "./",
+    "rootDir": "./src",
+    "baseUrl": "./src",
     "paths": {
       "@infrastructure/*": [
-        "src/infrastructure/*"
+        "infrastructure/*"
       ],
       "@adapters/*": [
-        "src/adapters/*"
+        "adapters/*"
       ],
       "@entities": [
-        "src/entities/index"
+        "entities/index"
       ],
       "@useCases/*": [
-        "src/use-cases/*"
-      ],
-      "@shared/*": [
-        "src/shared/*"
+        "use-cases/*"
       ]
-    }
+    },
+    "moduleResolution": "node"
   },
   "compileOnSave": true,
   "include": [
