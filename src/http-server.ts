@@ -23,8 +23,8 @@ export function startHttpServer(container: AwilixContainer) {
     
     app.use('/api', BaseRouter);
     
-    app.use((err: Error, _: Request, res: Response) => {
-        console.log(err);
+    app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+        req; next;
         return res.status(BAD_REQUEST).json({
             error: err.message,
         });

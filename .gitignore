@@ -1,4 +1,6 @@
 /node_modules
+/dist
+/.setup
 /src/infrastructure/db/config.ts
 /src/infrastructure/db/databases.json
 /src/infrastructure/plugins/gerencianet/credentials

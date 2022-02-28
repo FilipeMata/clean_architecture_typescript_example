@@ -4,9 +4,10 @@
   "scripts": {
     "build": "node build.js",
     "lint": "tslint --project \"tsconfig.json\"",
-    "start": "node -r module-alias/register ./dist",
+    "start": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node -r tsconfig-paths/register src/index.ts\"",
     "start:dev": "nodemon --config nodemon.json",
-    "test": "nodemon --config nodemon.test.json"
+    "test": "nodemon --config nodemon.test.json",
+    "setup": "rm -f .setup && rm -rf ./dist && sh scripts/setup.sh"
   },
   "dependencies": {
     "awilix": "^4.3.4",

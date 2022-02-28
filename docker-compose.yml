@@ -1,0 +1,28 @@
+version: "3.8"
+
+x-logging:
+  &default-logging
+  driver: json-file
+  options:
+    max-size: '100k'
+    max-file: '1'
+    
+networks:
+  shared-services:
+    external: true
+
+services:
+  clean_arquitecture:
+    container_name: clean_arquitecture
+    build:
+      context: .
+      target: dev
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    volumes:
+      - ".:/application"
+    networks:
+      - shared-services
+    ports:
+      - "9229:9229"
+      - "8081:8081"
