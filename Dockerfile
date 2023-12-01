@@ -1,4 +1,4 @@
-FROM node:12-alpine AS dev
+FROM node:20-alpine AS dev
 
 ENV PATH="/application/node_modules/.bin:${PATH}"
 # ENV NODE_EXTRA_CA_CERTS="/etc/ssl/certs/ca-certificates.crt"

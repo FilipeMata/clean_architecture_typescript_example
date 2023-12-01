@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import lodash from 'lodash';
 import { Sequelize, Options } from 'sequelize';
 import sequelize from 'sequelize';
 import { CustomerModel } from './models/store/customer';
@@ -61,7 +60,7 @@ export const loadModels = async (): Promise<DB> => {
         bindParam: false,
       };
 
-      const dbOptions = lodash.merge({}, databases[key], defaultDbAttributes);
+      const dbOptions = {...databases[key], ...defaultDbAttributes};
 
       const connection = new Sequelize(
         dbOptions.database,
