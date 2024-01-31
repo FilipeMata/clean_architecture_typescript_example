@@ -27,10 +27,10 @@ ps:
 	docker-compose ps
 
 login:
-	docker-compose run -w /application clean_arquitecture /bin/bash
+	docker-compose run --rm -w /application clean_arquitecture /bin/bash
 
 setup:
-	node ./scripts/create-databases.js & docker network create shared-services || true && docker-compose run -w /application clean_arquitecture /bin/bash -c "npm run setup"
+	node ./scripts/create-databases.js & docker network create shared-services || true && docker-compose run --rm -w /application clean_arquitecture /bin/bash -c "npm run setup"
 
 database:
 	docker run --name dbmysql -e MYSQL_USER=root -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -d -t mysql:8.0.18 
